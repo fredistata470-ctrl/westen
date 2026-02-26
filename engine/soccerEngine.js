@@ -55,7 +55,7 @@ function initMatch() {
 
     for (let i = 0; i < 4; i++) {
         players.push({ x: 250, y: FORMATION_Y[i], speed: 5.5, r: 15, team: "player" });
-        aiPlayers.push({ x: 950, y: FORMATION_Y[i], speed: 3.3, r: 15, team: "ai" });
+        aiPlayers.push({ x: 950, y: FORMATION_Y[i], speed: 2.6, r: 15, team: "ai" });
     }
 
     goalies.player = { x: 95, y: FIELD.height / 2, r: 17, speed: 3.3, box: FIELD.playerBox, team: "player" };
@@ -128,9 +128,10 @@ function updateAIOutfield() {
     const aiCarrier = possession.team === "ai" ? possession.owner : null;
     const playerCarrier = possession.team === "player" ? possession.owner : null;
 
+    const bestAttacker = findBestAIAttacker();
+
     aiPlayers.forEach((p, i) => {
-        // closest player pressures ball/ball-carrier, others keep shape
-        const isPressing = i === 0 || isClosestAIToBall(p);
+        const isPressing = isClosestAIToBall(p);
         let targetX = 900;
         let targetY = FORMATION_Y[i];
 
@@ -138,9 +139,15 @@ function updateAIOutfield() {
             targetX = playerCarrier ? playerCarrier.x : ball.x;
             targetY = playerCarrier ? playerCarrier.y : ball.y;
         } else if (aiCarrier) {
-            // support lanes when attacking
-            targetX = 880 - i * 40;
-            targetY = clamp(aiCarrier.y + (i - 1.5) * 95, 80, FIELD.height - 80);
+            if (p === bestAttacker) {
+                // primary runner goes to goal lane
+                targetX = 760;
+                targetY = clamp(aiCarrier.y + (Math.random() - 0.5) * 80, FIELD.goalTop + 20, FIELD.goalBottom - 20);
+            } else {
+                // support shape around ball carrier
+                targetX = clamp(aiCarrier.x - 90 + (i * 25), 680, 980);
+                targetY = clamp(aiCarrier.y + (i - 1.5) * 90, 80, FIELD.height - 80);
+            }
         }
 
         const to = normalize(targetX - p.x, targetY - p.y);
@@ -149,10 +156,9 @@ function updateAIOutfield() {
         p.x = clamp(p.x, p.r, FIELD.width - p.r);
         p.y = clamp(p.y, p.r, FIELD.height - p.r);
 
-        // defense tackle chance
         if (playerCarrier && possession.lockTimer <= 0) {
             const d = distance(p.x, p.y, playerCarrier.x, playerCarrier.y);
-            if (d < p.r + playerCarrier.r + 5 && Math.random() < 0.05) {
+            if (d < p.r + playerCarrier.r + 7 && Math.random() < 0.06) {
                 possession.owner = p;
                 possession.team = "ai";
                 possession.lockTimer = 10;
@@ -162,27 +168,39 @@ function updateAIOutfield() {
         }
     });
 
-    // AI attacking decisions when AI has possession
+    // AI attacking behavior: drive to goal, pass only if blocked, shoot near goal
     if (possession.team === "ai" && possession.owner) {
         const carrier = possession.owner;
-        const shotLane = Math.abs(carrier.y - FIELD.height / 2) < 95;
-        const closeToGoal = carrier.x > 980;
+        const closeToGoal = carrier.x < 300;
+        const inShotLane = carrier.y > FIELD.goalTop - 20 && carrier.y < FIELD.goalBottom + 20;
 
-        if (closeToGoal && shotLane && Math.random() < 0.06) {
-            const targetY = clamp(carrier.y + (Math.random() - 0.5) * 70, FIELD.goalTop + 15, FIELD.goalBottom - 15);
+        // dribble toward goal by default (less pointless side passing)
+        const directToGoal = normalize(FIELD.leftGoalX - carrier.x, FIELD.height / 2 - carrier.y);
+        carrier.x += directToGoal.x * 1.6;
+        carrier.y += directToGoal.y * 1.0;
+
+        // shoot when within realistic zone
+        if (closeToGoal && inShotLane && Math.random() < 0.16) {
+            const targetY = clamp(carrier.y + (Math.random() - 0.5) * 55, FIELD.goalTop + 12, FIELD.goalBottom - 12);
             const shotDir = normalize(FIELD.leftGoalX - ball.x, targetY - ball.y);
-            releasePossession(shotDir.x * 14, shotDir.y * 5.5);
+            releasePossession(shotDir.x * 15, shotDir.y * 5.2);
             return;
         }
 
-        if (Math.random() < 0.025) {
+        // pass only when pressure is high and teammate is in a better lane
+        const nearestPlayerDef = players.reduce((best, pl) => {
+            const d = distance(pl.x, pl.y, carrier.x, carrier.y);
+            return d < best ? d : best;
+        }, Infinity);
+
+        if (nearestPlayerDef < 85 && Math.random() < 0.09) {
             const mate = findBestAIPassTarget(carrier);
             if (mate) {
                 const passDir = normalize(mate.x - carrier.x, mate.y - carrier.y);
-                releasePossession(passDir.x * 9.5, passDir.y * 9.5);
+                releasePossession(passDir.x * 10.5, passDir.y * 9.2);
                 possession.owner = mate;
                 possession.team = "ai";
-                possession.lockTimer = 8;
+                possession.lockTimer = 12;
             }
         }
     }
@@ -217,6 +235,24 @@ function findBestAIPassTarget(carrier) {
             best = p;
         }
     });
+    return best;
+}
+
+
+function findBestAIAttacker() {
+    let best = aiPlayers[0] || null;
+    let bestScore = -Infinity;
+
+    aiPlayers.forEach(p => {
+        const toGoalX = p.x - FIELD.leftGoalX;
+        const centerBias = 1 - Math.min(1, Math.abs(p.y - FIELD.height / 2) / 260);
+        const scoreValue = toGoalX * 0.9 + centerBias * 120;
+        if (scoreValue > bestScore) {
+            bestScore = scoreValue;
+            best = p;
+        }
+    });
+
     return best;
 }
 
@@ -367,7 +403,7 @@ function attemptTackle() {
     if (possession.team === "ai" && possession.owner) {
         const enemy = possession.owner;
         const d = distance(selected.x, selected.y, enemy.x, enemy.y);
-        if (d < selected.r + enemy.r + 10) {
+        if (d < selected.r + enemy.r + 14) {
             possession.owner = selected;
             possession.team = "player";
             possession.lockTimer = 20;
@@ -530,7 +566,7 @@ function draw() {
     ctx.fillText(`Player ${score.player} - ${score.ai} AI`, 490, 32);
     ctx.font = "16px Arial";
     ctx.fillText("Move: W A S D | Offense: N pass, M shoot | Defense: K switch, L tackle", 220, 60);
-    ctx.fillText("K works only when you do NOT have ball. Pass auto-switches to receiver.", 265, 84);
+    ctx.fillText("AI now prioritizes attacking goal lanes; K works only on defense.", 300, 84);
 }
 
 function drawPost(p) {
