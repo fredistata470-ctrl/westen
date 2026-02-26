@@ -54,8 +54,8 @@ function initMatch() {
     possession.lockTimer = 0;
 
     for (let i = 0; i < 4; i++) {
-        players.push({ x: 250, y: FORMATION_Y[i], speed: 5.5, r: 15, team: "player" });
-        aiPlayers.push({ x: 950, y: FORMATION_Y[i], speed: 2.6, r: 15, team: "ai" });
+        players.push({ x: 250, y: FORMATION_Y[i], speed: 4.4, r: 15, team: "player" });
+        aiPlayers.push({ x: 950, y: FORMATION_Y[i], speed: 2.1, r: 15, team: "ai" });
     }
 
     goalies.player = { x: 95, y: FIELD.height / 2, r: 17, speed: 3.3, box: FIELD.playerBox, team: "player" };
@@ -319,7 +319,7 @@ function carryBallWithOwner() {
     ball.vy = 0;
 }
 
-function ensurePlayerControlForAction(selected, range = 18) {
+function ensurePlayerControlForAction(selected, range = 26) {
     if (!selected) return false;
     if (possession.owner === selected && possession.team === "player") return true;
 
@@ -356,14 +356,22 @@ function performPass() {
 }
 
 function performShotToRightGoal() {
-    const selected = players[0];
-    if (!selected) return;
-    if (!ensurePlayerControlForAction(selected, 24)) return;
+    // shooter preference: controlled player, fallback to current team ball owner
+    let shooter = players[0];
+    if (possession.team === "player" && possession.owner) {
+        shooter = possession.owner;
+        setControlledPlayer(shooter);
+    }
+
+    if (!shooter) return;
+    if (!ensurePlayerControlForAction(shooter, 32)) return;
 
     const targetX = FIELD.rightGoalX + 8;
-    const targetY = clamp(selected.y, FIELD.goalTop + 10, FIELD.goalBottom - 10);
+    const targetY = clamp(shooter.y, FIELD.goalTop + 8, FIELD.goalBottom - 8);
     const shot = normalize(targetX - ball.x, targetY - ball.y);
-    releasePossession(shot.x * 15.5, shot.y * 6.5);
+
+    // guaranteed release + stronger drive so shot is noticeable
+    releasePossession(shot.x * 18.5, shot.y * 7.2);
 }
 
 function findBestPassTarget(selected, dir) {
@@ -566,7 +574,7 @@ function draw() {
     ctx.fillText(`Player ${score.player} - ${score.ai} AI`, 490, 32);
     ctx.font = "16px Arial";
     ctx.fillText("Move: W A S D | Offense: N pass, M shoot | Defense: K switch, L tackle", 220, 60);
-    ctx.fillText("AI now prioritizes attacking goal lanes; K works only on defense.", 300, 84);
+    ctx.fillText("Pace tuned slower for control. K works only on defense.", 340, 84);
 }
 
 function drawPost(p) {
