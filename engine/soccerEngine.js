@@ -299,6 +299,7 @@ function performPass() {
     if (teammate) {
         const toMate = normalize(teammate.x - selected.x, teammate.y - selected.y);
         releasePossession(toMate.x * 10.5, toMate.y * 10.5);
+        setControlledPlayer(teammate);
     } else {
         // fallback forward pass in move direction
         releasePossession(dir.x * 9.5, dir.y * 9.5);
@@ -338,6 +339,38 @@ function findBestPassTarget(selected, dir) {
     }
 
     return best;
+}
+
+function setControlledPlayer(player) {
+    const idx = players.indexOf(player);
+    if (idx <= 0) return;
+    players.unshift(...players.splice(idx, 1));
+}
+
+function attemptTackle() {
+    const selected = players[0];
+    if (!selected) return;
+
+    if (possession.team === "ai" && possession.owner) {
+        const enemy = possession.owner;
+        const d = distance(selected.x, selected.y, enemy.x, enemy.y);
+        if (d < selected.r + enemy.r + 8) {
+            possession.owner = selected;
+            possession.team = "player";
+            possession.lockTimer = 20;
+            ball.vx = 0;
+            ball.vy = 0;
+            return;
+        }
+    }
+
+    if (!possession.owner && distance(selected.x, selected.y, ball.x, ball.y) < selected.r + 14) {
+        possession.owner = selected;
+        possession.team = "player";
+        possession.lockTimer = 16;
+        ball.vx = 0;
+        ball.vy = 0;
+    }
 }
 
 function normalize(x, y) {
@@ -451,7 +484,7 @@ function draw() {
     ctx.font = "24px Arial";
     ctx.fillText(`Player ${score.player} - ${score.ai} AI`, 490, 32);
     ctx.font = "16px Arial";
-    ctx.fillText("Move: W A S D | M: Pass to teammate | N: Shoot to right goal | K: Switch | L: Tackle", 235, 60);
+    ctx.fillText("Move: W A S D | Offense: N pass, M shoot | Defense: K switch, L tackle", 220, 60);
     ctx.fillText("Goalies stay in their own boxes and auto-defend.", 460, 84);
     ctx.fillText(`Ball: ${Math.round(ball.x)}, ${Math.round(ball.y)}`, 20, 30);
     ctx.fillText("Tip: keep moving while close to the ball for FIFA-style close control.", 20, 54);
@@ -495,16 +528,16 @@ document.addEventListener("keydown", e => {
 
     const inControl = possession.owner === selected && possession.team === "player";
 
-    if (key === "m" && inControl) {
+    if (key === "n" && inControl) {
         performPass();
     }
 
-    if (key === "n" && inControl) {
+    if (key === "m" && inControl) {
         performShotToRightGoal();
     }
 
-    if (key === "l" && inControl) {
-        releasePossession(6 + controlState.dirX * 2, controlState.dirY * 7);
+    if (key === "l") {
+        attemptTackle();
     }
 
     if (key === "k" && players.length > 1) {
