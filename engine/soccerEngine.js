@@ -25,6 +25,16 @@ const input = {
     right: false
 };
 
+const possession = {
+    owner: null,
+    team: null
+};
+
+const controlState = {
+    dirX: 1,
+    dirY: 0
+};
+
 function startMatch(chapter, done) {
     onMatchComplete = done || null;
     screen.innerHTML = "";
@@ -45,6 +55,8 @@ function initMatch() {
     players = [];
     aiPlayers = [];
     score = { player: 0, ai: 0 };
+    possession.owner = null;
+    possession.team = null;
 
     for (let i = 0; i < 5; i++) {
         players.push({ x: 220, y: 130 + i * 105, speed: 5.8, r: 15, team: "player" });
@@ -83,8 +95,14 @@ function update() {
     updateGoalie(goalies.player);
     updateGoalie(goalies.ai);
 
-    ball.x += ball.vx;
-    ball.y += ball.vy;
+    updatePlayerPossession();
+
+    if (possession.owner) {
+        carryBallWithOwner();
+    } else {
+        ball.x += ball.vx;
+        ball.y += ball.vy;
+    }
 
     // Ball never leaves the field
     if (ball.x < ball.radius) {
@@ -115,11 +133,13 @@ function update() {
         resetBall();
     }
 
-    ball.vx *= 0.985;
-    ball.vy *= 0.985;
+    if (!possession.owner) {
+        ball.vx *= 0.985;
+        ball.vy *= 0.985;
 
-    if (Math.abs(ball.vx) < 0.03) ball.vx = 0;
-    if (Math.abs(ball.vy) < 0.03) ball.vy = 0;
+        if (Math.abs(ball.vx) < 0.03) ball.vx = 0;
+        if (Math.abs(ball.vy) < 0.03) ball.vy = 0;
+    }
 
     if (score.player >= 3 || score.ai >= 3) {
         endMatch();
@@ -140,20 +160,18 @@ function moveControlledPlayer() {
 
     if (dx !== 0 || dy !== 0) {
         const len = Math.hypot(dx, dy);
-        selected.x += (dx / len) * selected.speed;
-        selected.y += (dy / len) * selected.speed;
+        const nx = dx / len;
+        const ny = dy / len;
+        selected.x += nx * selected.speed;
+        selected.y += ny * selected.speed;
+        controlState.dirX = nx;
+        controlState.dirY = ny;
     }
 
     selected.x = clamp(selected.x, selected.r, FIELD.width - selected.r);
     selected.y = clamp(selected.y, selected.r, FIELD.height - selected.r);
-
-    // light dribble if very close
-    const dist = distance(selected.x, selected.y, ball.x, ball.y);
-    if (dist < selected.r + 12) {
-        ball.vx += (selected.x - ball.x) * -0.02;
-        ball.vy += (selected.y - ball.y) * -0.02;
-    }
 }
+
 
 function updateAIOutfield() {
     aiPlayers.forEach((p, i) => {
@@ -170,7 +188,15 @@ function updateAIOutfield() {
         p.x = clamp(p.x, p.r, FIELD.width - p.r);
         p.y = clamp(p.y, p.r, FIELD.height - p.r);
 
-        if (distance(p.x, p.y, ball.x, ball.y) < p.r + 10 && Math.random() < 0.04) {
+        const ballDist = distance(p.x, p.y, ball.x, ball.y);
+        if (possession.team === "player" && possession.owner && ballDist < p.r + 9 && Math.random() < 0.03) {
+            possession.owner = p;
+            possession.team = "ai";
+            ball.vx = 0;
+            ball.vy = 0;
+        }
+
+        if (!possession.owner && ballDist < p.r + 10 && Math.random() < 0.04) {
             ball.vx = -7 - Math.random() * 3;
             ball.vy = (Math.random() - 0.5) * 7;
         }
@@ -196,12 +222,66 @@ function updateGoalie(goalie) {
 
     if (distance(goalie.x, goalie.y, ball.x, ball.y) < goalie.r + 12) {
         const clearDir = goalie.team === "player" ? 1 : -1;
-        ball.vx = clearDir * (8 + Math.random() * 3);
-        ball.vy = (ball.y - centerY) * 0.04;
+        if (possession.owner && possession.team !== goalie.team) {
+            possession.owner = goalie;
+            possession.team = goalie.team;
+        } else if (!possession.owner) {
+            ball.vx = clearDir * (8 + Math.random() * 3);
+            ball.vy = (ball.y - centerY) * 0.04;
+        }
     }
 }
 
+
+function updatePlayerPossession() {
+    const selected = players[0];
+    if (!selected) return;
+
+    const dist = distance(selected.x, selected.y, ball.x, ball.y);
+
+    if (!possession.owner && dist < selected.r + 11) {
+        possession.owner = selected;
+        possession.team = "player";
+        ball.vx = 0;
+        ball.vy = 0;
+    }
+
+    if (possession.team === "player" && possession.owner !== selected) {
+        possession.owner = selected;
+    }
+}
+
+function carryBallWithOwner() {
+    const owner = possession.owner;
+    if (!owner) return;
+
+    let dirX = controlState.dirX;
+    let dirY = controlState.dirY;
+
+    if (possession.team === "ai") {
+        const attackDir = -1;
+        dirX = attackDir;
+        dirY = 0;
+    }
+
+    const holdDistance = owner.r + ball.radius - 2;
+    const targetX = owner.x + dirX * holdDistance;
+    const targetY = owner.y + dirY * holdDistance;
+
+    ball.x += (targetX - ball.x) * 0.42;
+    ball.y += (targetY - ball.y) * 0.42;
+}
+
+function releasePossession(kickVX, kickVY) {
+    possession.owner = null;
+    possession.team = null;
+    ball.vx = kickVX;
+    ball.vy = kickVY;
+}
+
 function resetBall() {
+    possession.owner = null;
+    possession.team = null;
     ball.x = FIELD.width / 2;
     ball.y = FIELD.height / 2;
     ball.vx = 0;
@@ -299,7 +379,7 @@ function draw() {
     ctx.fillText("Move: Arrow Keys / WASD | M: Pass | N: Shoot | K: Switch Player | L: Tackle", 300, 60);
     ctx.fillText("Goalies stay in their own boxes and auto-defend.", 460, 84);
     ctx.fillText(`Ball: ${Math.round(ball.x)}, ${Math.round(ball.y)}`, 20, 30);
-    ctx.fillText("Tip: follow the yellow ring and white guide line to track ball faster.", 20, 54);
+    ctx.fillText("Tip: keep moving while close to the ball for FIFA-style close control.", 20, 54);
 }
 
 function drawGoalie(goalie, color) {
@@ -338,19 +418,18 @@ document.addEventListener("keydown", e => {
     const selected = players[0];
     if (!selected) return;
 
-    if (key === "m" && canKick(selected)) {
-        ball.vx = 7;
-        ball.vy = (Math.random() - 0.5) * 3;
+    const inControl = possession.owner === selected && possession.team === "player";
+
+    if (key === "m" && inControl) {
+        releasePossession(8.5 + controlState.dirX * 2.5, controlState.dirY * 3);
     }
 
-    if (key === "n" && canKick(selected)) {
-        ball.vx = 13;
-        ball.vy = (Math.random() - 0.5) * 4;
+    if (key === "n" && inControl) {
+        releasePossession(13 + controlState.dirX * 3, controlState.dirY * 4);
     }
 
-    if (key === "l" && canKick(selected, 40)) {
-        ball.vx = 5;
-        ball.vy = (Math.random() - 0.5) * 8;
+    if (key === "l" && inControl) {
+        releasePossession(6 + controlState.dirX * 2, controlState.dirY * 7);
     }
 
     if (key === "k" && players.length > 1) {
