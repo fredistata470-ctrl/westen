@@ -8,7 +8,6 @@ function init() {
 }
 
 function showBootScreen() {
-    gameState = "boot";
     screen.innerHTML = "<h1>Click To Start</h1>";
     screen.onclick = () => {
         screen.onclick = null;
@@ -17,7 +16,6 @@ function showBootScreen() {
 }
 
 function showMainMenu() {
-    gameState = "menu";
     screen.innerHTML = `
         <h1>WESTEN</h1>
         <button onclick="startGame()">Start Game</button>
@@ -25,7 +23,6 @@ function showMainMenu() {
 }
 
 function startGame() {
-    gameState = "story";
     currentChapter = 0;
     loadChapter(currentChapter);
 }

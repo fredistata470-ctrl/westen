@@ -10,7 +10,9 @@ async function loadChapter(index) {
     }
 
     if (chapter.type === "story") {
-        playStory(chapter, () => nextChapter());
+        playStory(chapter, () => {
+            nextChapter();
+        });
     }
 
     if (chapter.type === "match") {
@@ -18,7 +20,7 @@ async function loadChapter(index) {
     }
 }
 
-function playStory(chapter, onComplete) {
+function playStory(chapter, onEnd) {
     let dialogueIndex = 0;
 
     function showDialogue() {
@@ -36,7 +38,7 @@ function playStory(chapter, onComplete) {
                 btn.onclick = () => {
                     dialogueIndex++;
                     if (dialogueIndex >= chapter.lines.length) {
-                        if (onComplete) onComplete();
+                        if (onEnd) onEnd();
                     } else {
                         showDialogue();
                     }
@@ -48,7 +50,7 @@ function playStory(chapter, onComplete) {
                 dialogueIndex++;
                 if (dialogueIndex >= chapter.lines.length) {
                     screen.onclick = null;
-                    if (onComplete) onComplete();
+                    if (onEnd) onEnd();
                 } else {
                     showDialogue();
                 }
@@ -70,7 +72,9 @@ function startPreGameInterview(chapter) {
 function startPostGameInterview(chapter) {
     playStory(chapter.postGame, () => {
         if (chapter.storyAfterMatch) {
-            playStory(chapter.storyAfterMatch, () => nextChapter());
+            playStory(chapter.storyAfterMatch, () => {
+                nextChapter();
+            });
         } else {
             nextChapter();
         }

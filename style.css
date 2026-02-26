@@ -13,13 +13,6 @@ body {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    text-align: center;
-    padding: 24px;
-    box-sizing: border-box;
-}
-
-h1, h2, p {
-    margin: 12px 0;
 }
 
 button {

@@ -3,11 +3,11 @@ let ball;
 let players = [];
 let aiPlayers = [];
 let score = { player: 0, ai: 0 };
-let matchTimeLeft = 30;
-let matchTimer = null;
-let matchEndCallback = null;
+let matchRunning = false;
+let onMatchComplete = null;
 
-function startMatch(chapter, onMatchEnd) {
+function startMatch(chapter, done) {
+    onMatchComplete = done || null;
     screen.innerHTML = "";
     canvas = document.createElement("canvas");
     canvas.width = 1200;
@@ -15,23 +15,9 @@ function startMatch(chapter, onMatchEnd) {
     screen.appendChild(canvas);
 
     ctx = canvas.getContext("2d");
-    matchEndCallback = onMatchEnd;
 
     initMatch();
-
-    if (matchTimer) {
-        clearInterval(matchTimer);
-    }
-
-    matchTimer = setInterval(() => {
-        matchTimeLeft--;
-        if (matchTimeLeft <= 0) {
-            clearInterval(matchTimer);
-            matchTimer = null;
-            endMatch();
-        }
-    }, 1000);
-
+    matchRunning = true;
     requestAnimationFrame(gameLoop);
 }
 
@@ -40,7 +26,6 @@ function initMatch() {
     players = [];
     aiPlayers = [];
     score = { player: 0, ai: 0 };
-    matchTimeLeft = 30;
 
     for (let i = 0; i < 5; i++) {
         players.push({ x: 200, y: 150 + i * 80, team: "player" });
@@ -49,10 +34,7 @@ function initMatch() {
 }
 
 function gameLoop() {
-    if (!canvas || !ctx) {
-        return;
-    }
-
+    if (!matchRunning) return;
     update();
     draw();
     requestAnimationFrame(gameLoop);
@@ -61,12 +43,6 @@ function gameLoop() {
 function update() {
     ball.x += ball.vx;
     ball.y += ball.vy;
-
-    ball.vx *= 0.985;
-    ball.vy *= 0.985;
-
-    if (Math.abs(ball.vx) < 0.02) ball.vx = 0;
-    if (Math.abs(ball.vy) < 0.02) ball.vy = 0;
 
     if (ball.x < 0 || ball.x > canvas.width) ball.vx *= -1;
     if (ball.y < 0 || ball.y > canvas.height) ball.vy *= -1;
@@ -81,43 +57,30 @@ function update() {
         resetBall();
     }
 
+    ball.vx *= 0.99;
+    ball.vy *= 0.99;
+
     aiPassLogic();
+
+    if (score.player >= 2 || score.ai >= 2) {
+        endMatch();
+    }
 }
 
 function aiPassLogic() {
     if (!aiPlayers.length) return;
 
-    const nearest = aiPlayers.reduce((best, p) => {
-        const d = (p.x - ball.x) ** 2 + (p.y - ball.y) ** 2;
-        if (!best || d < best.d) return { p, d };
-        return best;
-    }, null).p;
+    const chaser = aiPlayers[0];
+    const dx = ball.x - chaser.x;
+    const dy = ball.y - chaser.y;
 
-    const dx = ball.x - nearest.x;
-    const dy = ball.y - nearest.y;
-    const dist = Math.hypot(dx, dy);
+    chaser.x += dx * 0.01;
+    chaser.y += dy * 0.01;
 
-    if (dist < 100 && Math.random() < 0.02) {
-        ball.vx = -6 - Math.random() * 4;
+    if (Math.hypot(dx, dy) < 40 && Math.random() < 0.05) {
+        ball.vx = -5 - Math.random() * 2;
         ball.vy = (Math.random() - 0.5) * 6;
     }
-}
-
-function endMatch() {
-    canvas = null;
-    ctx = null;
-    screen.innerHTML = `
-        <h2>Full Time</h2>
-        <p>Player ${score.player} - ${score.ai} AI</p>
-    `;
-
-    setTimeout(() => {
-        if (matchEndCallback) {
-            const cb = matchEndCallback;
-            matchEndCallback = null;
-            cb();
-        }
-    }, 1200);
 }
 
 function resetBall() {
@@ -125,6 +88,24 @@ function resetBall() {
     ball.y = 350;
     ball.vx = 0;
     ball.vy = 0;
+}
+
+function endMatch() {
+    matchRunning = false;
+    screen.innerHTML = `
+        <h2>Match Finished</h2>
+        <p>Player ${score.player} - ${score.ai} AI</p>
+        <p>Click to continue...</p>
+    `;
+
+    screen.onclick = () => {
+        screen.onclick = null;
+        if (onMatchComplete) {
+            const cb = onMatchComplete;
+            onMatchComplete = null;
+            cb();
+        }
+    };
 }
 
 function draw() {
@@ -140,10 +121,10 @@ function draw() {
     ctx.fillStyle = "white";
     ctx.fill();
 
-    players.forEach(p => {
+    players.forEach((p, idx) => {
         ctx.beginPath();
         ctx.arc(p.x, p.y, 15, 0, Math.PI * 2);
-        ctx.fillStyle = "blue";
+        ctx.fillStyle = idx === 0 ? "cyan" : "blue";
         ctx.fill();
     });
 
@@ -156,14 +137,11 @@ function draw() {
 
     ctx.fillStyle = "white";
     ctx.font = "24px Arial";
-    ctx.fillText(`Player ${score.player} - ${score.ai} AI`, 490, 32);
-    ctx.fillText(`Time: ${matchTimeLeft}s`, 560, 62);
-    ctx.font = "16px Arial";
-    ctx.fillText("Controls: M pass | N shoot | K switch player | L tackle (placeholder)", 350, 92);
+    ctx.fillText(`Player ${score.player} - ${score.ai} AI`, 500, 30);
 }
 
 document.addEventListener("keydown", e => {
-    if (!players.length || !ball) return;
+    if (!players.length || !ball || !matchRunning) return;
 
     const selected = players[0];
 
@@ -178,10 +156,14 @@ document.addEventListener("keydown", e => {
 
     if (e.key === "l") {
         // tackle logic placeholder
-        ball.vx = selected.x < ball.x ? -2 : 2;
     }
 
     if (e.key === "k") {
         players.push(players.shift());
     }
+
+    if (e.key === "ArrowUp") selected.y -= 15;
+    if (e.key === "ArrowDown") selected.y += 15;
+    if (e.key === "ArrowLeft") selected.x -= 15;
+    if (e.key === "ArrowRight") selected.x += 15;
 });
