@@ -24,7 +24,11 @@ function playStory(chapter, onEnd) {
     let dialogueIndex = 0;
 
     function showDialogue() {
-        const line = chapter.lines[dialogueIndex];
+        const line = chapter.lines?.[dialogueIndex];
+        if (!line) {
+            if (onEnd) onEnd();
+            return;
+        }
 
         screen.innerHTML = `
             <h2>${line.speaker}</h2>

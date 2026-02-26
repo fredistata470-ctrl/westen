@@ -1,6 +1,5 @@
 const screen = document.getElementById("screen");
 
-let gameState = "boot";
 let currentChapter = 0;
 
 function init() {
@@ -22,14 +21,24 @@ function showMainMenu() {
     `;
 }
 
-function startGame() {
+async function startGame() {
     currentChapter = 0;
-    loadChapter(currentChapter);
+
+    try {
+        await loadChapter(currentChapter);
+    } catch (error) {
+        console.error("Failed to start game", error);
+        screen.innerHTML = `
+            <h2>Could not start game</h2>
+            <p>Run this project from the Westen folder using a local server.</p>
+            <p>Example: <code>cd /workspace/westen && python -m http.server 4173</code></p>
+        `;
+    }
 }
 
 function nextChapter() {
     currentChapter++;
-    loadChapter(currentChapter);
+    return loadChapter(currentChapter);
 }
 
-init();
+window.addEventListener("DOMContentLoaded", init);
