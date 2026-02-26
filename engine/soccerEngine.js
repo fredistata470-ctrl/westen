@@ -55,7 +55,7 @@ function initMatch() {
 
     for (let i = 0; i < 4; i++) {
         players.push({ x: 250, y: FORMATION_Y[i], speed: 3.8, r: 15, team: "player" });
-        aiPlayers.push({ x: 950, y: FORMATION_Y[i], speed: 1.8, r: 15, team: "ai" });
+        aiPlayers.push({ x: 950, y: FORMATION_Y[i], speed: 1.4, r: 15, team: "ai" });
     }
 
     goalies.player = { x: 95, y: FIELD.height / 2, r: 17, speed: 3.3, box: FIELD.playerBox, team: "player" };
@@ -176,8 +176,8 @@ function updateAIOutfield() {
 
         // dribble toward goal by default (less pointless side passing)
         const directToGoal = normalize(FIELD.leftGoalX - carrier.x, FIELD.height / 2 - carrier.y);
-        carrier.x += directToGoal.x * 1.6;
-        carrier.y += directToGoal.y * 1.0;
+        carrier.x += directToGoal.x * 1.2;
+        carrier.y += directToGoal.y * 0.8;
 
         // shoot when within realistic zone
         if (closeToGoal && inShotLane && Math.random() < 0.16) {
@@ -583,7 +583,7 @@ function draw() {
     ctx.fillText(`Player ${score.player} - ${score.ai} AI`, 490, 32);
     ctx.font = "16px Arial";
     ctx.fillText("Move: W A S D | Offense: N pass, M shoot | Defense: K switch, L tackle", 220, 60);
-    ctx.fillText("Pace reduced further. Press M with possession to shoot directly at goal.", 260, 84);
+    ctx.fillText("AI pace reduced further for fairer build-up and ball recovery.", 290, 84);
 }
 
 function drawPost(p) {
