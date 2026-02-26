@@ -289,6 +289,62 @@ function carryBallWithOwner() {
     ball.vy = 0;
 }
 
+function performPass() {
+    const selected = players[0];
+    if (!selected) return;
+
+    const dir = normalize(controlState.dirX, controlState.dirY);
+    const teammate = findBestPassTarget(selected, dir);
+
+    if (teammate) {
+        const toMate = normalize(teammate.x - selected.x, teammate.y - selected.y);
+        releasePossession(toMate.x * 10.5, toMate.y * 10.5);
+    } else {
+        // fallback forward pass in move direction
+        releasePossession(dir.x * 9.5, dir.y * 9.5);
+    }
+}
+
+function performShotToRightGoal() {
+    const selected = players[0];
+    if (!selected) return;
+
+    const goalTargetX = FIELD.rightGoalX + 8;
+    const goalTargetY = clamp(selected.y, FIELD.goalTop + 10, FIELD.goalBottom - 10);
+    const shotDir = normalize(goalTargetX - ball.x, goalTargetY - ball.y);
+    releasePossession(shotDir.x * 15.5, shotDir.y * 6.5);
+}
+
+function findBestPassTarget(selected, dir) {
+    let best = null;
+    let bestScore = -Infinity;
+
+    for (let i = 1; i < players.length; i++) {
+        const mate = players[i];
+        const vx = mate.x - selected.x;
+        const vy = mate.y - selected.y;
+        const dist = Math.hypot(vx, vy);
+        if (dist < 40) continue;
+
+        const n = normalize(vx, vy);
+        const alignment = n.x * dir.x + n.y * dir.y;
+        if (alignment < 0.2) continue;
+
+        const score = alignment * 1200 - dist;
+        if (score > bestScore) {
+            bestScore = score;
+            best = mate;
+        }
+    }
+
+    return best;
+}
+
+function normalize(x, y) {
+    const len = Math.hypot(x, y) || 1;
+    return { x: x / len, y: y / len };
+}
+
 function releasePossession(kickVX, kickVY) {
     possession.owner = null;
     possession.team = null;
@@ -395,7 +451,7 @@ function draw() {
     ctx.font = "24px Arial";
     ctx.fillText(`Player ${score.player} - ${score.ai} AI`, 490, 32);
     ctx.font = "16px Arial";
-    ctx.fillText("Move: Arrow Keys / WASD | M: Pass | N: Shoot | K: Switch Player | L: Tackle", 300, 60);
+    ctx.fillText("Move: W A S D | M: Pass to teammate | N: Shoot to right goal | K: Switch | L: Tackle", 235, 60);
     ctx.fillText("Goalies stay in their own boxes and auto-defend.", 460, 84);
     ctx.fillText(`Ball: ${Math.round(ball.x)}, ${Math.round(ball.y)}`, 20, 30);
     ctx.fillText("Tip: keep moving while close to the ball for FIFA-style close control.", 20, 54);
@@ -422,10 +478,10 @@ function canKick(player, range = 34) {
 }
 
 function setDirection(key, pressed) {
-    if (key === "ArrowUp" || key === "w") input.up = pressed;
-    if (key === "ArrowDown" || key === "s") input.down = pressed;
-    if (key === "ArrowLeft" || key === "a") input.left = pressed;
-    if (key === "ArrowRight" || key === "d") input.right = pressed;
+    if (key === "w") input.up = pressed;
+    if (key === "s") input.down = pressed;
+    if (key === "a") input.left = pressed;
+    if (key === "d") input.right = pressed;
 }
 
 document.addEventListener("keydown", e => {
@@ -440,11 +496,11 @@ document.addEventListener("keydown", e => {
     const inControl = possession.owner === selected && possession.team === "player";
 
     if (key === "m" && inControl) {
-        releasePossession(8.5 + controlState.dirX * 2.5, controlState.dirY * 3);
+        performPass();
     }
 
     if (key === "n" && inControl) {
-        releasePossession(13 + controlState.dirX * 3, controlState.dirY * 4);
+        performShotToRightGoal();
     }
 
     if (key === "l" && inControl) {
