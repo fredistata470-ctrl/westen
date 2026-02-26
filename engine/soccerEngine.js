@@ -14,27 +14,21 @@ const FIELD = {
     goalBottom: 450,
     leftGoalX: 50,
     rightGoalX: 1150,
+    leftPostTop: { x: 50, y: 250 },
+    leftPostBottom: { x: 50, y: 450 },
+    rightPostTop: { x: 1150, y: 250 },
+    rightPostBottom: { x: 1150, y: 450 },
     playerBox: { x: 0, y: 190, w: 190, h: 320 },
     aiBox: { x: 1010, y: 190, w: 190, h: 320 }
 };
 
-const input = {
-    up: false,
-    down: false,
-    left: false,
-    right: false
-};
+const FORMATION_Y = [150, 280, 420, 550];
 
-const possession = {
-    owner: null,
-    team: null,
-    lockTimer: 0
-};
+const input = { up: false, down: false, left: false, right: false };
 
-const controlState = {
-    dirX: 1,
-    dirY: 0
-};
+const possession = { owner: null, team: null, lockTimer: 0 };
+
+const controlState = { dirX: 1, dirY: 0 };
 
 function startMatch(chapter, done) {
     onMatchComplete = done || null;
@@ -43,7 +37,6 @@ function startMatch(chapter, done) {
     canvas.width = FIELD.width;
     canvas.height = FIELD.height;
     screen.appendChild(canvas);
-
     ctx = canvas.getContext("2d");
 
     initMatch();
@@ -60,28 +53,13 @@ function initMatch() {
     possession.team = null;
     possession.lockTimer = 0;
 
-    for (let i = 0; i < 5; i++) {
-        players.push({ x: 220, y: 130 + i * 105, speed: 5.8, r: 15, team: "player" });
-        aiPlayers.push({ x: 980, y: 130 + i * 105, speed: 2.8, r: 15, team: "ai" });
+    for (let i = 0; i < 4; i++) {
+        players.push({ x: 250, y: FORMATION_Y[i], speed: 5.5, r: 15, team: "player" });
+        aiPlayers.push({ x: 950, y: FORMATION_Y[i], speed: 3.3, r: 15, team: "ai" });
     }
 
-    goalies.player = {
-        x: 90,
-        y: FIELD.height / 2,
-        r: 17,
-        speed: 3.4,
-        box: FIELD.playerBox,
-        team: "player"
-    };
-
-    goalies.ai = {
-        x: 1110,
-        y: FIELD.height / 2,
-        r: 17,
-        speed: 3.4,
-        box: FIELD.aiBox,
-        team: "ai"
-    };
+    goalies.player = { x: 95, y: FIELD.height / 2, r: 17, speed: 3.3, box: FIELD.playerBox, team: "player" };
+    goalies.ai = { x: 1105, y: FIELD.height / 2, r: 17, speed: 3.3, box: FIELD.aiBox, team: "ai" };
 }
 
 function gameLoop() {
@@ -93,6 +71,7 @@ function gameLoop() {
 
 function update() {
     if (possession.lockTimer > 0) possession.lockTimer--;
+
     moveControlledPlayer();
     updateAIOutfield();
     updateGoalie(goalies.player);
@@ -107,46 +86,17 @@ function update() {
         ball.y += ball.vy;
     }
 
-    // Ball never leaves the field
-    if (ball.x < ball.radius) {
-        ball.x = ball.radius;
-        ball.vx *= -0.8;
-    }
-    if (ball.x > FIELD.width - ball.radius) {
-        ball.x = FIELD.width - ball.radius;
-        ball.vx *= -0.8;
-    }
-    if (ball.y < ball.radius) {
-        ball.y = ball.radius;
-        ball.vy *= -0.8;
-    }
-    if (ball.y > FIELD.height - ball.radius) {
-        ball.y = FIELD.height - ball.radius;
-        ball.vy *= -0.8;
-    }
-
-    // Goal detection (front line only)
-    if (ball.x <= FIELD.leftGoalX && ball.y > FIELD.goalTop && ball.y < FIELD.goalBottom) {
-        score.ai++;
-        resetBall();
-    }
-
-    if (ball.x >= FIELD.rightGoalX && ball.y > FIELD.goalTop && ball.y < FIELD.goalBottom) {
-        score.player++;
-        resetBall();
-    }
+    handleFieldBoundariesAndPosts();
+    detectGoals();
 
     if (!possession.owner) {
         ball.vx *= 0.985;
         ball.vy *= 0.985;
-
         if (Math.abs(ball.vx) < 0.03) ball.vx = 0;
         if (Math.abs(ball.vy) < 0.03) ball.vy = 0;
     }
 
-    if (score.player >= 3 || score.ai >= 3) {
-        endMatch();
-    }
+    if (score.player >= 3 || score.ai >= 3) endMatch();
 }
 
 function moveControlledPlayer() {
@@ -155,7 +105,6 @@ function moveControlledPlayer() {
 
     let dx = 0;
     let dy = 0;
-
     if (input.up) dy -= 1;
     if (input.down) dy += 1;
     if (input.left) dx -= 1;
@@ -175,87 +124,134 @@ function moveControlledPlayer() {
     selected.y = clamp(selected.y, selected.r, FIELD.height - selected.r);
 }
 
-
 function updateAIOutfield() {
+    const aiCarrier = possession.team === "ai" ? possession.owner : null;
+    const playerCarrier = possession.team === "player" ? possession.owner : null;
+
     aiPlayers.forEach((p, i) => {
-        const pressureTargetX = possession.team === "player" && possession.owner ? possession.owner.x : ball.x;
-        const pressureTargetY = possession.team === "player" && possession.owner ? possession.owner.y : ball.y;
-        const targetX = i === 0 ? pressureTargetX : 920;
-        const targetY = i === 0 ? pressureTargetY : 130 + i * 105;
+        // closest player pressures ball/ball-carrier, others keep shape
+        const isPressing = i === 0 || isClosestAIToBall(p);
+        let targetX = 900;
+        let targetY = FORMATION_Y[i];
 
-        const dx = targetX - p.x;
-        const dy = targetY - p.y;
-        const d = Math.hypot(dx, dy) || 1;
+        if (isPressing) {
+            targetX = playerCarrier ? playerCarrier.x : ball.x;
+            targetY = playerCarrier ? playerCarrier.y : ball.y;
+        } else if (aiCarrier) {
+            // support lanes when attacking
+            targetX = 880 - i * 40;
+            targetY = clamp(aiCarrier.y + (i - 1.5) * 95, 80, FIELD.height - 80);
+        }
 
-        p.x += (dx / d) * p.speed;
-        p.y += (dy / d) * p.speed;
-
+        const to = normalize(targetX - p.x, targetY - p.y);
+        p.x += to.x * p.speed;
+        p.y += to.y * p.speed;
         p.x = clamp(p.x, p.r, FIELD.width - p.r);
         p.y = clamp(p.y, p.r, FIELD.height - p.r);
 
-        const ballDist = distance(p.x, p.y, ball.x, ball.y);
-        if (
-            possession.team === "player" &&
-            possession.owner &&
-            possession.lockTimer <= 0 &&
-            ballDist < p.r + 4 &&
-            Math.random() < 0.02
-        ) {
-            possession.owner = p;
-            possession.team = "ai";
-            possession.lockTimer = 8;
-            ball.vx = 0;
-            ball.vy = 0;
-        }
-
-        if (!possession.owner && ballDist < p.r + 10 && Math.random() < 0.04) {
-            ball.vx = -7 - Math.random() * 3;
-            ball.vy = (Math.random() - 0.5) * 7;
+        // defense tackle chance
+        if (playerCarrier && possession.lockTimer <= 0) {
+            const d = distance(p.x, p.y, playerCarrier.x, playerCarrier.y);
+            if (d < p.r + playerCarrier.r + 5 && Math.random() < 0.05) {
+                possession.owner = p;
+                possession.team = "ai";
+                possession.lockTimer = 10;
+                ball.vx = 0;
+                ball.vy = 0;
+            }
         }
     });
+
+    // AI attacking decisions when AI has possession
+    if (possession.team === "ai" && possession.owner) {
+        const carrier = possession.owner;
+        const shotLane = Math.abs(carrier.y - FIELD.height / 2) < 95;
+        const closeToGoal = carrier.x > 980;
+
+        if (closeToGoal && shotLane && Math.random() < 0.06) {
+            const targetY = clamp(carrier.y + (Math.random() - 0.5) * 70, FIELD.goalTop + 15, FIELD.goalBottom - 15);
+            const shotDir = normalize(FIELD.leftGoalX - ball.x, targetY - ball.y);
+            releasePossession(shotDir.x * 14, shotDir.y * 5.5);
+            return;
+        }
+
+        if (Math.random() < 0.025) {
+            const mate = findBestAIPassTarget(carrier);
+            if (mate) {
+                const passDir = normalize(mate.x - carrier.x, mate.y - carrier.y);
+                releasePossession(passDir.x * 9.5, passDir.y * 9.5);
+                possession.owner = mate;
+                possession.team = "ai";
+                possession.lockTimer = 8;
+            }
+        }
+    }
+}
+
+function isClosestAIToBall(player) {
+    let best = null;
+    let bestD = Infinity;
+    aiPlayers.forEach(p => {
+        const d = distance(p.x, p.y, ball.x, ball.y);
+        if (d < bestD) {
+            bestD = d;
+            best = p;
+        }
+    });
+    return best === player;
+}
+
+function findBestAIPassTarget(carrier) {
+    let best = null;
+    let bestScore = -Infinity;
+    aiPlayers.forEach(p => {
+        if (p === carrier) return;
+        const vx = p.x - carrier.x;
+        const vy = p.y - carrier.y;
+        const dist = Math.hypot(vx, vy);
+        if (dist < 45) return;
+        const towardGoal = -normalize(vx, vy).x;
+        const score = towardGoal * 500 - Math.abs(vy) - dist * 0.2;
+        if (score > bestScore) {
+            bestScore = score;
+            best = p;
+        }
+    });
+    return best;
 }
 
 function updateGoalie(goalie) {
-    const centerY = FIELD.height / 2;
-
-    // Stay in box and defend only goal area
-    const defendY = clamp(ball.y, FIELD.goalTop - 35, FIELD.goalBottom + 35);
+    const defendY = clamp(ball.y, FIELD.goalTop - 30, FIELD.goalBottom + 30);
     const defendX = goalie.team === "player" ? 105 : 1095;
+    const to = normalize(defendX - goalie.x, defendY - goalie.y);
 
-    const dx = defendX - goalie.x;
-    const dy = defendY - goalie.y;
-    const d = Math.hypot(dx, dy) || 1;
-
-    goalie.x += (dx / d) * goalie.speed;
-    goalie.y += (dy / d) * goalie.speed;
-
+    goalie.x += to.x * goalie.speed;
+    goalie.y += to.y * goalie.speed;
     goalie.x = clamp(goalie.x, goalie.box.x + goalie.r, goalie.box.x + goalie.box.w - goalie.r);
     goalie.y = clamp(goalie.y, goalie.box.y + goalie.r, goalie.box.y + goalie.box.h - goalie.r);
 
     if (distance(goalie.x, goalie.y, ball.x, ball.y) < goalie.r + 12) {
-        const clearDir = goalie.team === "player" ? 1 : -1;
         if (possession.owner && possession.team !== goalie.team) {
             possession.owner = goalie;
             possession.team = goalie.team;
             possession.lockTimer = 10;
         } else if (!possession.owner) {
+            const clearDir = goalie.team === "player" ? 1 : -1;
             ball.vx = clearDir * (8 + Math.random() * 3);
-            ball.vy = (ball.y - centerY) * 0.04;
+            ball.vy = (Math.random() - 0.5) * 4;
         }
     }
 }
-
 
 function updatePlayerPossession() {
     const selected = players[0];
     if (!selected) return;
 
     const dist = distance(selected.x, selected.y, ball.x, ball.y);
-
-    if (!possession.owner && dist < selected.r + 14) {
+    if (!possession.owner && dist < selected.r + 18) {
         possession.owner = selected;
         possession.team = "player";
-        possession.lockTimer = 28;
+        possession.lockTimer = 24;
         ball.vx = 0;
         ball.vy = 0;
     }
@@ -273,28 +269,23 @@ function carryBallWithOwner() {
     let dirY = controlState.dirY;
 
     if (possession.team === "ai") {
-        const attackDir = -1;
-        dirX = attackDir;
+        dirX = -1;
         dirY = 0;
     }
 
     const holdDistance = owner.r + ball.radius - 4;
-    const targetX = owner.x + dirX * holdDistance;
-    const targetY = owner.y + dirY * holdDistance;
+    const tx = owner.x + dirX * holdDistance;
+    const ty = owner.y + dirY * holdDistance;
 
-    // Strong foot-lock so ball stays controlled while turning/running
-    ball.x += (targetX - ball.x) * 0.78;
-    ball.y += (targetY - ball.y) * 0.78;
+    ball.x += (tx - ball.x) * 0.78;
+    ball.y += (ty - ball.y) * 0.78;
     ball.vx = 0;
     ball.vy = 0;
 }
 
 function ensurePlayerControlForAction(selected, range = 18) {
     if (!selected) return false;
-
-    if (possession.owner === selected && possession.team === "player") {
-        return true;
-    }
+    if (possession.owner === selected && possession.team === "player") return true;
 
     const d = distance(selected.x, selected.y, ball.x, ball.y);
     if (d <= selected.r + range) {
@@ -305,14 +296,13 @@ function ensurePlayerControlForAction(selected, range = 18) {
         ball.vy = 0;
         return true;
     }
-
     return false;
 }
 
 function performPass() {
     const selected = players[0];
     if (!selected) return;
-    if (!ensurePlayerControlForAction(selected, 20)) return;
+    if (!ensurePlayerControlForAction(selected, 22)) return;
 
     const dir = normalize(controlState.dirX, controlState.dirY);
     const teammate = findBestPassTarget(selected, dir);
@@ -321,8 +311,10 @@ function performPass() {
         const toMate = normalize(teammate.x - selected.x, teammate.y - selected.y);
         releasePossession(toMate.x * 10.5, toMate.y * 10.5);
         setControlledPlayer(teammate);
+        possession.owner = players[0];
+        possession.team = "player";
+        possession.lockTimer = 12;
     } else {
-        // fallback forward pass in move direction
         releasePossession(dir.x * 9.5, dir.y * 9.5);
     }
 }
@@ -330,12 +322,12 @@ function performPass() {
 function performShotToRightGoal() {
     const selected = players[0];
     if (!selected) return;
-    if (!ensurePlayerControlForAction(selected, 22)) return;
+    if (!ensurePlayerControlForAction(selected, 24)) return;
 
-    const goalTargetX = FIELD.rightGoalX + 8;
-    const goalTargetY = clamp(selected.y, FIELD.goalTop + 10, FIELD.goalBottom - 10);
-    const shotDir = normalize(goalTargetX - ball.x, goalTargetY - ball.y);
-    releasePossession(shotDir.x * 15.5, shotDir.y * 6.5);
+    const targetX = FIELD.rightGoalX + 8;
+    const targetY = clamp(selected.y, FIELD.goalTop + 10, FIELD.goalBottom - 10);
+    const shot = normalize(targetX - ball.x, targetY - ball.y);
+    releasePossession(shot.x * 15.5, shot.y * 6.5);
 }
 
 function findBestPassTarget(selected, dir) {
@@ -351,7 +343,7 @@ function findBestPassTarget(selected, dir) {
 
         const n = normalize(vx, vy);
         const alignment = n.x * dir.x + n.y * dir.y;
-        if (alignment < 0.2) continue;
+        if (alignment < 0.15) continue;
 
         const score = alignment * 1200 - dist;
         if (score > bestScore) {
@@ -359,7 +351,6 @@ function findBestPassTarget(selected, dir) {
             best = mate;
         }
     }
-
     return best;
 }
 
@@ -376,7 +367,7 @@ function attemptTackle() {
     if (possession.team === "ai" && possession.owner) {
         const enemy = possession.owner;
         const d = distance(selected.x, selected.y, enemy.x, enemy.y);
-        if (d < selected.r + enemy.r + 8) {
+        if (d < selected.r + enemy.r + 10) {
             possession.owner = selected;
             possession.team = "player";
             possession.lockTimer = 20;
@@ -386,12 +377,56 @@ function attemptTackle() {
         }
     }
 
-    if (!possession.owner && distance(selected.x, selected.y, ball.x, ball.y) < selected.r + 14) {
+    if (!possession.owner && distance(selected.x, selected.y, ball.x, ball.y) < selected.r + 16) {
         possession.owner = selected;
         possession.team = "player";
-        possession.lockTimer = 16;
+        possession.lockTimer = 14;
         ball.vx = 0;
         ball.vy = 0;
+    }
+}
+
+function handleFieldBoundariesAndPosts() {
+    // top/bottom lines
+    if (ball.y < ball.radius) {
+        ball.y = ball.radius;
+        ball.vy *= -0.8;
+    }
+    if (ball.y > FIELD.height - ball.radius) {
+        ball.y = FIELD.height - ball.radius;
+        ball.vy *= -0.8;
+    }
+
+    // goalposts block side entries
+    const sideOpen = ball.y > FIELD.goalTop && ball.y < FIELD.goalBottom;
+    if (ball.x < ball.radius) {
+        ball.x = ball.radius;
+        ball.vx *= -0.8;
+    }
+    if (ball.x > FIELD.width - ball.radius) {
+        ball.x = FIELD.width - ball.radius;
+        ball.vx *= -0.8;
+    }
+
+    if (ball.x <= FIELD.leftGoalX && !sideOpen) {
+        ball.x = FIELD.leftGoalX + ball.radius;
+        ball.vx = Math.abs(ball.vx) + 2;
+    }
+    if (ball.x >= FIELD.rightGoalX && !sideOpen) {
+        ball.x = FIELD.rightGoalX - ball.radius;
+        ball.vx = -Math.abs(ball.vx) - 2;
+    }
+}
+
+function detectGoals() {
+    if (ball.x <= FIELD.leftGoalX && ball.y > FIELD.goalTop && ball.y < FIELD.goalBottom) {
+        score.ai++;
+        resetBall();
+    }
+
+    if (ball.x >= FIELD.rightGoalX && ball.y > FIELD.goalTop && ball.y < FIELD.goalBottom) {
+        score.player++;
+        resetBall();
     }
 }
 
@@ -440,7 +475,6 @@ function draw() {
     ctx.fillStyle = "#1f8d2e";
     ctx.fillRect(0, 0, FIELD.width, FIELD.height);
 
-    // Mid line
     ctx.strokeStyle = "white";
     ctx.lineWidth = 3;
     ctx.beginPath();
@@ -448,76 +482,87 @@ function draw() {
     ctx.lineTo(FIELD.width / 2, FIELD.height);
     ctx.stroke();
 
-    // Goalie boxes
+    // goalie boxes
     ctx.strokeStyle = "#f0f0f0";
     ctx.strokeRect(FIELD.playerBox.x, FIELD.playerBox.y, FIELD.playerBox.w, FIELD.playerBox.h);
     ctx.strokeRect(FIELD.aiBox.x, FIELD.aiBox.y, FIELD.aiBox.w, FIELD.aiBox.h);
 
-    // Goals
+    // goals
     ctx.fillStyle = "white";
     ctx.fillRect(0, FIELD.goalTop, FIELD.leftGoalX, FIELD.goalBottom - FIELD.goalTop);
     ctx.fillRect(FIELD.rightGoalX, FIELD.goalTop, FIELD.width - FIELD.rightGoalX, FIELD.goalBottom - FIELD.goalTop);
 
-    // Ball
+    // goalposts (side blockers)
+    drawPost(FIELD.leftPostTop);
+    drawPost(FIELD.leftPostBottom);
+    drawPost(FIELD.rightPostTop);
+    drawPost(FIELD.rightPostBottom);
+
+    // ball
     ctx.beginPath();
     ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
     ctx.fillStyle = "white";
     ctx.fill();
-
-    // Ball locator ring (easier tracking)
     ctx.beginPath();
-    ctx.arc(ball.x, ball.y, ball.radius + 8, 0, Math.PI * 2);
+    ctx.arc(ball.x, ball.y, ball.radius + 7, 0, Math.PI * 2);
     ctx.strokeStyle = "#ffe066";
-    ctx.lineWidth = 3;
+    ctx.lineWidth = 2;
     ctx.stroke();
 
-    // Outfield players
-    players.forEach((p, idx) => {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = idx === 0 ? "#5ff0ff" : "blue";
-        ctx.fill();
-    });
+    players.forEach((p, idx) => drawPixelPlayer(p, idx === 0 ? "#67f3ff" : "#3f78ff", false));
+    aiPlayers.forEach(p => drawPixelPlayer(p, "#ff4d4d", false));
 
-    aiPlayers.forEach(p => {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = "red";
-        ctx.fill();
-    });
+    drawPixelPlayer(goalies.player, "#f8d96a", true);
+    drawPixelPlayer(goalies.ai, "#ffb17a", true);
 
-    // Goalies
-    drawGoalie(goalies.player, "#f8d96a");
-    drawGoalie(goalies.ai, "#ff9a9a");
-
-    // Selected player helper line to ball
     const selected = players[0];
     if (selected) {
         ctx.beginPath();
         ctx.moveTo(selected.x, selected.y);
         ctx.lineTo(ball.x, ball.y);
-        ctx.strokeStyle = "rgba(255, 255, 255, 0.35)";
+        ctx.strokeStyle = "rgba(255,255,255,0.35)";
         ctx.lineWidth = 2;
         ctx.stroke();
     }
 
-    // HUD
     ctx.fillStyle = "white";
     ctx.font = "24px Arial";
     ctx.fillText(`Player ${score.player} - ${score.ai} AI`, 490, 32);
     ctx.font = "16px Arial";
     ctx.fillText("Move: W A S D | Offense: N pass, M shoot | Defense: K switch, L tackle", 220, 60);
-    ctx.fillText("Goalies stay in their own boxes and auto-defend.", 460, 84);
-    ctx.fillText(`Ball: ${Math.round(ball.x)}, ${Math.round(ball.y)}`, 20, 30);
-    ctx.fillText("Tip: keep moving while close to the ball for FIFA-style close control.", 20, 54);
+    ctx.fillText("K works only when you do NOT have ball. Pass auto-switches to receiver.", 265, 84);
 }
 
-function drawGoalie(goalie, color) {
-    if (!goalie) return;
+function drawPost(p) {
     ctx.beginPath();
-    ctx.arc(goalie.x, goalie.y, goalie.r, 0, Math.PI * 2);
-    ctx.fillStyle = color;
+    ctx.arc(p.x, p.y, 7, 0, Math.PI * 2);
+    ctx.fillStyle = "#dddddd";
     ctx.fill();
+}
+
+function drawPixelPlayer(p, color, isGoalie) {
+    const x = p.x;
+    const y = p.y;
+
+    // body
+    ctx.fillStyle = color;
+    ctx.fillRect(x - 7, y - 9, 14, 18);
+
+    // head
+    ctx.fillStyle = "#ffd7b0";
+    ctx.fillRect(x - 5, y - 15, 10, 6);
+
+    // legs
+    ctx.fillStyle = "#111";
+    ctx.fillRect(x - 6, y + 9, 4, 6);
+    ctx.fillRect(x + 2, y + 9, 4, 6);
+
+    // gloves for goalies
+    if (isGoalie) {
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(x - 11, y - 2, 4, 4);
+        ctx.fillRect(x + 7, y - 2, 4, 4);
+    }
 }
 
 function distance(x1, y1, x2, y2) {
@@ -526,10 +571,6 @@ function distance(x1, y1, x2, y2) {
 
 function clamp(v, min, max) {
     return Math.max(min, Math.min(max, v));
-}
-
-function canKick(player, range = 34) {
-    return player && distance(player.x, player.y, ball.x, ball.y) <= range;
 }
 
 function setDirection(key, pressed) {
@@ -541,26 +582,18 @@ function setDirection(key, pressed) {
 
 document.addEventListener("keydown", e => {
     if (!matchRunning) return;
-
     const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
     setDirection(key, true);
 
     const selected = players[0];
     if (!selected) return;
 
-    if (key === "n") {
-        performPass();
-    }
+    if (key === "n") performPass();
+    if (key === "m") performShotToRightGoal();
+    if (key === "l") attemptTackle();
 
-    if (key === "m") {
-        performShotToRightGoal();
-    }
-
-    if (key === "l") {
-        attemptTackle();
-    }
-
-    if (key === "k" && players.length > 1) {
+    // K only on defense (no player possession)
+    if (key === "k" && players.length > 1 && possession.team !== "player") {
         players.push(players.shift());
     }
 });
