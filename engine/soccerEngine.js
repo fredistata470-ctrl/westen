@@ -27,7 +27,8 @@ const input = {
 
 const possession = {
     owner: null,
-    team: null
+    team: null,
+    lockTimer: 0
 };
 
 const controlState = {
@@ -57,6 +58,7 @@ function initMatch() {
     score = { player: 0, ai: 0 };
     possession.owner = null;
     possession.team = null;
+    possession.lockTimer = 0;
 
     for (let i = 0; i < 5; i++) {
         players.push({ x: 220, y: 130 + i * 105, speed: 5.8, r: 15, team: "player" });
@@ -90,6 +92,7 @@ function gameLoop() {
 }
 
 function update() {
+    if (possession.lockTimer > 0) possession.lockTimer--;
     moveControlledPlayer();
     updateAIOutfield();
     updateGoalie(goalies.player);
@@ -175,8 +178,10 @@ function moveControlledPlayer() {
 
 function updateAIOutfield() {
     aiPlayers.forEach((p, i) => {
-        const targetX = i === 0 ? ball.x : 920;
-        const targetY = i === 0 ? ball.y : 130 + i * 105;
+        const pressureTargetX = possession.team === "player" && possession.owner ? possession.owner.x : ball.x;
+        const pressureTargetY = possession.team === "player" && possession.owner ? possession.owner.y : ball.y;
+        const targetX = i === 0 ? pressureTargetX : 920;
+        const targetY = i === 0 ? pressureTargetY : 130 + i * 105;
 
         const dx = targetX - p.x;
         const dy = targetY - p.y;
@@ -189,9 +194,16 @@ function updateAIOutfield() {
         p.y = clamp(p.y, p.r, FIELD.height - p.r);
 
         const ballDist = distance(p.x, p.y, ball.x, ball.y);
-        if (possession.team === "player" && possession.owner && ballDist < p.r + 9 && Math.random() < 0.03) {
+        if (
+            possession.team === "player" &&
+            possession.owner &&
+            possession.lockTimer <= 0 &&
+            ballDist < p.r + 4 &&
+            Math.random() < 0.02
+        ) {
             possession.owner = p;
             possession.team = "ai";
+            possession.lockTimer = 8;
             ball.vx = 0;
             ball.vy = 0;
         }
@@ -225,6 +237,7 @@ function updateGoalie(goalie) {
         if (possession.owner && possession.team !== goalie.team) {
             possession.owner = goalie;
             possession.team = goalie.team;
+            possession.lockTimer = 10;
         } else if (!possession.owner) {
             ball.vx = clearDir * (8 + Math.random() * 3);
             ball.vy = (ball.y - centerY) * 0.04;
@@ -239,9 +252,10 @@ function updatePlayerPossession() {
 
     const dist = distance(selected.x, selected.y, ball.x, ball.y);
 
-    if (!possession.owner && dist < selected.r + 11) {
+    if (!possession.owner && dist < selected.r + 14) {
         possession.owner = selected;
         possession.team = "player";
+        possession.lockTimer = 28;
         ball.vx = 0;
         ball.vy = 0;
     }
@@ -264,17 +278,21 @@ function carryBallWithOwner() {
         dirY = 0;
     }
 
-    const holdDistance = owner.r + ball.radius - 2;
+    const holdDistance = owner.r + ball.radius - 4;
     const targetX = owner.x + dirX * holdDistance;
     const targetY = owner.y + dirY * holdDistance;
 
-    ball.x += (targetX - ball.x) * 0.42;
-    ball.y += (targetY - ball.y) * 0.42;
+    // Strong foot-lock so ball stays controlled while turning/running
+    ball.x += (targetX - ball.x) * 0.78;
+    ball.y += (targetY - ball.y) * 0.78;
+    ball.vx = 0;
+    ball.vy = 0;
 }
 
 function releasePossession(kickVX, kickVY) {
     possession.owner = null;
     possession.team = null;
+    possession.lockTimer = 0;
     ball.vx = kickVX;
     ball.vy = kickVY;
 }
@@ -282,6 +300,7 @@ function releasePossession(kickVX, kickVY) {
 function resetBall() {
     possession.owner = null;
     possession.team = null;
+    possession.lockTimer = 0;
     ball.x = FIELD.width / 2;
     ball.y = FIELD.height / 2;
     ball.vx = 0;
