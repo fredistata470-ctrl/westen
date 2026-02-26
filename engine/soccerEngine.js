@@ -364,11 +364,7 @@ function performShotToRightGoal() {
 
     if (possession.team === "player" && possession.owner && players.includes(possession.owner)) {
         shooter = possession.owner;
-        setControlledPlayer(shooter);
-    }
-
-    // If selected player is not close enough, fallback to nearest teammate to the ball.
-    if (!ensurePlayerControlForAction(shooter, 44)) {
+    } else {
         let nearest = players[0];
         let bestDist = Infinity;
         players.forEach(p => {
@@ -378,18 +374,16 @@ function performShotToRightGoal() {
                 nearest = p;
             }
         });
-
         shooter = nearest;
-        setControlledPlayer(shooter);
+    }
 
-        // Final fallback: if still not in strict possession, allow a loose-ball shot when close.
-        if (!ensurePlayerControlForAction(shooter, 52)) {
-            const looseBallDistance = distance(shooter.x, shooter.y, ball.x, ball.y);
-            if (looseBallDistance > shooter.r + 30) return;
-            possession.owner = shooter;
-            possession.team = "player";
-            possession.lockTimer = 2;
-        }
+    setControlledPlayer(shooter);
+
+    // Guarantee a shot: if strict control can't be claimed, force a short one-frame control.
+    if (!ensurePlayerControlForAction(shooter, 56)) {
+        possession.owner = shooter;
+        possession.team = "player";
+        possession.lockTimer = 1;
     }
 
     // Place ball in front of shooter and force a rightward strike direction.
@@ -400,8 +394,8 @@ function performShotToRightGoal() {
     const targetY = clamp(ball.y + controlState.dirY * 70, FIELD.goalTop + 8, FIELD.goalBottom - 8);
     const shot = normalize(targetX - ball.x, targetY - ball.y);
 
-    const strongRightX = Math.max(0.82, shot.x);
-    releasePossession(strongRightX * 24, shot.y * 6.2);
+    const strongRightX = Math.max(0.9, shot.x);
+    releasePossession(strongRightX * 26, shot.y * 6.8);
 }
 
 function findBestPassTarget(selected, dir) {
