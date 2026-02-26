@@ -289,9 +289,30 @@ function carryBallWithOwner() {
     ball.vy = 0;
 }
 
+function ensurePlayerControlForAction(selected, range = 18) {
+    if (!selected) return false;
+
+    if (possession.owner === selected && possession.team === "player") {
+        return true;
+    }
+
+    const d = distance(selected.x, selected.y, ball.x, ball.y);
+    if (d <= selected.r + range) {
+        possession.owner = selected;
+        possession.team = "player";
+        possession.lockTimer = 10;
+        ball.vx = 0;
+        ball.vy = 0;
+        return true;
+    }
+
+    return false;
+}
+
 function performPass() {
     const selected = players[0];
     if (!selected) return;
+    if (!ensurePlayerControlForAction(selected, 20)) return;
 
     const dir = normalize(controlState.dirX, controlState.dirY);
     const teammate = findBestPassTarget(selected, dir);
@@ -309,6 +330,7 @@ function performPass() {
 function performShotToRightGoal() {
     const selected = players[0];
     if (!selected) return;
+    if (!ensurePlayerControlForAction(selected, 22)) return;
 
     const goalTargetX = FIELD.rightGoalX + 8;
     const goalTargetY = clamp(selected.y, FIELD.goalTop + 10, FIELD.goalBottom - 10);
@@ -526,13 +548,11 @@ document.addEventListener("keydown", e => {
     const selected = players[0];
     if (!selected) return;
 
-    const inControl = possession.owner === selected && possession.team === "player";
-
-    if (key === "n" && inControl) {
+    if (key === "n") {
         performPass();
     }
 
-    if (key === "m" && inControl) {
+    if (key === "m") {
         performShotToRightGoal();
     }
 
