@@ -171,7 +171,7 @@ function updateAIOutfield() {
     // AI attacking behavior: drive to goal, pass only if blocked, shoot near goal
     if (possession.team === "ai" && possession.owner) {
         const carrier = possession.owner;
-        const closeToGoal = carrier.x < 300;
+        const closeToGoal = carrier.x < 420;
         const inShotLane = carrier.y > FIELD.goalTop - 20 && carrier.y < FIELD.goalBottom + 20;
 
         // dribble toward goal by default (less pointless side passing)
@@ -180,10 +180,10 @@ function updateAIOutfield() {
         carrier.y += directToGoal.y * 0.8;
 
         // shoot when within realistic zone
-        if (closeToGoal && inShotLane && Math.random() < 0.16) {
+        if (closeToGoal && inShotLane && Math.random() < 0.28) {
             const targetY = clamp(carrier.y + (Math.random() - 0.5) * 55, FIELD.goalTop + 12, FIELD.goalBottom - 12);
             const shotDir = normalize(FIELD.leftGoalX - ball.x, targetY - ball.y);
-            releasePossession(shotDir.x * 15, shotDir.y * 5.2);
+            releasePossession(shotDir.x * 18, shotDir.y * 6.5);
             return;
         }
 
@@ -197,7 +197,7 @@ function updateAIOutfield() {
             const mate = findBestAIPassTarget(carrier);
             if (mate) {
                 const passDir = normalize(mate.x - carrier.x, mate.y - carrier.y);
-                releasePossession(passDir.x * 10.5, passDir.y * 9.2);
+                releasePossession(passDir.x * 6.2, passDir.y * 5.2);
                 possession.owner = mate;
                 possession.team = "ai";
                 possession.lockTimer = 12;
@@ -378,7 +378,15 @@ function performShotToRightGoal() {
 
         shooter = nearest;
         setControlledPlayer(shooter);
-        if (!ensurePlayerControlForAction(shooter, 52)) return;
+
+        // Final fallback: if still not in strict possession, allow a loose-ball shot when close.
+        if (!ensurePlayerControlForAction(shooter, 52)) {
+            const looseBallDistance = distance(shooter.x, shooter.y, ball.x, ball.y);
+            if (looseBallDistance > shooter.r + 30) return;
+            possession.owner = shooter;
+            possession.team = "player";
+            possession.lockTimer = 2;
+        }
     }
 
     // Place ball in front of shooter and force a rightward strike direction.
