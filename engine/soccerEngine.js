@@ -26,7 +26,7 @@ const FORMATION_Y = [150, 280, 420, 550];
 
 const input = { up: false, down: false, left: false, right: false };
 
-const possession = { owner: null, team: null, lockTimer: 0 };
+const possession = { owner: null, team: null, lockTimer: 0, pickupCooldown: 0 };
 
 const controlState = { dirX: 1, dirY: 0 };
 
@@ -52,6 +52,7 @@ function initMatch() {
     possession.owner = null;
     possession.team = null;
     possession.lockTimer = 0;
+    possession.pickupCooldown = 0;
 
     for (let i = 0; i < 4; i++) {
         players.push({ x: 250, y: FORMATION_Y[i], speed: 3.8, r: 15, team: "player" });
@@ -71,6 +72,7 @@ function gameLoop() {
 
 function update() {
     if (possession.lockTimer > 0) possession.lockTimer--;
+    if (possession.pickupCooldown > 0) possession.pickupCooldown--;
 
     moveControlledPlayer();
     updateAIOutfield();
@@ -282,6 +284,7 @@ function updateGoalie(goalie) {
 function updatePlayerPossession() {
     const selected = players[0];
     if (!selected) return;
+    if (possession.pickupCooldown > 0) return;
 
     const dist = distance(selected.x, selected.y, ball.x, ball.y);
     if (!possession.owner && dist < selected.r + 18) {
@@ -510,6 +513,7 @@ function releasePossession(kickVX, kickVY) {
     possession.owner = null;
     possession.team = null;
     possession.lockTimer = 0;
+    possession.pickupCooldown = 8;
     ball.vx = kickVX;
     ball.vy = kickVY;
 }
@@ -518,6 +522,7 @@ function resetBall() {
     possession.owner = null;
     possession.team = null;
     possession.lockTimer = 0;
+    possession.pickupCooldown = 0;
     ball.x = FIELD.width / 2;
     ball.y = FIELD.height / 2;
     ball.vx = 0;
