@@ -356,31 +356,41 @@ function performPass() {
 }
 
 function performShotToRightGoal() {
-    // Must work whenever player team has/gets close control.
     let shooter = players[0];
     if (!shooter) return;
 
-    // If another player on our team currently owns possession, switch control to that owner first.
-    if (possession.team === "player" && possession.owner) {
+    if (possession.team === "player" && possession.owner && players.includes(possession.owner)) {
         shooter = possession.owner;
         setControlledPlayer(shooter);
     }
 
-    // Aggressive control claim to avoid "M does nothing" cases.
-    if (!ensurePlayerControlForAction(shooter, 40)) return;
+    // If selected player is not close enough, fallback to nearest teammate to the ball.
+    if (!ensurePlayerControlForAction(shooter, 44)) {
+        let nearest = players[0];
+        let bestDist = Infinity;
+        players.forEach(p => {
+            const d = distance(p.x, p.y, ball.x, ball.y);
+            if (d < bestDist) {
+                bestDist = d;
+                nearest = p;
+            }
+        });
 
-    // Snap ball to the shooter foot before release for consistent shot origin.
-    const shotFromX = shooter.x + shooter.r + ball.radius - 3;
-    const shotFromY = shooter.y;
-    ball.x = shotFromX;
-    ball.y = shotFromY;
+        shooter = nearest;
+        setControlledPlayer(shooter);
+        if (!ensurePlayerControlForAction(shooter, 52)) return;
+    }
 
-    const targetX = FIELD.rightGoalX + 8;
-    const targetY = clamp(shooter.y, FIELD.goalTop + 8, FIELD.goalBottom - 8);
+    // Place ball in front of shooter and force a rightward strike direction.
+    ball.x = shooter.x + shooter.r + ball.radius - 2;
+    ball.y = shooter.y + controlState.dirY * 3;
+
+    const targetX = FIELD.width - 2;
+    const targetY = clamp(ball.y + controlState.dirY * 70, FIELD.goalTop + 8, FIELD.goalBottom - 8);
     const shot = normalize(targetX - ball.x, targetY - ball.y);
 
-    // Strong direct shot at goal.
-    releasePossession(shot.x * 22, shot.y * 8);
+    const strongRightX = Math.max(0.82, shot.x);
+    releasePossession(strongRightX * 24, shot.y * 6.2);
 }
 
 function findBestPassTarget(selected, dir) {
