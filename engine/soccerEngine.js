@@ -47,8 +47,8 @@ function initMatch() {
     score = { player: 0, ai: 0 };
 
     for (let i = 0; i < 5; i++) {
-        players.push({ x: 220, y: 130 + i * 105, speed: 4.6, r: 15, team: "player" });
-        aiPlayers.push({ x: 980, y: 130 + i * 105, speed: 3.2, r: 15, team: "ai" });
+        players.push({ x: 220, y: 130 + i * 105, speed: 5.8, r: 15, team: "player" });
+        aiPlayers.push({ x: 980, y: 130 + i * 105, speed: 2.8, r: 15, team: "ai" });
     }
 
     goalies.player = {
@@ -170,7 +170,7 @@ function updateAIOutfield() {
         p.x = clamp(p.x, p.r, FIELD.width - p.r);
         p.y = clamp(p.y, p.r, FIELD.height - p.r);
 
-        if (distance(p.x, p.y, ball.x, ball.y) < p.r + 10 && Math.random() < 0.06) {
+        if (distance(p.x, p.y, ball.x, ball.y) < p.r + 10 && Math.random() < 0.04) {
             ball.vx = -7 - Math.random() * 3;
             ball.vy = (Math.random() - 0.5) * 7;
         }
@@ -254,6 +254,13 @@ function draw() {
     ctx.fillStyle = "white";
     ctx.fill();
 
+    // Ball locator ring (easier tracking)
+    ctx.beginPath();
+    ctx.arc(ball.x, ball.y, ball.radius + 8, 0, Math.PI * 2);
+    ctx.strokeStyle = "#ffe066";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
     // Outfield players
     players.forEach((p, idx) => {
         ctx.beginPath();
@@ -273,6 +280,17 @@ function draw() {
     drawGoalie(goalies.player, "#f8d96a");
     drawGoalie(goalies.ai, "#ff9a9a");
 
+    // Selected player helper line to ball
+    const selected = players[0];
+    if (selected) {
+        ctx.beginPath();
+        ctx.moveTo(selected.x, selected.y);
+        ctx.lineTo(ball.x, ball.y);
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.35)";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+    }
+
     // HUD
     ctx.fillStyle = "white";
     ctx.font = "24px Arial";
@@ -280,6 +298,8 @@ function draw() {
     ctx.font = "16px Arial";
     ctx.fillText("Move: Arrow Keys / WASD | M: Pass | N: Shoot | K: Switch Player | L: Tackle", 300, 60);
     ctx.fillText("Goalies stay in their own boxes and auto-defend.", 460, 84);
+    ctx.fillText(`Ball: ${Math.round(ball.x)}, ${Math.round(ball.y)}`, 20, 30);
+    ctx.fillText("Tip: follow the yellow ring and white guide line to track ball faster.", 20, 54);
 }
 
 function drawGoalie(goalie, color) {
