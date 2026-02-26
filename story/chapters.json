@@ -1,0 +1,46 @@
+[
+  {
+    "type": "story",
+    "lines": [
+      { "speaker": "Narrator", "text": "Prologue..." },
+      { "speaker": "Coach", "text": "Welcome to Westen." }
+    ]
+  },
+  {
+    "type": "story",
+    "lines": [
+      { "speaker": "Narrator", "text": "Chapter 1 begins..." },
+      { "speaker": "Captain", "text": "We build identity before results." }
+    ]
+  },
+  {
+    "type": "story",
+    "lines": [
+      { "speaker": "Narrator", "text": "Chapter 2..." },
+      { "speaker": "Assistant", "text": "From here, your decisions shape the club." }
+    ]
+  },
+  {
+    "type": "match",
+    "preGame": {
+      "type": "story",
+      "lines": [
+        { "speaker": "Reporter", "text": "How do you feel today?" },
+        { "speaker": "You", "text": "We are ready to prove ourselves." }
+      ]
+    },
+    "postGame": {
+      "type": "story",
+      "lines": [
+        { "speaker": "Reporter", "text": "Great performance." },
+        { "speaker": "You", "text": "This is only the beginning." }
+      ]
+    },
+    "storyAfterMatch": {
+      "type": "story",
+      "lines": [
+        { "speaker": "Narrator", "text": "The system is now active: interview, match, review, and progression." }
+      ]
+    }
+  }
+]
