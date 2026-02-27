@@ -97,6 +97,7 @@ function update() {
     matchClock = Math.max(0, matchClock - (1 / 60));
 
     moveControlledPlayer();
+    updatePlayerOutfield();
     updateAIOutfield();
     updateGoalie(goalies.player);
     updateGoalie(goalies.ai);
@@ -115,8 +116,8 @@ function update() {
     detectGoals();
 
     if (!possession.owner) {
-        ball.vx *= 0.985;
-        ball.vy *= 0.985;
+        ball.vx *= 0.97;
+        ball.vy *= 0.97;
         if (Math.abs(ball.vx) < 0.03) ball.vx = 0;
         if (Math.abs(ball.vy) < 0.03) ball.vy = 0;
     }
@@ -152,6 +153,56 @@ function moveControlledPlayer() {
 
     selected.x = clamp(selected.x, selected.r, FIELD.width - selected.r);
     selected.y = clamp(selected.y, selected.r, FIELD.height - selected.r);
+}
+
+// Spread offsets for attack support (per teammate index 1..3)
+const ATTACK_OFFSETS = [
+    { dx: 160, dy: -150 },
+    { dx: 200, dy:    0 },
+    { dx: 160, dy:  150 }
+];
+
+// Defensive shape constants for player outfield teammates
+const DEFENSIVE_BASE_X   = 350;
+const DEFENSIVE_SPREAD_X = 80;
+const DEFENSIVE_MIN_X    = 200;
+const DEFENSIVE_MAX_X    = 520;
+
+// How far the ball can be before the goalie fully centres on the goal-mouth
+const GOALIE_MAX_TRACK_DIST = 900;
+
+function updatePlayerOutfield() {
+    const carrier = possession.team === "player" ? possession.owner : null;
+    const aiHasBall = possession.team === "ai" && possession.owner !== null;
+
+    for (let i = 1; i < players.length; i++) {
+        const p = players[i];
+        let targetX, targetY;
+
+        if (carrier && players.includes(carrier)) {
+            // Attacking: spread around the carrier to create passing lanes
+            const off = ATTACK_OFFSETS[i - 1] || { dx: 140, dy: (i - 2) * 160 };
+            targetX = clamp(carrier.x + off.dx, 200, FIELD.width - 250);
+            targetY = clamp(carrier.y + off.dy, 60, FIELD.height - 60);
+        } else if (aiHasBall) {
+            // Defending: drop into a compact defensive shape
+            targetX = clamp(DEFENSIVE_BASE_X + (i % 2) * DEFENSIVE_SPREAD_X, DEFENSIVE_MIN_X, DEFENSIVE_MAX_X);
+            targetY = FORMATION_Y[i] || FORMATION_Y[0];
+        } else {
+            // Ball loose: hold formation home positions
+            targetX = 300;
+            targetY = FORMATION_Y[i] || FORMATION_Y[0];
+        }
+
+        const to = normalize(targetX - p.x, targetY - p.y);
+        const dist = distance(p.x, p.y, targetX, targetY);
+        if (dist > 6) {
+            p.x += to.x * p.speed;
+            p.y += to.y * p.speed;
+        }
+        p.x = clamp(p.x, p.r, FIELD.width - p.r);
+        p.y = clamp(p.y, p.r, FIELD.height - p.r);
+    }
 }
 
 function updateAIOutfield() {
@@ -315,7 +366,11 @@ function updateGoalie(goalie) {
     }
 
     const predictedY = ball.y + ball.vy * 4 + goalie.errorY;
-    const defendY = clamp(predictedY, FIELD.goalTop - 25, FIELD.goalBottom + 25);
+    const ballDist = distance(goalie.x, goalie.y, ball.x, ball.y);
+    const trackWeight = clamp(1 - ballDist / GOALIE_MAX_TRACK_DIST, 0.25, 1);
+    const centreY = FIELD.height / 2;
+    const blendedY = centreY + (predictedY - centreY) * trackWeight;
+    const defendY = clamp(blendedY, FIELD.goalTop - 25, FIELD.goalBottom + 25);
     const defendX = goalie.team === "player" ? 85 : 1315;
 
     const to = normalize(defendX - goalie.x, defendY - goalie.y);
@@ -351,8 +406,8 @@ function updateGoalie(goalie) {
     possession.owner = null;
     possession.team = null;
     possession.lockTimer = 0;
-    ball.vx = blockDir * (6 + Math.random() * 5);
-    ball.vy = (Math.random() - 0.5) * 7;
+    ball.vx = blockDir * (4 + Math.random() * 3);
+    ball.vy = (Math.random() - 0.5) * 5;
 }
 
 function updatePlayerPossession() {
@@ -481,7 +536,7 @@ function performShotToRightGoal() {
     const shot = normalize(targetX - ball.x, targetY - ball.y);
 
     const strongRightX = Math.max(0.9, shot.x);
-    releasePossession(strongRightX * 26, shot.y * 6.8);
+    releasePossession(strongRightX * 18, shot.y * 5.5);
     passAssist.target = null;
     passAssist.timer = 0;
 }
@@ -546,11 +601,11 @@ function handleFieldBoundariesAndPosts() {
     // top/bottom lines
     if (ball.y < ball.radius) {
         ball.y = ball.radius;
-        ball.vy *= -0.8;
+        ball.vy *= -0.65;
     }
     if (ball.y > FIELD.height - ball.radius) {
         ball.y = FIELD.height - ball.radius;
-        ball.vy *= -0.8;
+        ball.vy *= -0.65;
     }
 
     // goalposts block side entries
@@ -566,11 +621,11 @@ function handleFieldBoundariesAndPosts() {
 
     if (ball.x <= FIELD.leftGoalX && !sideOpen) {
         ball.x = FIELD.leftGoalX + ball.radius;
-        ball.vx = Math.abs(ball.vx) + 2;
+        ball.vx = Math.abs(ball.vx) * 0.65;
     }
     if (ball.x >= FIELD.rightGoalX && !sideOpen) {
         ball.x = FIELD.rightGoalX - ball.radius;
-        ball.vx = -Math.abs(ball.vx) - 2;
+        ball.vx = -Math.abs(ball.vx) * 0.65;
     }
 }
 
@@ -675,11 +730,21 @@ function draw() {
     drawPixelPlayer(goalies.player, "#f8d96a", true);
     drawPixelPlayer(goalies.ai, "#ffb17a", true);
 
+    // Scoreboard HUD
+    const hudCx = FIELD.width / 2;
+    ctx.fillStyle = "rgba(0,0,0,0.55)";
+    ctx.fillRect(hudCx - 160, 6, 320, 68);
+    ctx.strokeStyle = "rgba(255,255,255,0.4)";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(hudCx - 160, 6, 320, 68);
+    ctx.textAlign = "center";
     ctx.fillStyle = "white";
-    ctx.font = "24px Arial";
-    ctx.fillText(`Player ${score.player} - ${score.ai} AI`, 590, 32);
-    ctx.font = "18px Arial";
-    ctx.fillText(`Time ${formatClock(matchClock)}`, 660, 60);
+    ctx.font = "bold 30px Arial";
+    ctx.fillText(`${score.player}  -  ${score.ai}`, hudCx, 42);
+    ctx.font = "16px Arial";
+    ctx.fillStyle = "#ffdd77";
+    ctx.fillText(`${formatClock(matchClock)}`, hudCx, 63);
+    ctx.textAlign = "left";
 }
 
 function formatClock(value) {
