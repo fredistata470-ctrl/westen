@@ -11,6 +11,13 @@ let pauseMenuEl = null;
 let matchClock = 180;
 let goaliePossessionTimer = 0;
 
+let tackleCooldown = 0;
+let tackleActive = false;
+let tackleTimer = 0;
+const TACKLE_RANGE = 26;
+const TACKLE_DURATION = 12;
+const TACKLE_COOLDOWN_FRAMES = 40;
+
 const FIELD = {
     width: 1400,
     height: 820,
@@ -145,13 +152,16 @@ function initMatch() {
     shotState.aimY = 0;
     passState.held = false;
     passState.charge = 0;
+    tackleCooldown = 0;
+    tackleActive = false;
+    tackleTimer = 0;
 
     const formation = FORMATIONS[currentFormation] || FORMATIONS["2-2"];
     for (let i = 0; i < 4; i++) {
         const ph = formation.playerHome[i];
         const ah = formation.aiHome[i];
         players.push({ x: ph.x, y: ph.y, speed: 3.8, r: 15, team: "player" });
-        aiPlayers.push({ x: ah.x, y: ah.y, speed: 2.1, r: 15, team: "ai" });
+        aiPlayers.push({ x: ah.x, y: ah.y, speed: 2.1, r: 15, team: "ai", tackleCooldown: 0 });
     }
 
     goalies.player = { x: 78, y: FIELD.height / 2, r: 17, speed: 2.95, box: FIELD.playerBox, team: "player", reactionTimer: 0, errorY: 0, diveTimer: 0, diveDir: 0 };
@@ -171,6 +181,16 @@ function update() {
     if (possession.lockTimer > 0) possession.lockTimer--;
     if (possession.pickupCooldown > 0) possession.pickupCooldown--;
     if (passAssist.timer > 0) passAssist.timer--;
+
+    if (tackleCooldown > 0) tackleCooldown--;
+    if (tackleActive) {
+        tackleTimer++;
+        if (tackleTimer > TACKLE_DURATION) {
+            tackleActive = false;
+            tackleTimer = 0;
+        }
+        attemptTackle();
+    }
 
     if (shotState.held) {
         shotState.charge = Math.min(shotState.maxCharge, shotState.charge + 1);
@@ -356,13 +376,25 @@ function updateAIOutfield() {
         p.y = clamp(p.y, p.r, FIELD.height - p.r);
 
         if (playerCarrier && possession.lockTimer <= 0) {
-            const d = distance(p.x, p.y, playerCarrier.x, playerCarrier.y);
-            if (d < p.r + playerCarrier.r + 9 && Math.random() < 0.065) {
-                possession.owner = p;
-                possession.team = "ai";
-                possession.lockTimer = 11;
-                ball.vx = 0;
-                ball.vy = 0;
+            if (p.tackleCooldown > 0) {
+                p.tackleCooldown--;
+            } else {
+                const d = distance(p.x, p.y, playerCarrier.x, playerCarrier.y);
+                if (d < p.r + playerCarrier.r + TACKLE_RANGE) {
+                    if (Math.random() < 0.55) {
+                        possession.owner = p;
+                        possession.team = "ai";
+                        possession.lockTimer = 15;
+                        ball.vx = 0;
+                        ball.vy = 0;
+                    } else {
+                        possession.owner = null;
+                        possession.team = null;
+                        ball.vx = (Math.random() - 0.5) * 6;
+                        ball.vy = (Math.random() - 0.5) * 6;
+                    }
+                    p.tackleCooldown = TACKLE_COOLDOWN_FRAMES;
+                }
             }
         }
     });
@@ -546,30 +578,39 @@ function updateGoalie(goalie) {
     const angleY = clamp(ball.y, FIELD.goalTop + 10, FIELD.goalBottom - 10);
     goalie.y += (angleY - goalie.y) * 0.08;
 
-    const interactionRadius = goalie.r + 10;
+    const interactionRadius = goalie.r + 8;
     if (distance(goalie.x, goalie.y, ball.x, ball.y) >= interactionRadius) return;
 
-    // Strong shots are harder to catch
+    // Save probability based on shot speed (arcade-polished: strong shots can beat keeper)
     const shotSpeed = Math.hypot(ball.vx, ball.vy);
-    const catchChance = shotSpeed < 10 ? 0.75 : 0.45;
+    let saveChance;
+    if (shotSpeed < 7) {
+        saveChance = 0.85; // weak shot — almost always saved
+    } else if (shotSpeed < 11) {
+        saveChance = 0.55; // normal shot
+    } else {
+        saveChance = 0.30; // powerful shot — often scores
+    }
 
-    if (Math.random() < catchChance) {
+    // Reduce save chance if ball is far from keeper's body (angled / corner shot)
+    const angleOffset = Math.abs(ball.y - goalie.y);
+    if (angleOffset > 25) {
+        saveChance -= 0.2;
+    }
+
+    if (Math.random() < saveChance) {
         possession.owner = goalie;
         possession.team = goalie.team;
         possession.lockTimer = GOALIE_CATCH_LOCK_DURATION;
         ball.vx = 0;
         ball.vy = 0;
-        return;
+    } else {
+        // Deflection — ball bounces back into play
+        possession.owner = null;
+        possession.team = null;
+        ball.vx *= -0.6;
+        ball.vy *= 0.8;
     }
-
-    // Clean parry — push ball away from goal mouth
-    const parryDir = goalie.team === "player" ? 1 : -1;
-    possession.owner = null;
-    possession.team = null;
-    possession.lockTimer = 0;
-
-    ball.vx = parryDir * (6 + Math.random() * 3);
-    ball.vy = (Math.random() - 0.5) * 7;
 }
 
 function updatePlayerPossession() {
@@ -764,27 +805,50 @@ function setControlledPlayer(player) {
 function attemptTackle() {
     const selected = players[0];
     if (!selected) return;
+    if (!tackleActive) return;
 
-    if (possession.team === "ai" && possession.owner) {
-        const enemy = possession.owner;
-        const d = distance(selected.x, selected.y, enemy.x, enemy.y);
-        if (d < selected.r + enemy.r + 14) {
+    // Loose ball pickup during the tackle window
+    if (!possession.owner) {
+        if (distance(selected.x, selected.y, ball.x, ball.y) < selected.r + 16) {
             possession.owner = selected;
             possession.team = "player";
-            possession.lockTimer = 20;
+            possession.lockTimer = 14;
             ball.vx = 0;
             ball.vy = 0;
-            return;
+            tackleActive = false;
+            tackleTimer = 0;
         }
+        return;
     }
 
-    if (!possession.owner && distance(selected.x, selected.y, ball.x, ball.y) < selected.r + 16) {
+    if (possession.owner.team === selected.team) return;
+
+    const target = possession.owner;
+    const d = distance(selected.x, selected.y, target.x, target.y);
+    if (d > selected.r + target.r + TACKLE_RANGE) return;
+
+    // Must be facing the opponent
+    const facing = normalize(controlState.dirX, controlState.dirY);
+    const toTarget = normalize(target.x - selected.x, target.y - selected.y);
+    const dot = facing.x * toTarget.x + facing.y * toTarget.y;
+    if (dot < 0.3) return;
+
+    if (Math.random() < 0.65) {
+        // Success: win the ball
         possession.owner = selected;
         possession.team = "player";
-        possession.lockTimer = 14;
+        possession.lockTimer = 15;
         ball.vx = 0;
         ball.vy = 0;
+    } else {
+        // Fail: loose ball poke
+        possession.owner = null;
+        possession.team = null;
+        ball.vx = (Math.random() - 0.5) * 6;
+        ball.vy = (Math.random() - 0.5) * 6;
     }
+    tackleActive = false;
+    tackleTimer = 0;
 }
 
 function handleFieldBoundariesAndPosts() {
@@ -1343,7 +1407,7 @@ document.addEventListener("keydown", e => {
 
     if (key === "n" && !e.repeat) { passState.held = true; passState.charge = 0; }
     if (key === "m" && !e.repeat) { shotState.held = true; shotState.charge = 0; shotState.aimX = controlState.dirX; shotState.aimY = controlState.dirY; }
-    if (key === "l") attemptTackle();
+    if (key === "l" && tackleCooldown <= 0) { tackleActive = true; tackleCooldown = TACKLE_COOLDOWN_FRAMES; tackleTimer = 0; }
 
     // K: smart-switch to player nearest the ball on defense
     if (key === "k" && players.length > 1 && possession.team !== "player") {
