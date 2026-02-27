@@ -12,26 +12,26 @@ let matchClock = 180;
 let goaliePossessionTimer = 0;
 
 const FIELD = {
-    width: 1200,
-    height: 700,
-    goalTop: 250,
-    goalBottom: 450,
-    leftGoalX: 50,
-    rightGoalX: 1150,
-    leftPostTop: { x: 50, y: 250 },
-    leftPostBottom: { x: 50, y: 450 },
-    rightPostTop: { x: 1150, y: 250 },
-    rightPostBottom: { x: 1150, y: 450 },
-    playerBox: { x: 0, y: 230, w: 140, h: 240 },
-    aiBox: { x: 1060, y: 230, w: 140, h: 240 }
+    width: 1400,
+    height: 820,
+    goalTop: 290,
+    goalBottom: 530,
+    leftGoalX: 60,
+    rightGoalX: 1340,
+    leftPostTop: { x: 60, y: 290 },
+    leftPostBottom: { x: 60, y: 530 },
+    rightPostTop: { x: 1340, y: 290 },
+    rightPostBottom: { x: 1340, y: 530 },
+    playerBox: { x: 0, y: 310, w: 110, h: 200 },
+    aiBox: { x: 1290, y: 310, w: 110, h: 200 }
 };
 
-const FORMATION_Y = [150, 280, 420, 550];
+const FORMATION_Y = [170, 320, 500, 650];
 const AI_HOME = [
-    { x: 910, y: 180 },
-    { x: 820, y: 320 },
-    { x: 820, y: 420 },
-    { x: 940, y: 560 }
+    { x: 1030, y: 180 },
+    { x: 930, y: 340 },
+    { x: 930, y: 500 },
+    { x: 1080, y: 650 }
 ];
 
 const input = { up: false, down: false, left: false, right: false };
@@ -58,7 +58,7 @@ function startMatch(chapter, done) {
 }
 
 function initMatch() {
-    ball = { x: 600, y: 350, vx: 0, vy: 0, radius: 10 };
+    ball = { x: FIELD.width / 2, y: FIELD.height / 2, vx: 0, vy: 0, radius: 7 };
     players = [];
     aiPlayers = [];
     score = { player: 0, ai: 0 };
@@ -72,12 +72,12 @@ function initMatch() {
     goaliePossessionTimer = 0;
 
     for (let i = 0; i < 4; i++) {
-        players.push({ x: 250, y: FORMATION_Y[i], speed: 3.8, r: 15, team: "player" });
+        players.push({ x: 300, y: FORMATION_Y[i], speed: 3.8, r: 15, team: "player" });
         aiPlayers.push({ x: AI_HOME[i].x, y: AI_HOME[i].y, speed: 1.9, r: 15, team: "ai" });
     }
 
-    goalies.player = { x: 95, y: FIELD.height / 2, r: 17, speed: 2.95, box: FIELD.playerBox, team: "player", reactionTimer: 0, errorY: 0, diveTimer: 0, diveDir: 0 };
-    goalies.ai = { x: 1105, y: FIELD.height / 2, r: 17, speed: 2.95, box: FIELD.aiBox, team: "ai", reactionTimer: 0, errorY: 0, diveTimer: 0, diveDir: 0 };
+    goalies.player = { x: 78, y: FIELD.height / 2, r: 17, speed: 2.95, box: FIELD.playerBox, team: "player", reactionTimer: 0, errorY: 0, diveTimer: 0, diveDir: 0 };
+    goalies.ai = { x: 1322, y: FIELD.height / 2, r: 17, speed: 2.95, box: FIELD.aiBox, team: "ai", reactionTimer: 0, errorY: 0, diveTimer: 0, diveDir: 0 };
 }
 
 function gameLoop() {
@@ -316,7 +316,7 @@ function updateGoalie(goalie) {
 
     const predictedY = ball.y + ball.vy * 4 + goalie.errorY;
     const defendY = clamp(predictedY, FIELD.goalTop - 25, FIELD.goalBottom + 25);
-    const defendX = goalie.team === "player" ? 98 : 1102;
+    const defendX = goalie.team === "player" ? 85 : 1315;
 
     const to = normalize(defendX - goalie.x, defendY - goalie.y);
     goalie.x += to.x * goalie.speed;
@@ -333,22 +333,26 @@ function updateGoalie(goalie) {
     goalie.x = clamp(goalie.x, goalie.box.x + goalie.r, goalie.box.x + goalie.box.w - goalie.r);
     goalie.y = clamp(goalie.y, goalie.box.y + goalie.r, goalie.box.y + goalie.box.h - goalie.r);
 
-    const catchRadius = goalie.r + (Math.random() < 0.72 ? 9 : 4);
-    if (distance(goalie.x, goalie.y, ball.x, ball.y) < catchRadius) {
-        if (possession.owner && possession.team !== goalie.team) {
-            possession.owner = goalie;
-            possession.team = goalie.team;
-            possession.lockTimer = 9;
-            ball.vx = 0;
-            ball.vy = 0;
-        } else if (!possession.owner) {
-            possession.owner = goalie;
-            possession.team = goalie.team;
-            possession.lockTimer = 9;
-            ball.vx = 0;
-            ball.vy = 0;
-        }
+    const interactionRadius = goalie.r + 10;
+    if (distance(goalie.x, goalie.y, ball.x, ball.y) >= interactionRadius) return;
+
+    const canCatch = Math.random() < 0.68;
+    if (canCatch) {
+        possession.owner = goalie;
+        possession.team = goalie.team;
+        possession.lockTimer = 9;
+        ball.vx = 0;
+        ball.vy = 0;
+        return;
     }
+
+    // Otherwise the goalie blocks/parries.
+    const blockDir = goalie.team === "player" ? 1 : -1;
+    possession.owner = null;
+    possession.team = null;
+    possession.lockTimer = 0;
+    ball.vx = blockDir * (6 + Math.random() * 5);
+    ball.vy = (Math.random() - 0.5) * 7;
 }
 
 function updatePlayerPossession() {
@@ -673,9 +677,9 @@ function draw() {
 
     ctx.fillStyle = "white";
     ctx.font = "24px Arial";
-    ctx.fillText(`Player ${score.player} - ${score.ai} AI`, 490, 32);
+    ctx.fillText(`Player ${score.player} - ${score.ai} AI`, 590, 32);
     ctx.font = "18px Arial";
-    ctx.fillText(`Time ${formatClock(matchClock)}`, 560, 60);
+    ctx.fillText(`Time ${formatClock(matchClock)}`, 660, 60);
 }
 
 function formatClock(value) {
@@ -707,7 +711,7 @@ function openPauseMenu() {
     menu.style.background = "rgba(0,0,0,0.75)";
     menu.innerHTML = `
         <h2>Pause Menu</h2>
-        <button id="menu-team">Y Team Management</button>
+        <button id="menu-team">Team Management</button>
         <button id="menu-instructions">Instructions</button>
         <button id="menu-exit">Exit to Main Menu</button>
         <button id="menu-resume">Resume</button>
@@ -716,8 +720,8 @@ function openPauseMenu() {
     screen.appendChild(menu);
     pauseMenuEl = menu;
 
-    menu.querySelector("#menu-team").onclick = () => showMenuOverlayMessage("Team management is coming next. (Press Y)");
-    menu.querySelector("#menu-instructions").onclick = () => showMenuOverlayMessage("Controls: WASD move, N pass, M shoot, L tackle, K switch on defense.");
+    menu.querySelector("#menu-team").onclick = () => openTeamManagementPanel();
+    menu.querySelector("#menu-instructions").onclick = () => showMenuOverlayMessage("Controls: WASD move, N pass, M shoot, L tackle, K switch on defense. Press P to open/close this menu.");
     menu.querySelector("#menu-exit").onclick = () => exitToMainMenu();
     menu.querySelector("#menu-resume").onclick = () => togglePauseMenu();
 }
@@ -733,6 +737,30 @@ function showMenuOverlayMessage(text) {
         pauseMenuEl.appendChild(note);
     }
     note.textContent = text;
+}
+
+function openTeamManagementPanel() {
+    if (!pauseMenuEl) return;
+
+    let panel = pauseMenuEl.querySelector(".team-panel");
+    if (!panel) {
+        panel = document.createElement("div");
+        panel.className = "team-panel";
+        panel.style.display = "flex";
+        panel.style.gap = "8px";
+        panel.style.marginTop = "12px";
+        panel.style.flexWrap = "wrap";
+        panel.style.justifyContent = "center";
+        pauseMenuEl.appendChild(panel);
+    }
+
+    panel.innerHTML = "";
+    players.forEach((p, idx) => {
+        const btn = document.createElement("button");
+        btn.textContent = `Player ${idx + 1}`;
+        btn.onclick = () => showMenuOverlayMessage(`Selected Player ${idx + 1}. Stats customization can be added next.`);
+        panel.appendChild(btn);
+    });
 }
 
 function removePauseMenu() {
@@ -810,7 +838,7 @@ document.addEventListener("keydown", e => {
     }
 
     if (matchPaused) {
-        if (key === "y") showMenuOverlayMessage("Team management is coming next. (Press Y)");
+        if (key === "y") openTeamManagementPanel();
         return;
     }
 
