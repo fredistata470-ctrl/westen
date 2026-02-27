@@ -10,6 +10,7 @@ let matchPaused = false;
 let pauseMenuEl = null;
 let matchClock = 180;
 let goaliePossessionTimer = 0;
+let playerGoaliePossessionTimer = 0;
 
 let tackleCooldown = 0;
 let tackleActive = false;
@@ -146,6 +147,7 @@ function initMatch() {
     passAssist.timer = 0;
     matchClock = 180;
     goaliePossessionTimer = 0;
+    playerGoaliePossessionTimer = 0;
     shotState.held = false;
     shotState.charge = 0;
     shotState.aimX = 1;
@@ -225,6 +227,7 @@ function update() {
 
     updatePlayerPossession();
     updatePassAssistCapture();
+    updatePlayerGoalieAutoPass();
 
     // Auto-switch controlled player to nearest when ball is loose.
     // Suppress while a pass assist is in flight so control stays on the intended recipient.
@@ -422,7 +425,7 @@ function updateAIOutfield() {
 
     if (carrier === goalies.ai) {
         goaliePossessionTimer += 1 / 60;
-        if (goaliePossessionTimer < 5) return;
+        if (goaliePossessionTimer < 2) return;
 
         // Pick the teammate with the most space around them
         let bestTarget = aiPlayers[0];
@@ -476,6 +479,36 @@ function updateAIOutfield() {
         possession.team = "ai";
         possession.lockTimer = 10;
     }
+}
+
+function updatePlayerGoalieAutoPass() {
+    if (possession.owner !== goalies.player) {
+        playerGoaliePossessionTimer = 0;
+        return;
+    }
+
+    playerGoaliePossessionTimer += 1 / 60;
+    if (playerGoaliePossessionTimer < 2) return;
+
+    // Pick the player teammate with the most space
+    let bestTarget = players[0];
+    let maxSpace = -Infinity;
+    for (const mate of players) {
+        const space = distanceToNearestOpponent(mate);
+        if (space > maxSpace) {
+            maxSpace = space;
+            bestTarget = mate;
+        }
+    }
+    const outlet = bestTarget;
+    const carrier = goalies.player;
+    const outletDir = normalize(outlet.x - carrier.x, outlet.y - carrier.y);
+    releasePossession(outletDir.x * 11.0, outletDir.y * 8.0);
+    possession.owner = outlet;
+    possession.team = "player";
+    possession.lockTimer = 10;
+    setControlledPlayer(outlet);
+    playerGoaliePossessionTimer = 0;
 }
 
 function isClosestAIToBall(player) {
