@@ -82,6 +82,9 @@ const controlState = { dirX: 1, dirY: 0 };
 const shotState = { held: false, charge: 0, maxCharge: 90, aimX: 1, aimY: 0 };
 const passState = { held: false, charge: 0, maxCharge: 60 };
 
+const PASS_ASSIST_COLOR = "#66aaff";
+const PASS_TARGET_RADIUS_OFFSET = 9;
+
 function showFormationSelect(onSelect) {
     screen.innerHTML = "";
     const div = document.createElement("div");
@@ -183,8 +186,9 @@ function update() {
     updatePlayerPossession();
     updatePassAssistCapture();
 
-    // Auto-switch controlled player to nearest when ball is loose
-    if (!possession.owner && possession.pickupCooldown <= 0 && players.length > 1) {
+    // Auto-switch controlled player to nearest when ball is loose.
+    // Suppress while a pass assist is in flight so control stays on the intended recipient.
+    if (!possession.owner && possession.pickupCooldown <= 0 && passAssist.timer <= 0 && players.length > 1) {
         let nearestIdx = 0;
         let nearestDist = distance(players[0].x, players[0].y, ball.x, ball.y);
         for (let i = 1; i < players.length; i++) {
@@ -1034,7 +1038,7 @@ function draw() {
         }
     }
 
-    // Pass charge bar above player
+    // Pass charge bar above player + pass-assist target preview
     if (passState.held) {
         const selected = players[0];
         if (selected) {
@@ -1050,7 +1054,49 @@ function draw() {
             ctx.strokeStyle = "white";
             ctx.lineWidth = 1;
             ctx.strokeRect(barX, barY, barW, barH);
+
+            // Highlight the teammate that will receive the pass (only when a direction is held)
+            if (controlState.dirX !== 0 || controlState.dirY !== 0) {
+                const dir = normalize(controlState.dirX, controlState.dirY);
+                const target = findBestPassTarget(selected, dir);
+                if (target) {
+                    // Dashed circle around target
+                    ctx.save();
+                    ctx.setLineDash([5, 4]);
+                    ctx.strokeStyle = PASS_ASSIST_COLOR;
+                    ctx.lineWidth = 2.5;
+                    ctx.beginPath();
+                    ctx.arc(target.x, target.y, target.r + PASS_TARGET_RADIUS_OFFSET, 0, Math.PI * 2);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+
+                    // Dashed line from passer to target
+                    ctx.strokeStyle = "rgba(102,170,255,0.55)";
+                    ctx.lineWidth = 1.5;
+                    ctx.setLineDash([6, 5]);
+                    ctx.beginPath();
+                    ctx.moveTo(selected.x, selected.y);
+                    ctx.lineTo(target.x, target.y);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                    ctx.restore();
+                }
+            }
         }
+    }
+
+    // In-flight pass assist indicator: circle around the intended recipient
+    if (passAssist.timer > 0 && passAssist.target) {
+        const t = passAssist.target;
+        ctx.save();
+        ctx.setLineDash([5, 4]);
+        ctx.strokeStyle = PASS_ASSIST_COLOR;
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.arc(t.x, t.y, t.r + PASS_TARGET_RADIUS_OFFSET, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.restore();
     }
 }
 
@@ -1102,7 +1148,8 @@ function openPauseMenu() {
     };
     menu.querySelector("#menu-team").onclick = () => openTeamManagementPanel();
     menu.querySelector("#menu-instructions").onclick = () => showMenuOverlayMessage(
-        "Controls: WASD move | Hold N then release to pass (longer = stronger) | " +
+        "Controls: WASD move | Hold N then release to pass — aims toward the player you face, " +
+        "control switches to them automatically | " +
         "Hold M and aim with WASD then release to shoot (longer = stronger) | " +
         "L tackle | K switch on defense | P pause menu."
     );
