@@ -41,6 +41,9 @@ const passAssist = { target: null, timer: 0 };
 
 const controlState = { dirX: 1, dirY: 0 };
 
+const shotState = { held: false, charge: 0, maxCharge: 90, aimX: 1, aimY: 0 };
+const passState = { held: false, charge: 0, maxCharge: 60 };
+
 function startMatch(chapter, done) {
     onMatchComplete = done || null;
     screen.innerHTML = "";
@@ -70,6 +73,12 @@ function initMatch() {
     passAssist.timer = 0;
     matchClock = 180;
     goaliePossessionTimer = 0;
+    shotState.held = false;
+    shotState.charge = 0;
+    shotState.aimX = 1;
+    shotState.aimY = 0;
+    passState.held = false;
+    passState.charge = 0;
 
     for (let i = 0; i < 4; i++) {
         players.push({ x: 300, y: FORMATION_Y[i], speed: 3.8, r: 15, team: "player" });
@@ -93,6 +102,15 @@ function update() {
     if (possession.lockTimer > 0) possession.lockTimer--;
     if (possession.pickupCooldown > 0) possession.pickupCooldown--;
     if (passAssist.timer > 0) passAssist.timer--;
+
+    if (shotState.held) {
+        shotState.charge = Math.min(shotState.maxCharge, shotState.charge + 1);
+        shotState.aimX = controlState.dirX;
+        shotState.aimY = controlState.dirY;
+    }
+    if (passState.held) {
+        passState.charge = Math.min(passState.maxCharge, passState.charge + 1);
+    }
 
     matchClock = Math.max(0, matchClock - (1 / 60));
 
@@ -170,6 +188,11 @@ const DEFENSIVE_MAX_X    = 520;
 
 // How far the ball can be before the goalie fully centres on the goal-mouth
 const GOALIE_MAX_TRACK_DIST = 900;
+
+// Controls how inaccurately the AI goalie reads the player's shot aim (higher = easier to fake)
+const GOALIE_AIM_READ_NOISE = 140;
+// Controls how much the AI goalie anticipates the aimed corner vs reacting to ball position
+const GOALIE_AIM_READ_WEIGHT = 0.55;
 
 function updatePlayerOutfield() {
     const carrier = possession.team === "player" ? possession.owner : null;
@@ -365,23 +388,47 @@ function updateGoalie(goalie) {
         goalie.errorY = (Math.random() - 0.5) * 58;
     }
 
-    const predictedY = ball.y + ball.vy * 4 + goalie.errorY;
+    // Detect if a shot is incoming toward this goalie's goal
+    const shotIncoming = (goalie.team === "player" && ball.vx < -8) ||
+                         (goalie.team === "ai" && ball.vx > 8);
+
+    const predictedY = ball.y + ball.vy * (shotIncoming ? 8 : 4) + goalie.errorY;
     const ballDist = distance(goalie.x, goalie.y, ball.x, ball.y);
-    const trackWeight = clamp(1 - ballDist / GOALIE_MAX_TRACK_DIST, 0.25, 1);
+
+    // Each goalie only fully tracks the ball when it is a threat to their own goal
+    const ballHeadingTowardsGoal = (goalie.team === "player" && ball.vx <= 0) ||
+                                   (goalie.team === "ai" && ball.vx >= 0);
+    const distWeight = clamp(1 - ballDist / GOALIE_MAX_TRACK_DIST, 0.25, 1);
+    const trackWeight = ballHeadingTowardsGoal
+        ? clamp(distWeight + (shotIncoming ? 0.3 : 0), 0.25, 1)
+        : distWeight * 0.4;
+
     const centreY = FIELD.height / 2;
-    const blendedY = centreY + (predictedY - centreY) * trackWeight;
+    let blendedY = centreY + (predictedY - centreY) * trackWeight;
+
+    // AI goalie partially reads player's shot aim so it can be faked
+    if (goalie.team === "ai" && shotState.held && possession.team === "player") {
+        const aimTargetY = FIELD.height / 2 + shotState.aimY * 130;
+        const readNoise = (Math.random() - 0.5) * GOALIE_AIM_READ_NOISE;
+        blendedY = blendedY * (1 - GOALIE_AIM_READ_WEIGHT) + (aimTargetY + readNoise) * GOALIE_AIM_READ_WEIGHT;
+    }
+
     const defendY = clamp(blendedY, FIELD.goalTop - 25, FIELD.goalBottom + 25);
     const defendX = goalie.team === "player" ? 85 : 1315;
 
+    const activeSpeed = shotIncoming ? goalie.speed * 1.7 : goalie.speed;
     const to = normalize(defendX - goalie.x, defendY - goalie.y);
-    goalie.x += to.x * goalie.speed;
-    goalie.y += to.y * goalie.speed;
+    goalie.x += to.x * activeSpeed;
+    goalie.y += to.y * activeSpeed;
 
     if (goalie.diveTimer > 0) {
         goalie.diveTimer--;
         goalie.y += goalie.diveDir * 3.4;
-    } else if (Math.random() < 0.01) {
+    } else if (shotIncoming && Math.random() < 0.04) {
         goalie.diveTimer = 5 + Math.floor(Math.random() * 6);
+        goalie.diveDir = (ball.y < goalie.y) ? -1 : 1;
+    } else if (Math.random() < 0.004) {
+        goalie.diveTimer = 3 + Math.floor(Math.random() * 4);
         goalie.diveDir = Math.random() < 0.5 ? -1 : 1;
     }
 
@@ -499,7 +546,7 @@ function performPass() {
     }
 }
 
-function performShotToRightGoal() {
+function performChargedShot() {
     let shooter = players[0];
     if (!shooter) return;
 
@@ -510,35 +557,57 @@ function performShotToRightGoal() {
         let bestDist = Infinity;
         players.forEach(p => {
             const d = distance(p.x, p.y, ball.x, ball.y);
-            if (d < bestDist) {
-                bestDist = d;
-                nearest = p;
-            }
+            if (d < bestDist) { bestDist = d; nearest = p; }
         });
         shooter = nearest;
     }
 
     setControlledPlayer(shooter);
 
-    // Guarantee a shot: if strict control can't be claimed, force a short one-frame control.
     if (!ensurePlayerControlForAction(shooter, 56)) {
         possession.owner = shooter;
         possession.team = "player";
         possession.lockTimer = 1;
     }
 
-    // Place ball in front of shooter and force a rightward strike direction.
+    const chargeRatio = Math.max(0.15, shotState.charge / shotState.maxCharge);
+    const power = 11 + chargeRatio * 11;
+
     ball.x = shooter.x + shooter.r + ball.radius - 2;
-    ball.y = shooter.y + controlState.dirY * 3;
+    ball.y = shooter.y + shotState.aimY * 3;
 
     const targetX = FIELD.width - 2;
-    const targetY = clamp(ball.y + controlState.dirY * 70, FIELD.goalTop + 8, FIELD.goalBottom - 8);
+    const targetY = clamp(
+        FIELD.height / 2 + shotState.aimY * 140,
+        FIELD.goalTop + 8,
+        FIELD.goalBottom - 8
+    );
     const shot = normalize(targetX - ball.x, targetY - ball.y);
-
-    const strongRightX = Math.max(0.9, shot.x);
-    releasePossession(strongRightX * 18, shot.y * 5.5);
+    releasePossession(Math.max(0.9, shot.x) * power, shot.y * (power * 0.32));
     passAssist.target = null;
     passAssist.timer = 0;
+}
+
+function performChargedPass() {
+    const selected = players[0];
+    if (!selected) return;
+    if (!ensurePlayerControlForAction(selected, 22)) return;
+
+    const chargeRatio = Math.max(0.2, passState.charge / passState.maxCharge);
+    const passSpeed = 8.0 + chargeRatio * 6.0;
+
+    const dir = normalize(controlState.dirX, controlState.dirY);
+    const teammate = findBestPassTarget(selected, dir);
+
+    if (teammate) {
+        const toMate = normalize(teammate.x - selected.x, teammate.y - selected.y);
+        releasePossession(toMate.x * passSpeed, toMate.y * passSpeed);
+        setControlledPlayer(teammate);
+        passAssist.target = teammate;
+        passAssist.timer = 40;
+    } else {
+        releasePossession(dir.x * passSpeed, dir.y * passSpeed);
+    }
 }
 
 function findBestPassTarget(selected, dir) {
@@ -629,14 +698,28 @@ function handleFieldBoundariesAndPosts() {
     }
 }
 
+function announceGoal(team) {
+    const text = team === "player" ? "Goal for the home team!" : "Goal for the away team!";
+    if (!window.speechSynthesis) return;
+    try {
+        const utter = new SpeechSynthesisUtterance(text);
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(utter);
+    } catch (err) {
+        // Speech synthesis unavailable or blocked; fall back silently
+    }
+}
+
 function detectGoals() {
     if (ball.x <= FIELD.leftGoalX && ball.y > FIELD.goalTop && ball.y < FIELD.goalBottom) {
         score.ai++;
+        announceGoal("ai");
         resetBall();
     }
 
     if (ball.x >= FIELD.rightGoalX && ball.y > FIELD.goalTop && ball.y < FIELD.goalBottom) {
         score.player++;
+        announceGoal("player");
         resetBall();
     }
 }
@@ -732,19 +815,102 @@ function draw() {
 
     // Scoreboard HUD
     const hudCx = FIELD.width / 2;
-    ctx.fillStyle = "rgba(0,0,0,0.55)";
-    ctx.fillRect(hudCx - 160, 6, 320, 68);
-    ctx.strokeStyle = "rgba(255,255,255,0.4)";
-    ctx.lineWidth = 1;
-    ctx.strokeRect(hudCx - 160, 6, 320, 68);
+    ctx.fillStyle = "rgba(0,0,0,0.72)";
+    ctx.fillRect(hudCx - 180, 6, 360, 76);
+    ctx.strokeStyle = "rgba(255,215,0,0.7)";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(hudCx - 180, 6, 360, 76);
+
     ctx.textAlign = "center";
+    ctx.fillStyle = "#67f3ff";
+    ctx.font = "bold 14px Arial";
+    ctx.fillText("HOME", hudCx - 90, 26);
+    ctx.fillStyle = "#ff7070";
+    ctx.fillText("AWAY", hudCx + 90, 26);
+
     ctx.fillStyle = "white";
-    ctx.font = "bold 30px Arial";
-    ctx.fillText(`${score.player}  -  ${score.ai}`, hudCx, 42);
-    ctx.font = "16px Arial";
+    ctx.font = "bold 38px Arial";
+    ctx.fillText(`${score.player}`, hudCx - 72, 62);
+    ctx.fillStyle = "#aaaaaa";
+    ctx.font = "bold 26px Arial";
+    ctx.fillText("-", hudCx, 58);
+    ctx.fillStyle = "white";
+    ctx.font = "bold 38px Arial";
+    ctx.fillText(`${score.ai}`, hudCx + 72, 62);
+
     ctx.fillStyle = "#ffdd77";
-    ctx.fillText(`${formatClock(matchClock)}`, hudCx, 63);
+    ctx.font = "bold 14px Arial";
+    ctx.fillText(`${formatClock(matchClock)}`, hudCx, 76);
     ctx.textAlign = "left";
+
+    // Shot charge bar and aim arrow
+    if (shotState.held) {
+        const shooter = players[0];
+        if (shooter) {
+            const chargeRatio = shotState.charge / shotState.maxCharge;
+
+            // Aim arrow toward the right goal
+            const aimLen = 55;
+            const startX = shooter.x + shotState.aimX * (shooter.r + 5);
+            const startY = shooter.y + shotState.aimY * (shooter.r + 5);
+            const endX = shooter.x + shotState.aimX * aimLen;
+            const endY = shooter.y + shotState.aimY * aimLen;
+
+            ctx.save();
+            ctx.strokeStyle = "#ffe033";
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+            ctx.lineTo(endX, endY);
+            ctx.stroke();
+
+            // Arrowhead triangle
+            const angle = Math.atan2(shotState.aimY, shotState.aimX);
+            ctx.translate(endX, endY);
+            ctx.rotate(angle);
+            ctx.fillStyle = "#ffe033";
+            ctx.beginPath();
+            ctx.moveTo(10, 0);
+            ctx.lineTo(-7, -6);
+            ctx.lineTo(-7, 6);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+
+            // Shot power bar
+            const barW = 60;
+            const barH = 10;
+            const barX = shooter.x - barW / 2;
+            const barY = shooter.y - shooter.r - 24;
+            ctx.fillStyle = "rgba(0,0,0,0.55)";
+            ctx.fillRect(barX - 1, barY - 1, barW + 2, barH + 2);
+            const barColor = chargeRatio < 0.5 ? "#6eff6e" : chargeRatio < 0.8 ? "#ffe566" : "#ff5555";
+            ctx.fillStyle = barColor;
+            ctx.fillRect(barX, barY, barW * chargeRatio, barH);
+            ctx.strokeStyle = "white";
+            ctx.lineWidth = 1;
+            ctx.strokeRect(barX, barY, barW, barH);
+        }
+    }
+
+    // Pass charge bar
+    if (passState.held) {
+        const selected = players[0];
+        if (selected) {
+            const chargeRatio = passState.charge / passState.maxCharge;
+            const barW = 60;
+            const barH = 8;
+            const barX = selected.x - barW / 2;
+            const barY = selected.y - selected.r - 24;
+            ctx.fillStyle = "rgba(0,0,0,0.55)";
+            ctx.fillRect(barX - 1, barY - 1, barW + 2, barH + 2);
+            ctx.fillStyle = "#66aaff";
+            ctx.fillRect(barX, barY, barW * chargeRatio, barH);
+            ctx.strokeStyle = "white";
+            ctx.lineWidth = 1;
+            ctx.strokeRect(barX, barY, barW, barH);
+        }
+    }
 }
 
 function formatClock(value) {
@@ -786,7 +952,11 @@ function openPauseMenu() {
     pauseMenuEl = menu;
 
     menu.querySelector("#menu-team").onclick = () => openTeamManagementPanel();
-    menu.querySelector("#menu-instructions").onclick = () => showMenuOverlayMessage("Controls: WASD move, N pass, M shoot, L tackle, K switch on defense. Press P to open/close this menu.");
+    menu.querySelector("#menu-instructions").onclick = () => showMenuOverlayMessage(
+        "Controls: WASD move | Hold N then release to pass (longer = stronger) | " +
+        "Hold M and aim with WASD then release to shoot (longer = stronger) | " +
+        "L tackle | K switch on defense | P pause menu."
+    );
     menu.querySelector("#menu-exit").onclick = () => exitToMainMenu();
     menu.querySelector("#menu-resume").onclick = () => togglePauseMenu();
 }
@@ -912,8 +1082,8 @@ document.addEventListener("keydown", e => {
     const selected = players[0];
     if (!selected) return;
 
-    if (key === "n") performPass();
-    if (key === "m") performShotToRightGoal();
+    if (key === "n" && !e.repeat) { passState.held = true; passState.charge = 0; }
+    if (key === "m" && !e.repeat) { shotState.held = true; shotState.charge = 0; shotState.aimX = controlState.dirX; shotState.aimY = controlState.dirY; }
     if (key === "l") attemptTackle();
 
     // K only on defense (no player possession)
@@ -925,4 +1095,15 @@ document.addEventListener("keydown", e => {
 document.addEventListener("keyup", e => {
     const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
     setDirection(key, false);
+
+    if (key === "m" && shotState.held) {
+        shotState.held = false;
+        if (matchRunning && !matchPaused) performChargedShot();
+        shotState.charge = 0;
+    }
+    if (key === "n" && passState.held) {
+        passState.held = false;
+        if (matchRunning && !matchPaused) performChargedPass();
+        passState.charge = 0;
+    }
 });
