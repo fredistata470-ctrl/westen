@@ -1210,6 +1210,19 @@ function draw() {
         }
     }
 
+    // Controls legend (bottom of field)
+    const legendText = "Arrow Keys: Move  |  Space: Shoot  |  Z: Tackle  |  X: Pass";
+    ctx.font = "bold 13px Arial";
+    const legendW = ctx.measureText(legendText).width + 20;
+    const legendX = (FIELD.width - legendW) / 2;
+    const legendY = FIELD.height - 10;
+    ctx.fillStyle = "rgba(0,0,0,0.55)";
+    ctx.fillRect(legendX, legendY - 17, legendW, 22);
+    ctx.fillStyle = "rgba(255,255,255,0.85)";
+    ctx.textAlign = "center";
+    ctx.fillText(legendText, FIELD.width / 2, legendY);
+    ctx.textAlign = "left";
+
     // In-flight pass assist indicator: circle around the intended recipient
     if (passAssist.timer > 0 && passAssist.target) {
         const t = passAssist.target;
@@ -1401,15 +1414,20 @@ function clamp(v, min, max) {
 }
 
 function setDirection(key, pressed) {
-    if (key === "w") input.up = pressed;
-    if (key === "s") input.down = pressed;
-    if (key === "a") input.left = pressed;
-    if (key === "d") input.right = pressed;
+    if (key === "w" || key === "ArrowUp") input.up = pressed;
+    if (key === "s" || key === "ArrowDown") input.down = pressed;
+    if (key === "a" || key === "ArrowLeft") input.left = pressed;
+    if (key === "d" || key === "ArrowRight") input.right = pressed;
 }
 
 document.addEventListener("keydown", e => {
     if (!matchRunning) return;
     const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+
+    // Prevent arrow keys and space from scrolling the page during gameplay
+    if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key) || e.key === " ") {
+        e.preventDefault();
+    }
 
     if (key === "p") {
         togglePauseMenu();
@@ -1427,8 +1445,11 @@ document.addEventListener("keydown", e => {
     if (!selected) return;
 
     if (key === "n" && !e.repeat) { passState.held = true; passState.charge = 0; }
+    if (key === "x" && !e.repeat) { passState.held = true; passState.charge = 0; }
     if (key === "m" && !e.repeat) { shotState.held = true; shotState.charge = 0; shotState.aimX = controlState.dirX; shotState.aimY = controlState.dirY; }
+    if (key === " " && !e.repeat) { shotState.held = true; shotState.charge = 0; shotState.aimX = controlState.dirX; shotState.aimY = controlState.dirY; }
     if (key === "l" && tackleCooldown <= 0) { tackleActive = true; tackleCooldown = TACKLE_COOLDOWN_FRAMES; tackleTimer = 0; }
+    if (key === "z" && tackleCooldown <= 0) { tackleActive = true; tackleCooldown = TACKLE_COOLDOWN_FRAMES; tackleTimer = 0; }
 
     // K: smart-switch to player nearest the ball on defense
     if (key === "k" && players.length > 1 && possession.team !== "player") {
@@ -1446,12 +1467,12 @@ document.addEventListener("keyup", e => {
     const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
     setDirection(key, false);
 
-    if (key === "m" && shotState.held) {
+    if ((key === "m" || key === " ") && shotState.held) {
         shotState.held = false;
         if (matchRunning && !matchPaused) performChargedShot();
         shotState.charge = 0;
     }
-    if (key === "n" && passState.held) {
+    if ((key === "n" || key === "x") && passState.held) {
         passState.held = false;
         if (matchRunning && !matchPaused) performChargedPass();
         passState.charge = 0;
