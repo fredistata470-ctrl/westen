@@ -85,6 +85,12 @@ const passState = { held: false, charge: 0, maxCharge: 60 };
 const PASS_ASSIST_COLOR = "#66aaff";
 const PASS_TARGET_RADIUS_OFFSET = 9;
 
+// Goalie save constants
+const GOALIE_CATCH_LOCK_DURATION = 18; // frames ball is held after a save (~0.3s at 60fps)
+const GOAL_MOUTH_BUFFER = 4;           // px: keeps ball from embedding inside goal mouth
+// Minimum rightward directional component required to shoot toward the right goal
+const MIN_SHOOTING_DIR_X = 0.2;
+
 function showFormationSelect(onSelect) {
     screen.innerHTML = "";
     const div = document.createElement("div");
@@ -214,8 +220,8 @@ function update() {
     detectGoals();
 
     if (!possession.owner) {
-        ball.vx *= 0.97;
-        ball.vy *= 0.97;
+        ball.vx *= 0.985;
+        ball.vy *= 0.985;
         if (Math.abs(ball.vx) < 0.03) ball.vx = 0;
         if (Math.abs(ball.vy) < 0.03) ball.vy = 0;
     }
@@ -372,7 +378,17 @@ function updateAIOutfield() {
         goaliePossessionTimer += 1 / 60;
         if (goaliePossessionTimer < 5) return;
 
-        const outlet = findBestAIPassTarget(carrier) || aiPlayers[0];
+        // Pick the teammate with the most space around them
+        let bestTarget = aiPlayers[0];
+        let maxSpace = -Infinity;
+        for (const mate of aiPlayers) {
+            const space = distanceToNearestOpponent(mate);
+            if (space > maxSpace) {
+                maxSpace = space;
+                bestTarget = mate;
+            }
+        }
+        const outlet = bestTarget || aiPlayers[0];
         if (outlet) {
             const outletDir = normalize(outlet.x - carrier.x, outlet.y - carrier.y);
             releasePossession(outletDir.x * 11.0, outletDir.y * 8.0);
@@ -526,26 +542,34 @@ function updateGoalie(goalie) {
     goalie.x = clamp(goalie.x, goalie.box.x + goalie.r, goalie.box.x + goalie.box.w - goalie.r);
     goalie.y = clamp(goalie.y, goalie.box.y + goalie.r, goalie.box.y + goalie.box.h - goalie.r);
 
+    // Fine-tune Y position based on ball angle (FIFA-style tracking)
+    const angleY = clamp(ball.y, FIELD.goalTop + 10, FIELD.goalBottom - 10);
+    goalie.y += (angleY - goalie.y) * 0.08;
+
     const interactionRadius = goalie.r + 10;
     if (distance(goalie.x, goalie.y, ball.x, ball.y) >= interactionRadius) return;
 
-    const canCatch = Math.random() < 0.68;
-    if (canCatch) {
+    // Strong shots are harder to catch
+    const shotSpeed = Math.hypot(ball.vx, ball.vy);
+    const catchChance = shotSpeed < 10 ? 0.75 : 0.45;
+
+    if (Math.random() < catchChance) {
         possession.owner = goalie;
         possession.team = goalie.team;
-        possession.lockTimer = 9;
+        possession.lockTimer = GOALIE_CATCH_LOCK_DURATION;
         ball.vx = 0;
         ball.vy = 0;
         return;
     }
 
-    // Otherwise the goalie blocks/parries.
-    const blockDir = goalie.team === "player" ? 1 : -1;
+    // Clean parry — push ball away from goal mouth
+    const parryDir = goalie.team === "player" ? 1 : -1;
     possession.owner = null;
     possession.team = null;
     possession.lockTimer = 0;
-    ball.vx = blockDir * (4 + Math.random() * 3);
-    ball.vy = (Math.random() - 0.5) * 5;
+
+    ball.vx = parryDir * (6 + Math.random() * 3);
+    ball.vy = (Math.random() - 0.5) * 7;
 }
 
 function updatePlayerPossession() {
@@ -628,12 +652,12 @@ function performPass() {
 
     if (teammate) {
         const toMate = normalize(teammate.x - selected.x, teammate.y - selected.y);
-        releasePossession(toMate.x * 8.6, toMate.y * 8.6);
+        releasePossession(toMate.x * 10.5, toMate.y * 7.2);
         setControlledPlayer(teammate);
         passAssist.target = teammate;
         passAssist.timer = 40;
     } else {
-        releasePossession(dir.x * 8.2, dir.y * 8.2);
+        releasePossession(dir.x * 9.8, dir.y * 7);
     }
 }
 
@@ -652,6 +676,12 @@ function performChargedShot() {
         });
         shooter = nearest;
     }
+
+    // Must be facing roughly toward the right goal to shoot
+    if (controlState.dirX < MIN_SHOOTING_DIR_X) return;
+
+    // Prevent instant re-shot after a save/possession change
+    if (possession.lockTimer > 0) return;
 
     setControlledPlayer(shooter);
 
@@ -786,6 +816,23 @@ function handleFieldBoundariesAndPosts() {
     if (ball.x >= FIELD.rightGoalX && !sideOpen) {
         ball.x = FIELD.rightGoalX - ball.radius;
         ball.vx = -Math.abs(ball.vx) * 0.65;
+    }
+
+    // Prevent ball getting stuck inside goal mouth (before a goal is scored)
+    if (
+        ball.x > FIELD.rightGoalX - GOAL_MOUTH_BUFFER &&
+        ball.y > FIELD.goalTop &&
+        ball.y < FIELD.goalBottom
+    ) {
+        ball.x = FIELD.rightGoalX - GOAL_MOUTH_BUFFER;
+    }
+
+    if (
+        ball.x < FIELD.leftGoalX + GOAL_MOUTH_BUFFER &&
+        ball.y > FIELD.goalTop &&
+        ball.y < FIELD.goalBottom
+    ) {
+        ball.x = FIELD.leftGoalX + GOAL_MOUTH_BUFFER;
     }
 }
 
@@ -1223,6 +1270,8 @@ function drawPixelPlayer(p, color, isGoalie) {
     const x = p.x;
     const y = p.y;
 
+    const walkCycle = Math.sin(Date.now() * 0.008 + x * 0.05) * 2;
+
     // body
     ctx.fillStyle = color;
     ctx.fillRect(x - 7, y - 9, 14, 18);
@@ -1231,12 +1280,15 @@ function drawPixelPlayer(p, color, isGoalie) {
     ctx.fillStyle = "#ffd7b0";
     ctx.fillRect(x - 5, y - 15, 10, 6);
 
-    // legs
+    // legs animated
     ctx.fillStyle = "#111";
-    ctx.fillRect(x - 6, y + 9, 4, 6);
-    ctx.fillRect(x + 2, y + 9, 4, 6);
+    ctx.fillRect(x - 6, y + 9, 4, 6 + walkCycle);
+    ctx.fillRect(x + 2, y + 9, 4, 6 - walkCycle);
 
-    // gloves for goalies
+    // subtle shadow
+    ctx.fillStyle = "rgba(0,0,0,0.2)";
+    ctx.fillRect(x - 8, y + 14, 16, 4);
+
     if (isGoalie) {
         ctx.fillStyle = "#ffffff";
         ctx.fillRect(x - 11, y - 2, 4, 4);
@@ -1246,6 +1298,17 @@ function drawPixelPlayer(p, color, isGoalie) {
 
 function distance(x1, y1, x2, y2) {
     return Math.hypot(x2 - x1, y2 - y1);
+}
+
+function distanceToNearestOpponent(player) {
+    let min = Infinity;
+    for (const p of players.concat(aiPlayers, [goalies.player, goalies.ai]).filter(Boolean)) {
+        if (p.team !== player.team) {
+            const d = distance(player.x, player.y, p.x, p.y);
+            if (d < min) min = d;
+        }
+    }
+    return min;
 }
 
 function clamp(v, min, max) {
