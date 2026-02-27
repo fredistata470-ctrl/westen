@@ -254,8 +254,8 @@ function update() {
     detectGoals();
 
     if (!possession.owner) {
-        ball.vx *= 0.985;
-        ball.vy *= 0.985;
+        ball.vx *= 0.95;
+        ball.vy *= 0.95;
         if (Math.abs(ball.vx) < 0.03) ball.vx = 0;
         if (Math.abs(ball.vy) < 0.03) ball.vy = 0;
     }
@@ -649,8 +649,7 @@ function updatePassAssistCapture() {
     const d = distance(passAssist.target.x, passAssist.target.y, ball.x, ball.y);
     if (d > passAssist.target.r + 16) return;
 
-    setControlledPlayer(passAssist.target);
-    possession.owner = players[0];
+    possession.owner = passAssist.target;
     possession.team = "player";
     possession.lockTimer = 12;
     ball.vx = 0;
@@ -668,6 +667,10 @@ function carryBallWithOwner() {
 
     if (possession.team === "ai") {
         dirX = -1;
+        dirY = 0;
+    } else if (possession.team === "player" && possession.owner !== players[0]) {
+        // Non-controlled player-team player: carry ball toward the AI goal
+        dirX = 1;
         dirY = 0;
     }
 
@@ -708,7 +711,6 @@ function performPass() {
     if (teammate) {
         const toMate = normalize(teammate.x - selected.x, teammate.y - selected.y);
         releasePossession(toMate.x * 10.5, toMate.y * 7.2);
-        setControlledPlayer(teammate);
         passAssist.target = teammate;
         passAssist.timer = 40;
     } else {
@@ -778,12 +780,22 @@ function performChargedPass() {
     if (teammate) {
         const toMate = normalize(teammate.x - selected.x, teammate.y - selected.y);
         releasePossession(toMate.x * passSpeed, toMate.y * passSpeed);
-        setControlledPlayer(teammate);
         passAssist.target = teammate;
         passAssist.timer = 40;
     } else {
         releasePossession(dir.x * passSpeed, dir.y * passSpeed);
     }
+}
+
+function performShot() {
+    const shooter = players[0];
+    if (!shooter) return;
+    if (!ensurePlayerControlForAction(shooter, 22)) return;
+
+    const dir = normalize(FIELD.rightGoalX - shooter.x, FIELD.height / 2 - shooter.y);
+    releasePossession(dir.x * 12, dir.y * 12);
+    passAssist.target = null;
+    passAssist.timer = 0;
 }
 
 function findBestPassTarget(selected, dir) {
@@ -1211,7 +1223,7 @@ function draw() {
     }
 
     // Controls legend (bottom of field)
-    const legendText = "Arrow Keys: Move  |  Space: Shoot  |  Z: Tackle  |  X: Pass";
+    const legendText = "Arrow Keys: Move  |  N: Pass  |  M: Shoot  |  K: Switch (def)  |  L: Tackle  |  X: Charged Pass  |  Space: Charged Shot";
     ctx.font = "bold 13px Arial";
     const legendW = ctx.measureText(legendText).width + 20;
     const legendX = (FIELD.width - legendW) / 2;
@@ -1444,22 +1456,16 @@ document.addEventListener("keydown", e => {
     const selected = players[0];
     if (!selected) return;
 
-    if (key === "n" && !e.repeat) { passState.held = true; passState.charge = 0; }
+    if (key === "n" && !e.repeat) performPass();
     if (key === "x" && !e.repeat) { passState.held = true; passState.charge = 0; }
-    if (key === "m" && !e.repeat) { shotState.held = true; shotState.charge = 0; shotState.aimX = controlState.dirX; shotState.aimY = controlState.dirY; }
+    if (key === "m" && !e.repeat) performShot();
     if (key === " " && !e.repeat) { shotState.held = true; shotState.charge = 0; shotState.aimX = controlState.dirX; shotState.aimY = controlState.dirY; }
     if (key === "l" && tackleCooldown <= 0) { tackleActive = true; tackleCooldown = TACKLE_COOLDOWN_FRAMES; tackleTimer = 0; }
     if (key === "z" && tackleCooldown <= 0) { tackleActive = true; tackleCooldown = TACKLE_COOLDOWN_FRAMES; tackleTimer = 0; }
 
-    // K: smart-switch to player nearest the ball on defense
+    // K: cycle to next player on defense only
     if (key === "k" && players.length > 1 && possession.team !== "player") {
-        let nearestIdx = 0;
-        let nearestDist = Infinity;
-        for (let i = 0; i < players.length; i++) {
-            const d = distance(players[i].x, players[i].y, ball.x, ball.y);
-            if (d < nearestDist) { nearestDist = d; nearestIdx = i; }
-        }
-        if (nearestIdx > 0) players.unshift(...players.splice(nearestIdx, 1));
+        players.push(players.shift());
     }
 });
 
@@ -1467,12 +1473,12 @@ document.addEventListener("keyup", e => {
     const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
     setDirection(key, false);
 
-    if ((key === "m" || key === " ") && shotState.held) {
+    if (key === " " && shotState.held) {
         shotState.held = false;
         if (matchRunning && !matchPaused) performChargedShot();
         shotState.charge = 0;
     }
-    if ((key === "n" || key === "x") && passState.held) {
+    if (key === "x" && passState.held) {
         passState.held = false;
         if (matchRunning && !matchPaused) performChargedPass();
         passState.charge = 0;
