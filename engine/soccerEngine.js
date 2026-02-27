@@ -27,6 +27,7 @@ const FORMATION_Y = [150, 280, 420, 550];
 const input = { up: false, down: false, left: false, right: false };
 
 const possession = { owner: null, team: null, lockTimer: 0, pickupCooldown: 0 };
+const passAssist = { target: null, timer: 0 };
 
 const controlState = { dirX: 1, dirY: 0 };
 
@@ -53,6 +54,8 @@ function initMatch() {
     possession.team = null;
     possession.lockTimer = 0;
     possession.pickupCooldown = 0;
+    passAssist.target = null;
+    passAssist.timer = 0;
 
     for (let i = 0; i < 4; i++) {
         players.push({ x: 250, y: FORMATION_Y[i], speed: 3.8, r: 15, team: "player" });
@@ -73,6 +76,7 @@ function gameLoop() {
 function update() {
     if (possession.lockTimer > 0) possession.lockTimer--;
     if (possession.pickupCooldown > 0) possession.pickupCooldown--;
+    if (passAssist.timer > 0) passAssist.timer--;
 
     moveControlledPlayer();
     updateAIOutfield();
@@ -80,6 +84,7 @@ function update() {
     updateGoalie(goalies.ai);
 
     updatePlayerPossession();
+    updatePassAssistCapture();
 
     if (possession.owner) {
         carryBallWithOwner();
@@ -294,10 +299,23 @@ function updatePlayerPossession() {
         ball.vx = 0;
         ball.vy = 0;
     }
+}
 
-    if (possession.team === "player" && possession.owner !== selected) {
-        possession.owner = selected;
-    }
+function updatePassAssistCapture() {
+    if (passAssist.timer <= 0 || !passAssist.target) return;
+    if (possession.owner || possession.pickupCooldown > 0) return;
+
+    const d = distance(passAssist.target.x, passAssist.target.y, ball.x, ball.y);
+    if (d > passAssist.target.r + 16) return;
+
+    setControlledPlayer(passAssist.target);
+    possession.owner = players[0];
+    possession.team = "player";
+    possession.lockTimer = 12;
+    ball.vx = 0;
+    ball.vy = 0;
+    passAssist.timer = 0;
+    passAssist.target = null;
 }
 
 function carryBallWithOwner() {
@@ -348,13 +366,12 @@ function performPass() {
 
     if (teammate) {
         const toMate = normalize(teammate.x - selected.x, teammate.y - selected.y);
-        releasePossession(toMate.x * 10.5, toMate.y * 10.5);
+        releasePossession(toMate.x * 8.6, toMate.y * 8.6);
         setControlledPlayer(teammate);
-        possession.owner = players[0];
-        possession.team = "player";
-        possession.lockTimer = 12;
+        passAssist.target = teammate;
+        passAssist.timer = 40;
     } else {
-        releasePossession(dir.x * 9.5, dir.y * 9.5);
+        releasePossession(dir.x * 8.2, dir.y * 8.2);
     }
 }
 
@@ -396,6 +413,8 @@ function performShotToRightGoal() {
 
     const strongRightX = Math.max(0.9, shot.x);
     releasePossession(strongRightX * 26, shot.y * 6.8);
+    passAssist.target = null;
+    passAssist.timer = 0;
 }
 
 function findBestPassTarget(selected, dir) {
@@ -507,7 +526,7 @@ function releasePossession(kickVX, kickVY) {
     possession.owner = null;
     possession.team = null;
     possession.lockTimer = 0;
-    possession.pickupCooldown = 8;
+    possession.pickupCooldown = 18;
     ball.vx = kickVX;
     ball.vy = kickVY;
 }
@@ -517,6 +536,8 @@ function resetBall() {
     possession.team = null;
     possession.lockTimer = 0;
     possession.pickupCooldown = 0;
+    passAssist.target = null;
+    passAssist.timer = 0;
     ball.x = FIELD.width / 2;
     ball.y = FIELD.height / 2;
     ball.vx = 0;
@@ -584,16 +605,6 @@ function draw() {
 
     drawPixelPlayer(goalies.player, "#f8d96a", true);
     drawPixelPlayer(goalies.ai, "#ffb17a", true);
-
-    const selected = players[0];
-    if (selected) {
-        ctx.beginPath();
-        ctx.moveTo(selected.x, selected.y);
-        ctx.lineTo(ball.x, ball.y);
-        ctx.strokeStyle = "rgba(255,255,255,0.35)";
-        ctx.lineWidth = 2;
-        ctx.stroke();
-    }
 
     ctx.fillStyle = "white";
     ctx.font = "24px Arial";
