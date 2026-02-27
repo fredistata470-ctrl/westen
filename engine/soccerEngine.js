@@ -160,7 +160,7 @@ function initMatch() {
     for (let i = 0; i < 4; i++) {
         const ph = formation.playerHome[i];
         const ah = formation.aiHome[i];
-        players.push({ x: ph.x, y: ph.y, speed: 3.8, r: 15, team: "player" });
+        players.push({ x: ph.x, y: ph.y, baseSpeed: 3.8, speed: 3.8, stamina: 100, r: 15, team: "player" });
         aiPlayers.push({ x: ah.x, y: ah.y, speed: 2.1, r: 15, team: "ai", tackleCooldown: 0 });
     }
 
@@ -204,6 +204,20 @@ function update() {
     matchClock = Math.max(0, matchClock - (1 / 60));
 
     moveControlledPlayer();
+
+    players.forEach(p => {
+        if (!p.baseSpeed) return;
+        const moving = input.up || input.down || input.left || input.right;
+        if (moving && players[0] === p) {
+            p.stamina -= 0.15;
+        } else {
+            p.stamina += 0.08;
+        }
+        p.stamina = clamp(p.stamina, 0, 100);
+        const fatigueFactor = 0.6 + (p.stamina / 100) * 0.4;
+        p.speed = p.baseSpeed * fatigueFactor;
+    });
+
     updatePlayerOutfield();
     updateAIOutfield();
     updateGoalie(goalies.player);
@@ -434,7 +448,7 @@ function updateAIOutfield() {
 
     goaliePossessionTimer = 0;
 
-    const nearGoalX = carrier.x <= 350;
+    const nearGoalX = carrier.x <= 420;
     const inShotLane = carrier.y > FIELD.goalTop - 20 && carrier.y < FIELD.goalBottom + 20;
     const nearestPlayerDef = players.reduce((best, pl) => Math.min(best, distance(pl.x, pl.y, carrier.x, carrier.y)), Infinity);
 
@@ -443,7 +457,7 @@ function updateAIOutfield() {
     carrier.x += drive.x * 1.55;
     carrier.y += drive.y * 0.95;
 
-    if (nearGoalX && inShotLane && (nearestPlayerDef > 85 || Math.random() < 0.2)) {
+    if (nearGoalX && inShotLane && (nearestPlayerDef > 85 || Math.random() < 0.35)) {
         const targetY = clamp(carrier.y + (Math.random() - 0.5) * 46, FIELD.goalTop + 12, FIELD.goalBottom - 12);
         const shotDir = normalize(FIELD.leftGoalX - ball.x, targetY - ball.y);
         releasePossession(shotDir.x * 20.5, shotDir.y * 7.5);
@@ -1357,6 +1371,13 @@ function drawPixelPlayer(p, color, isGoalie) {
         ctx.fillStyle = "#ffffff";
         ctx.fillRect(x - 11, y - 2, 4, 4);
         ctx.fillRect(x + 7, y - 2, 4, 4);
+    }
+
+    if (!isGoalie && p.team === "player" && p.stamina !== undefined) {
+        ctx.fillStyle = "black";
+        ctx.fillRect(x - 10, y - 22, 20, 4);
+        ctx.fillStyle = "#00ff88";
+        ctx.fillRect(x - 10, y - 22, (p.stamina / 100) * 20, 4);
     }
 }
 
