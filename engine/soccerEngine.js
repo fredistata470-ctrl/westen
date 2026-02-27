@@ -99,6 +99,8 @@ const GOALIE_CATCH_LOCK_DURATION = 18; // frames ball is held after a save (~0.3
 const GOAL_MOUTH_BUFFER = 4;           // px: keeps ball from embedding inside goal mouth
 // Minimum rightward directional component required to shoot toward the right goal
 const MIN_SHOOTING_DIR_X = 0.2;
+// Pickup radius offset for AI outfield players collecting a loose ball
+const AI_OUTFIELD_PICKUP_RADIUS = 14;
 
 function showFormationSelect(onSelect) {
     screen.innerHTML = "";
@@ -417,6 +419,20 @@ function updateAIOutfield() {
         }
     });
 
+    // AI outfield loose-ball pickup (mirrors player's updatePlayerPossession)
+    if (!possession.owner && possession.pickupCooldown <= 0) {
+        for (const p of aiPlayers) {
+            if (distance(p.x, p.y, ball.x, ball.y) < p.r + AI_OUTFIELD_PICKUP_RADIUS) {
+                possession.owner = p;
+                possession.team = "ai";
+                possession.lockTimer = 20;
+                ball.vx = 0;
+                ball.vy = 0;
+                break;
+            }
+        }
+    }
+
     if (possession.team !== "ai" || !possession.owner) {
         goaliePossessionTimer = 0;
         return;
@@ -442,9 +458,6 @@ function updateAIOutfield() {
         if (outlet) {
             const outletDir = normalize(outlet.x - carrier.x, outlet.y - carrier.y);
             releasePossession(outletDir.x * 11.0, outletDir.y * 8.0);
-            possession.owner = outlet;
-            possession.team = "ai";
-            possession.lockTimer = 10;
         }
         goaliePossessionTimer = 0;
         return;
