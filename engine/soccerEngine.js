@@ -10,6 +10,8 @@ let matchPaused = false;
 let pauseMenuEl = null;
 let matchClock = 180;
 let goaliePossessionTimer = 0;
+let playerGoaliePossessionTimer = 0;
+const GOALIE_AUTO_PASS_DELAY = 2; // seconds before a goalie auto-passes
 
 let tackleCooldown = 0;
 let tackleActive = false;
@@ -146,6 +148,7 @@ function initMatch() {
     passAssist.timer = 0;
     matchClock = 180;
     goaliePossessionTimer = 0;
+    playerGoaliePossessionTimer = 0;
     shotState.held = false;
     shotState.charge = 0;
     shotState.aimX = 1;
@@ -225,6 +228,7 @@ function update() {
 
     updatePlayerPossession();
     updatePassAssistCapture();
+    updatePlayerGoaliePossession();
 
     // Auto-switch controlled player to nearest when ball is loose.
     // Suppress while a pass assist is in flight so control stays on the intended recipient.
@@ -422,7 +426,7 @@ function updateAIOutfield() {
 
     if (carrier === goalies.ai) {
         goaliePossessionTimer += 1 / 60;
-        if (goaliePossessionTimer < 5) return;
+        if (goaliePossessionTimer < GOALIE_AUTO_PASS_DELAY) return;
 
         // Pick the teammate with the most space around them
         let bestTarget = aiPlayers[0];
@@ -476,6 +480,40 @@ function updateAIOutfield() {
         possession.team = "ai";
         possession.lockTimer = 10;
     }
+}
+
+function goalieAutoPassToPlayer() {
+    const goalie = goalies.player;
+    let bestTarget = null;
+    let maxSpace = -Infinity;
+    for (const mate of players) {
+        const space = distanceToNearestOpponent(mate);
+        if (space > maxSpace) {
+            maxSpace = space;
+            bestTarget = mate;
+        }
+    }
+    if (!bestTarget) return;
+    const dir = normalize(bestTarget.x - goalie.x, bestTarget.y - goalie.y);
+    releasePossession(dir.x * 10.0, dir.y * 7.5);
+    passAssist.target = bestTarget;
+    passAssist.timer = 40;
+    playerGoaliePossessionTimer = 0;
+}
+
+function updatePlayerGoaliePossession() {
+    if (possession.team !== "player" || possession.owner !== goalies.player) {
+        playerGoaliePossessionTimer = 0;
+        return;
+    }
+    // Reset timer while the player is actively pressing direction keys (lining up a pass)
+    if (input.up || input.down || input.left || input.right) {
+        playerGoaliePossessionTimer = 0;
+        return;
+    }
+    playerGoaliePossessionTimer += 1 / 60;
+    if (playerGoaliePossessionTimer < GOALIE_AUTO_PASS_DELAY) return;
+    goalieAutoPassToPlayer();
 }
 
 function isClosestAIToBall(player) {
@@ -701,6 +739,37 @@ function ensurePlayerControlForAction(selected, range = 26) {
 }
 
 function performPass() {
+    // If the player's goalie has the ball, pass from the goalie to the best-aligned teammate
+    if (possession.owner === goalies.player && possession.team === "player") {
+        const goalie = goalies.player;
+        const passDir = normalize(controlState.dirX, controlState.dirY);
+        let best = null;
+        let bestScore = -Infinity;
+        for (const mate of players) {
+            const vx = mate.x - goalie.x;
+            const vy = mate.y - goalie.y;
+            const dist = Math.hypot(vx, vy);
+            if (dist < 30) continue;
+            const n = normalize(vx, vy);
+            const alignment = n.x * passDir.x + n.y * passDir.y;
+            const score = alignment * 800 - dist * 0.3;
+            if (score > bestScore) {
+                bestScore = score;
+                best = mate;
+            }
+        }
+        if (best) {
+            const toMate = normalize(best.x - goalie.x, best.y - goalie.y);
+            releasePossession(toMate.x * 10.0, toMate.y * 7.5);
+            passAssist.target = best;
+            passAssist.timer = 40;
+        } else {
+            releasePossession(passDir.x * 9.0, passDir.y * 7.0);
+        }
+        playerGoaliePossessionTimer = 0;
+        return;
+    }
+
     const selected = players[0];
     if (!selected) return;
     if (!ensurePlayerControlForAction(selected, 22)) return;
@@ -1223,7 +1292,7 @@ function draw() {
     }
 
     // Controls legend (bottom of field)
-    const legendText = "Arrow Keys: Move  |  N: Pass  |  M: Shoot  |  K: Switch (def)  |  L: Tackle  |  X: Charged Pass  |  Space: Charged Shot";
+    const legendText = "Arrow Keys: Move  |  N: Pass (goalie too)  |  M: Shoot  |  K: Switch (def)  |  L: Tackle  |  X: Charged Pass  |  Space: Charged Shot";
     ctx.font = "bold 13px Arial";
     const legendW = ctx.measureText(legendText).width + 20;
     const legendX = (FIELD.width - legendW) / 2;
@@ -1298,9 +1367,10 @@ function openPauseMenu() {
     };
     menu.querySelector("#menu-team").onclick = () => openTeamManagementPanel();
     menu.querySelector("#menu-instructions").onclick = () => showMenuOverlayMessage(
-        "Controls: WASD move | Hold N then release to pass — aims toward the player you face, " +
-        "control switches to them automatically | " +
+        "Controls: WASD move | N: pass (works from outfield players AND from goalie — aim with WASD first) — " +
+        "control switches to the recipient automatically | " +
         "Hold M and aim with WASD then release to shoot (longer = stronger) | " +
+        "Goalie auto-passes after 2 s if you don't act | " +
         "L tackle | K switch on defense | P pause menu."
     );
     menu.querySelector("#menu-exit").onclick = () => exitToMainMenu();
