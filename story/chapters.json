@@ -1,0 +1,42 @@
+[
+  {
+    "type": "story",
+    "lines": [
+      { "speaker": "Narrator", "text": "Prologue..." },
+      { "speaker": "Coach", "text": "Welcome to Westen." }
+    ]
+  },
+  {
+    "type": "story",
+    "lines": [
+      { "speaker": "Narrator", "text": "Chapter 1 begins..." }
+    ]
+  },
+  {
+    "type": "story",
+    "lines": [
+      { "speaker": "Narrator", "text": "Chapter 2..." }
+    ]
+  },
+  {
+    "type": "match",
+    "preGame": {
+      "type": "story",
+      "lines": [
+        { "speaker": "Reporter", "text": "How do you feel today?" }
+      ]
+    },
+    "postGame": {
+      "type": "story",
+      "lines": [
+        { "speaker": "Reporter", "text": "Great performance." }
+      ]
+    },
+    "storyAfterMatch": {
+      "type": "story",
+      "lines": [
+        { "speaker": "Narrator", "text": "System cycle unlocked: Pre-Game Interview → Match → Post-Game Interview → Story → Next Chapter." }
+      ]
+    }
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "id": "westen_fc",
+    "name": "Westen FC",
+    "color": "blue",
+    "formation": "2-2"
+  },
+  {
+    "id": "northbridge_united",
+    "name": "Northbridge United",
+    "color": "red",
+    "formation": "2-2"
+  }
+]
