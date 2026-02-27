@@ -34,6 +34,44 @@ const AI_HOME = [
     { x: 1080, y: 650 }
 ];
 
+// Formation definitions for 4-player teams (2-2, 3-1, 1-3)
+const FORMATIONS = {
+    "2-2": {
+        label: "2-2 Balanced",
+        playerHome: [
+            { x: 290, y: 240 }, { x: 290, y: 580 },
+            { x: 480, y: 300 }, { x: 480, y: 520 }
+        ],
+        aiHome: [
+            { x: 1110, y: 240 }, { x: 1110, y: 580 },
+            { x: 920,  y: 300 }, { x: 920,  y: 520 }
+        ]
+    },
+    "3-1": {
+        label: "3-1 Defensive",
+        playerHome: [
+            { x: 260, y: 200 }, { x: 260, y: 410 }, { x: 260, y: 620 },
+            { x: 490, y: 410 }
+        ],
+        aiHome: [
+            { x: 1140, y: 200 }, { x: 1140, y: 410 }, { x: 1140, y: 620 },
+            { x: 910,  y: 410 }
+        ]
+    },
+    "1-3": {
+        label: "1-3 Attacking",
+        playerHome: [
+            { x: 260, y: 410 },
+            { x: 460, y: 190 }, { x: 490, y: 410 }, { x: 460, y: 630 }
+        ],
+        aiHome: [
+            { x: 1140, y: 410 },
+            { x: 940,  y: 190 }, { x: 910, y: 410 }, { x: 940, y: 630 }
+        ]
+    }
+};
+let currentFormation = "2-2";
+
 const input = { up: false, down: false, left: false, right: false };
 
 const possession = { owner: null, team: null, lockTimer: 0, pickupCooldown: 0 };
@@ -44,20 +82,39 @@ const controlState = { dirX: 1, dirY: 0 };
 const shotState = { held: false, charge: 0, maxCharge: 90, aimX: 1, aimY: 0 };
 const passState = { held: false, charge: 0, maxCharge: 60 };
 
+function showFormationSelect(onSelect) {
+    screen.innerHTML = "";
+    const div = document.createElement("div");
+    div.style.display = "flex";
+    div.style.flexDirection = "column";
+    div.style.alignItems = "center";
+    div.style.gap = "10px";
+    div.innerHTML = `<h2 style="margin-bottom:6px">Select Formation</h2><p style="margin:0 0 8px">Choose your team shape (4 players):</p>`;
+    Object.entries(FORMATIONS).forEach(([key, f]) => {
+        const btn = document.createElement("button");
+        btn.textContent = f.label + (key === currentFormation ? " [selected]" : "");
+        btn.onclick = () => { currentFormation = key; onSelect(); };
+        div.appendChild(btn);
+    });
+    screen.appendChild(div);
+}
+
 function startMatch(chapter, done) {
     onMatchComplete = done || null;
-    screen.innerHTML = "";
-    canvas = document.createElement("canvas");
-    canvas.width = FIELD.width;
-    canvas.height = FIELD.height;
-    screen.appendChild(canvas);
-    ctx = canvas.getContext("2d");
+    showFormationSelect(() => {
+        screen.innerHTML = "";
+        canvas = document.createElement("canvas");
+        canvas.width = FIELD.width;
+        canvas.height = FIELD.height;
+        screen.appendChild(canvas);
+        ctx = canvas.getContext("2d");
 
-    initMatch();
-    matchPaused = false;
-    removePauseMenu();
-    matchRunning = true;
-    requestAnimationFrame(gameLoop);
+        initMatch();
+        matchPaused = false;
+        removePauseMenu();
+        matchRunning = true;
+        requestAnimationFrame(gameLoop);
+    });
 }
 
 function initMatch() {
@@ -80,9 +137,12 @@ function initMatch() {
     passState.held = false;
     passState.charge = 0;
 
+    const formation = FORMATIONS[currentFormation] || FORMATIONS["2-2"];
     for (let i = 0; i < 4; i++) {
-        players.push({ x: 300, y: FORMATION_Y[i], speed: 3.8, r: 15, team: "player" });
-        aiPlayers.push({ x: AI_HOME[i].x, y: AI_HOME[i].y, speed: 1.9, r: 15, team: "ai" });
+        const ph = formation.playerHome[i];
+        const ah = formation.aiHome[i];
+        players.push({ x: ph.x, y: ph.y, speed: 3.8, r: 15, team: "player" });
+        aiPlayers.push({ x: ah.x, y: ah.y, speed: 2.1, r: 15, team: "ai" });
     }
 
     goalies.player = { x: 78, y: FIELD.height / 2, r: 17, speed: 2.95, box: FIELD.playerBox, team: "player", reactionTimer: 0, errorY: 0, diveTimer: 0, diveDir: 0 };
@@ -122,6 +182,22 @@ function update() {
 
     updatePlayerPossession();
     updatePassAssistCapture();
+
+    // Auto-switch controlled player to nearest when ball is loose
+    if (!possession.owner && possession.pickupCooldown <= 0 && players.length > 1) {
+        let nearestIdx = 0;
+        let nearestDist = distance(players[0].x, players[0].y, ball.x, ball.y);
+        for (let i = 1; i < players.length; i++) {
+            const d = distance(players[i].x, players[i].y, ball.x, ball.y);
+            if (d < nearestDist - PLAYER_SWITCH_HYSTERESIS) {
+                nearestDist = d;
+                nearestIdx = i;
+            }
+        }
+        if (nearestIdx > 0) {
+            players.unshift(...players.splice(nearestIdx, 1));
+        }
+    }
 
     if (possession.owner) {
         carryBallWithOwner();
@@ -185,14 +261,22 @@ const DEFENSIVE_BASE_X   = 350;
 const DEFENSIVE_SPREAD_X = 80;
 const DEFENSIVE_MIN_X    = 200;
 const DEFENSIVE_MAX_X    = 520;
+// Factor to pull defenders back toward their own half relative to formation home X
+const DEFENSIVE_PULLBACK_FACTOR = 0.88;
 
 // How far the ball can be before the goalie fully centres on the goal-mouth
 const GOALIE_MAX_TRACK_DIST = 900;
+// Ball prediction lookahead frames: shot vs normal
+const GOALIE_SHOT_LOOKAHEAD   = 10;
+const GOALIE_NORMAL_LOOKAHEAD = 4;
 
 // Controls how inaccurately the AI goalie reads the player's shot aim (higher = easier to fake)
 const GOALIE_AIM_READ_NOISE = 140;
 // Controls how much the AI goalie anticipates the aimed corner vs reacting to ball position
 const GOALIE_AIM_READ_WEIGHT = 0.55;
+
+// Hysteresis distance for auto-switching controlled player (prevents rapid flickering)
+const PLAYER_SWITCH_HYSTERESIS = 25;
 
 function updatePlayerOutfield() {
     const carrier = possession.team === "player" ? possession.owner : null;
@@ -208,13 +292,15 @@ function updatePlayerOutfield() {
             targetX = clamp(carrier.x + off.dx, 200, FIELD.width - 250);
             targetY = clamp(carrier.y + off.dy, 60, FIELD.height - 60);
         } else if (aiHasBall) {
-            // Defending: drop into a compact defensive shape
-            targetX = clamp(DEFENSIVE_BASE_X + (i % 2) * DEFENSIVE_SPREAD_X, DEFENSIVE_MIN_X, DEFENSIVE_MAX_X);
-            targetY = FORMATION_Y[i] || FORMATION_Y[0];
+            // Defending: pull back toward formation home in defensive half
+            const fHome = (FORMATIONS[currentFormation] || FORMATIONS["2-2"]).playerHome[i] || { x: DEFENSIVE_BASE_X, y: FORMATION_Y[i] };
+            targetX = clamp(fHome.x * DEFENSIVE_PULLBACK_FACTOR, DEFENSIVE_MIN_X, DEFENSIVE_MAX_X);
+            targetY = fHome.y;
         } else {
             // Ball loose: hold formation home positions
-            targetX = 300;
-            targetY = FORMATION_Y[i] || FORMATION_Y[0];
+            const fHome = (FORMATIONS[currentFormation] || FORMATIONS["2-2"]).playerHome[i] || { x: 300, y: FORMATION_Y[i] };
+            targetX = fHome.x;
+            targetY = fHome.y;
         }
 
         const to = normalize(targetX - p.x, targetY - p.y);
@@ -239,8 +325,9 @@ function updateAIOutfield() {
     }, null)?.p;
 
     aiPlayers.forEach((p, i) => {
-        let targetX = AI_HOME[i].x;
-        let targetY = AI_HOME[i].y;
+        const aiFormHome = (FORMATIONS[currentFormation] || FORMATIONS["2-2"]).aiHome[i] || AI_HOME[i];
+        let targetX = aiFormHome.x;
+        let targetY = aiFormHome.y;
 
         if (p === pressAgent) {
             targetX = playerCarrier ? playerCarrier.x : ball.x;
@@ -284,7 +371,7 @@ function updateAIOutfield() {
         const outlet = findBestAIPassTarget(carrier) || aiPlayers[0];
         if (outlet) {
             const outletDir = normalize(outlet.x - carrier.x, outlet.y - carrier.y);
-            releasePossession(outletDir.x * 8.4, outletDir.y * 5.9);
+            releasePossession(outletDir.x * 11.0, outletDir.y * 8.0);
             possession.owner = outlet;
             possession.team = "ai";
             possession.lockTimer = 10;
@@ -307,7 +394,7 @@ function updateAIOutfield() {
     if (nearGoalX && inShotLane && (nearestPlayerDef > 85 || Math.random() < 0.2)) {
         const targetY = clamp(carrier.y + (Math.random() - 0.5) * 46, FIELD.goalTop + 12, FIELD.goalBottom - 12);
         const shotDir = normalize(FIELD.leftGoalX - ball.x, targetY - ball.y);
-        releasePossession(shotDir.x * 18.2, shotDir.y * 6.4);
+        releasePossession(shotDir.x * 20.5, shotDir.y * 7.5);
         return;
     }
 
@@ -315,10 +402,10 @@ function updateAIOutfield() {
     if (!bestMate) return;
 
     const laneGain = (carrier.x - bestMate.x);
-    const shouldPass = (nearestPlayerDef < 80 && Math.random() < 0.18) || (laneGain > 45 && Math.random() < 0.11);
+    const shouldPass = (nearestPlayerDef < 95 && Math.random() < 0.24) || (laneGain > 35 && Math.random() < 0.16);
     if (shouldPass) {
         const passDir = normalize(bestMate.x - carrier.x, bestMate.y - carrier.y);
-        releasePossession(passDir.x * 6.6, passDir.y * 5.3);
+        releasePossession(passDir.x * 9.5, passDir.y * 8.2);
         possession.owner = bestMate;
         possession.team = "ai";
         possession.lockTimer = 10;
@@ -389,10 +476,10 @@ function updateGoalie(goalie) {
     }
 
     // Detect if a shot is incoming toward this goalie's goal
-    const shotIncoming = (goalie.team === "player" && ball.vx < -8) ||
-                         (goalie.team === "ai" && ball.vx > 8);
+    const shotIncoming = (goalie.team === "player" && ball.vx < -7) ||
+                         (goalie.team === "ai" && ball.vx > 7);
 
-    const predictedY = ball.y + ball.vy * (shotIncoming ? 8 : 4) + goalie.errorY;
+    const predictedY = ball.y + ball.vy * (shotIncoming ? GOALIE_SHOT_LOOKAHEAD : GOALIE_NORMAL_LOOKAHEAD) + goalie.errorY;
     const ballDist = distance(goalie.x, goalie.y, ball.x, ball.y);
 
     // Each goalie only fully tracks the ball when it is a threat to their own goal
@@ -416,16 +503,16 @@ function updateGoalie(goalie) {
     const defendY = clamp(blendedY, FIELD.goalTop - 25, FIELD.goalBottom + 25);
     const defendX = goalie.team === "player" ? 85 : 1315;
 
-    const activeSpeed = shotIncoming ? goalie.speed * 1.7 : goalie.speed;
+    const activeSpeed = shotIncoming ? goalie.speed * 2.0 : goalie.speed;
     const to = normalize(defendX - goalie.x, defendY - goalie.y);
     goalie.x += to.x * activeSpeed;
     goalie.y += to.y * activeSpeed;
 
     if (goalie.diveTimer > 0) {
         goalie.diveTimer--;
-        goalie.y += goalie.diveDir * 3.4;
-    } else if (shotIncoming && Math.random() < 0.04) {
-        goalie.diveTimer = 5 + Math.floor(Math.random() * 6);
+        goalie.y += goalie.diveDir * 4.8;
+    } else if (shotIncoming && Math.random() < 0.07) {
+        goalie.diveTimer = 8 + Math.floor(Math.random() * 7);
         goalie.diveDir = (ball.y < goalie.y) ? -1 : 1;
     } else if (Math.random() < 0.004) {
         goalie.diveTimer = 3 + Math.floor(Math.random() * 4);
@@ -594,7 +681,7 @@ function performChargedPass() {
     if (!ensurePlayerControlForAction(selected, 22)) return;
 
     const chargeRatio = Math.max(0.2, passState.charge / passState.maxCharge);
-    const passSpeed = 8.0 + chargeRatio * 6.0;
+    const passSpeed = 10.5 + chargeRatio * 8.5;
 
     const dir = normalize(controlState.dirX, controlState.dirY);
     const teammate = findBestPassTarget(selected, dir);
@@ -813,7 +900,7 @@ function draw() {
     drawPixelPlayer(goalies.player, "#f8d96a", true);
     drawPixelPlayer(goalies.ai, "#ffb17a", true);
 
-    // Scoreboard HUD
+    // Scoreboard HUD (center top)
     const hudCx = FIELD.width / 2;
     ctx.fillStyle = "rgba(0,0,0,0.72)";
     ctx.fillRect(hudCx - 180, 6, 360, 76);
@@ -843,7 +930,61 @@ function draw() {
     ctx.fillText(`${formatClock(matchClock)}`, hudCx, 76);
     ctx.textAlign = "left";
 
-    // Shot charge bar and aim arrow
+    // Corner scoreboard (top-left) – always visible even on smaller viewports
+    ctx.fillStyle = "rgba(0,0,0,0.82)";
+    ctx.fillRect(8, 8, 130, 52);
+    ctx.strokeStyle = "rgba(255,215,0,0.85)";
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(8, 8, 130, 52);
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#67f3ff";
+    ctx.font = "bold 11px Arial";
+    ctx.fillText("HOME", 43, 22);
+    ctx.fillStyle = "#ff7070";
+    ctx.fillText("AWAY", 103, 22);
+    ctx.fillStyle = "white";
+    ctx.font = "bold 28px Arial";
+    ctx.fillText(`${score.player}`, 38, 50);
+    ctx.fillStyle = "#aaa";
+    ctx.font = "bold 20px Arial";
+    ctx.fillText("-", 73, 48);
+    ctx.fillStyle = "white";
+    ctx.font = "bold 28px Arial";
+    ctx.fillText(`${score.ai}`, 108, 50);
+    ctx.textAlign = "left";
+
+    // Bottom HUD: shot/pass power bar (always visible when charging)
+    if (shotState.held || passState.held) {
+        const isShot = shotState.held;
+        const chargeRatio = isShot
+            ? shotState.charge / shotState.maxCharge
+            : passState.charge / passState.maxCharge;
+        const hudBarW = 280;
+        const hudBarH = 18;
+        const hudBarX = FIELD.width / 2 - hudBarW / 2;
+        const hudBarY = FIELD.height - 36;
+        const label = isShot ? "SHOT POWER" : "PASS POWER";
+        const barColor = isShot
+            ? (chargeRatio < 0.5 ? "#6eff6e" : chargeRatio < 0.8 ? "#ffe566" : "#ff5555")
+            : "#66aaff";
+
+        ctx.fillStyle = "rgba(0,0,0,0.7)";
+        ctx.fillRect(hudBarX - 2, hudBarY - 20, hudBarW + 4, hudBarH + 24);
+        ctx.fillStyle = "rgba(255,255,255,0.85)";
+        ctx.font = "bold 12px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText(label, FIELD.width / 2, hudBarY - 6);
+        ctx.textAlign = "left";
+        ctx.fillStyle = "#333";
+        ctx.fillRect(hudBarX, hudBarY, hudBarW, hudBarH);
+        ctx.fillStyle = barColor;
+        ctx.fillRect(hudBarX, hudBarY, hudBarW * chargeRatio, hudBarH);
+        ctx.strokeStyle = "white";
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(hudBarX, hudBarY, hudBarW, hudBarH);
+    }
+
+    // Shot charge bar and aim arrow (above player)
     if (shotState.held) {
         const shooter = players[0];
         if (shooter) {
@@ -877,13 +1018,13 @@ function draw() {
             ctx.fill();
             ctx.restore();
 
-            // Shot power bar
-            const barW = 60;
-            const barH = 10;
+            // Shot power bar above player
+            const barW = 70;
+            const barH = 12;
             const barX = shooter.x - barW / 2;
-            const barY = shooter.y - shooter.r - 24;
-            ctx.fillStyle = "rgba(0,0,0,0.55)";
-            ctx.fillRect(barX - 1, barY - 1, barW + 2, barH + 2);
+            const barY = shooter.y - shooter.r - 28;
+            ctx.fillStyle = "rgba(0,0,0,0.65)";
+            ctx.fillRect(barX - 2, barY - 2, barW + 4, barH + 4);
             const barColor = chargeRatio < 0.5 ? "#6eff6e" : chargeRatio < 0.8 ? "#ffe566" : "#ff5555";
             ctx.fillStyle = barColor;
             ctx.fillRect(barX, barY, barW * chargeRatio, barH);
@@ -893,17 +1034,17 @@ function draw() {
         }
     }
 
-    // Pass charge bar
+    // Pass charge bar above player
     if (passState.held) {
         const selected = players[0];
         if (selected) {
             const chargeRatio = passState.charge / passState.maxCharge;
-            const barW = 60;
-            const barH = 8;
+            const barW = 70;
+            const barH = 12;
             const barX = selected.x - barW / 2;
-            const barY = selected.y - selected.r - 24;
-            ctx.fillStyle = "rgba(0,0,0,0.55)";
-            ctx.fillRect(barX - 1, barY - 1, barW + 2, barH + 2);
+            const barY = selected.y - selected.r - 28;
+            ctx.fillStyle = "rgba(0,0,0,0.65)";
+            ctx.fillRect(barX - 2, barY - 2, barW + 4, barH + 4);
             ctx.fillStyle = "#66aaff";
             ctx.fillRect(barX, barY, barW * chargeRatio, barH);
             ctx.strokeStyle = "white";
@@ -942,6 +1083,7 @@ function openPauseMenu() {
     menu.style.background = "rgba(0,0,0,0.75)";
     menu.innerHTML = `
         <h2>Pause Menu</h2>
+        <button id="menu-formation">Formation: ${(FORMATIONS[currentFormation] || FORMATIONS["2-2"]).label}</button>
         <button id="menu-team">Team Management</button>
         <button id="menu-instructions">Instructions</button>
         <button id="menu-exit">Exit to Main Menu</button>
@@ -951,6 +1093,13 @@ function openPauseMenu() {
     screen.appendChild(menu);
     pauseMenuEl = menu;
 
+    menu.querySelector("#menu-formation").onclick = () => {
+        const keys = Object.keys(FORMATIONS);
+        const idx = keys.indexOf(currentFormation);
+        currentFormation = keys[(idx + 1) % keys.length];
+        menu.querySelector("#menu-formation").textContent = "Formation: " + (FORMATIONS[currentFormation] || FORMATIONS["2-2"]).label;
+        showMenuOverlayMessage("Formation changed to " + FORMATIONS[currentFormation].label + ". Home positions update immediately; starting positions apply on next match.");
+    };
     menu.querySelector("#menu-team").onclick = () => openTeamManagementPanel();
     menu.querySelector("#menu-instructions").onclick = () => showMenuOverlayMessage(
         "Controls: WASD move | Hold N then release to pass (longer = stronger) | " +
@@ -1086,9 +1235,15 @@ document.addEventListener("keydown", e => {
     if (key === "m" && !e.repeat) { shotState.held = true; shotState.charge = 0; shotState.aimX = controlState.dirX; shotState.aimY = controlState.dirY; }
     if (key === "l") attemptTackle();
 
-    // K only on defense (no player possession)
+    // K: smart-switch to player nearest the ball on defense
     if (key === "k" && players.length > 1 && possession.team !== "player") {
-        players.push(players.shift());
+        let nearestIdx = 0;
+        let nearestDist = Infinity;
+        for (let i = 0; i < players.length; i++) {
+            const d = distance(players[i].x, players[i].y, ball.x, ball.y);
+            if (d < nearestDist) { nearestDist = d; nearestIdx = i; }
+        }
+        if (nearestIdx > 0) players.unshift(...players.splice(nearestIdx, 1));
     }
 });
 
