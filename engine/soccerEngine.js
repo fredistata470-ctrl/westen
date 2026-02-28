@@ -92,6 +92,9 @@ const controlState = { dirX: 1, dirY: 0 };
 const shotState = { held: false, charge: 0, maxCharge: 90, aimX: 1, aimY: 0 };
 const passState = { held: false, charge: 0, maxCharge: 60 };
 
+// Pre-generated crowd pixel positions for efficient rendering
+let crowdPixels = [];
+
 const PASS_ASSIST_COLOR = "#66aaff";
 const PASS_TARGET_RADIUS_OFFSET = 9;
 const PASS_ASSIST_STEER_RANGE = 300;    // px: distance within which magnetic steering is active
@@ -183,14 +186,14 @@ function initMatch() {
     for (let i = 0; i < 4; i++) {
         const ph = formation.playerHome[i];
         const ah = formation.aiHome[i];
-        players.push({ x: ph.x, y: ph.y, baseSpeed: 3.8, speed: 3.8, stamina: 100, r: 15, team: "player", vx: 0, vy: 0, animOffset: 0, number: i + 1 });
+        players.push({ x: ph.x, y: ph.y, baseSpeed: 3.8, speed: 3.8, stamina: 100, r: 11, team: "player", vx: 0, vy: 0, animOffset: 0, number: i + 1 });
         aiPlayers.push({
             x: ah.x,
             y: ah.y,
             baseSpeed: 2.6,
             speed: 2.6,
             stamina: 100,
-            r: 15,
+            r: 11,
             team: "ai",
             tackleCooldown: 0,
             vx: 0,
@@ -200,8 +203,18 @@ function initMatch() {
         });
     }
 
-    goalies.player = { x: 78, y: FIELD.height / 2, r: 11, speed: 2.95, box: FIELD.playerBox, team: "player", reactionTimer: 0, errorY: 0, diveTimer: 0, diveDir: 0, animOffset: 0 };
-    goalies.ai = { x: 1322, y: FIELD.height / 2, r: 11, speed: 2.95, box: FIELD.aiBox, team: "ai", reactionTimer: 0, errorY: 0, diveTimer: 0, diveDir: 0, animOffset: 0 };
+    goalies.player = { x: 78, y: FIELD.height / 2, r: 13, speed: 2.95, box: FIELD.playerBox, team: "player", reactionTimer: 0, errorY: 0, diveTimer: 0, diveDir: 0, animOffset: 0 };
+    goalies.ai = { x: 1322, y: FIELD.height / 2, r: 13, speed: 2.95, box: FIELD.aiBox, team: "ai", reactionTimer: 0, errorY: 0, diveTimer: 0, diveDir: 0, animOffset: 0 };
+
+    // Pre-generate crowd pixels for top and bottom stands
+    const standH = 42;
+    crowdPixels = [];
+    for (let i = 0; i < 500; i++) {
+        crowdPixels.push({ x: Math.random() * FIELD.width, y: Math.random() * (standH - 2), hue: Math.random() * 360, bottom: false });
+    }
+    for (let i = 0; i < 500; i++) {
+        crowdPixels.push({ x: Math.random() * FIELD.width, y: Math.random() * (standH - 2), hue: Math.random() * 360, bottom: true });
+    }
 }
 
 function gameLoop() {
@@ -384,9 +397,9 @@ const GOALIE_SHOT_LOOKAHEAD   = 10;
 const GOALIE_NORMAL_LOOKAHEAD = 4;
 
 // Controls how inaccurately the AI goalie reads the player's shot aim (higher = easier to fake)
-const GOALIE_AIM_READ_NOISE = 200;
+const GOALIE_AIM_READ_NOISE = 220;
 // Controls how much the AI goalie anticipates the aimed corner vs reacting to ball position
-const GOALIE_AIM_READ_WEIGHT = 0.30;
+const GOALIE_AIM_READ_WEIGHT = 0.32;
 
 // Hysteresis distance for auto-switching controlled player (prevents rapid flickering)
 const PLAYER_SWITCH_HYSTERESIS = 25;
@@ -756,9 +769,8 @@ function updateGoalie(goalie) {
 
     // Reduce save chance if ball is far from keeper's body (angled / corner shot)
     const angleOffset = Math.abs(ball.y - goalie.y);
-    if (angleOffset > 25) {
-        saveChance -= 0.25;
-    }
+    if (angleOffset > 18) saveChance -= 0.25;
+    if (angleOffset > 32) saveChance -= 0.45;
 
     if (Math.random() < saveChance) {
         possession.owner = goalie;
@@ -945,7 +957,7 @@ function performChargedShot() {
     }
 
     const chargeRatio = Math.max(0.30, shotState.charge / shotState.maxCharge);
-    const power = 24 + chargeRatio * 26;
+    const power = 13 + chargeRatio * 16;
 
     ball.x = shooter.x + shooter.r + ball.radius - 2;
     ball.y = shooter.y + shotState.aimY * 3;
@@ -957,7 +969,7 @@ function performChargedShot() {
         FIELD.goalBottom - 8
     );
     const shot = normalize(targetX - ball.x, targetY - ball.y);
-    releasePossession(shot.x * power, shot.y * power);
+    releasePossession(Math.max(1.1, shot.x) * power, shot.y * (power * 0.65));
     passAssist.target = null;
     passAssist.timer = 0;
 }
@@ -1253,33 +1265,13 @@ function draw() {
     // --- Crowd in the stands (top and bottom strips) ---
     const standH = 42;
     // Stand background
-    ctx.fillStyle = "#3a3060";
+    ctx.fillStyle = "#1a1a1a";
     ctx.fillRect(0, 0, FIELD.width, standH);
     ctx.fillRect(0, FIELD.height - standH, FIELD.width, standH);
-    // Crowd figures: rows of small colored heads
-    for (let col = 0; col < FIELD.width; col += 18) {
-        for (let row = 0; row < 2; row++) {
-            const hue = (col * 13 + row * 97) % 360;
-            ctx.fillStyle = `hsl(${hue},38%,32%)`;
-            ctx.beginPath();
-            ctx.arc(col + 9, 8 + row * 16, 6, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = `hsl(${hue},22%,18%)`;
-            ctx.beginPath();
-            ctx.arc(col + 9, 14 + row * 16, 5, 0, Math.PI);
-            ctx.fill();
-        }
-        for (let row = 0; row < 2; row++) {
-            const hue = (col * 17 + row * 83) % 360;
-            ctx.fillStyle = `hsl(${hue},38%,32%)`;
-            ctx.beginPath();
-            ctx.arc(col + 9, FIELD.height - standH + 8 + row * 16, 6, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = `hsl(${hue},22%,18%)`;
-            ctx.beginPath();
-            ctx.arc(col + 9, FIELD.height - standH + 14 + row * 16, 5, 0, Math.PI);
-            ctx.fill();
-        }
+    // Crowd: pre-generated colorful pixel dots
+    for (const cp of crowdPixels) {
+        ctx.fillStyle = `hsl(${cp.hue},70%,60%)`;
+        ctx.fillRect(cp.x, cp.bottom ? FIELD.height - standH + cp.y : cp.y, 2, 2);
     }
 
     ctx.strokeStyle = "white";
@@ -1431,25 +1423,23 @@ function draw() {
             const chargeRatio = shotState.charge / shotState.maxCharge;
 
             // Aim arrow toward the right goal
-            const aimLen = 55;
-            const startX = shooter.x + shotState.aimX * (shooter.r + 5);
-            const startY = shooter.y + shotState.aimY * (shooter.r + 5);
-            const endX = shooter.x + shotState.aimX * aimLen;
-            const endY = shooter.y + shotState.aimY * aimLen;
+            const arrowLength = 90 + shotState.charge;
+            const ax = shooter.x + shotState.aimX * arrowLength;
+            const ay = shooter.y + shotState.aimY * arrowLength;
 
             ctx.save();
-            ctx.strokeStyle = "#ffe033";
+            ctx.strokeStyle = "#ff4444";
             ctx.lineWidth = 3;
             ctx.beginPath();
-            ctx.moveTo(startX, startY);
-            ctx.lineTo(endX, endY);
+            ctx.moveTo(shooter.x, shooter.y);
+            ctx.lineTo(ax, ay);
             ctx.stroke();
 
             // Arrowhead triangle
             const angle = Math.atan2(shotState.aimY, shotState.aimX);
-            ctx.translate(endX, endY);
+            ctx.translate(ax, ay);
             ctx.rotate(angle);
-            ctx.fillStyle = "#ffe033";
+            ctx.fillStyle = "#ff4444";
             ctx.beginPath();
             ctx.moveTo(10, 0);
             ctx.lineTo(-7, -6);
@@ -1746,7 +1736,7 @@ function drawPixelPlayer(p, color, isGoalie, isControlled) {
     // Body
     ctx.beginPath();
     ctx.fillStyle = color;
-    ctx.arc(x, drawY, r, 0, Math.PI * 2);
+    ctx.ellipse(x, drawY, r * 0.75, r * 1.15, 0, 0, Math.PI * 2);
     ctx.fill();
     ctx.lineWidth = isControlled ? 3 : 2;
     ctx.strokeStyle = isControlled ? "yellow" : "black";
