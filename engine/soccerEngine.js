@@ -93,8 +93,8 @@ const passState = { held: false, charge: 0, maxCharge: 60 };
 
 const PASS_ASSIST_COLOR = "#66aaff";
 const PASS_TARGET_RADIUS_OFFSET = 9;
-const PASS_ASSIST_STEER_RANGE = 220;    // px: distance within which magnetic steering is active
-const PASS_ASSIST_STEER_STRENGTH = 0.06; // subtle curve per frame toward intended recipient
+const PASS_ASSIST_STEER_RANGE = 300;    // px: distance within which magnetic steering is active
+const PASS_ASSIST_STEER_STRENGTH = 0.12; // curve per frame toward intended recipient
 
 // Goalie save constants
 const GOALIE_CATCH_LOCK_DURATION = 18; // frames ball is held after a save (~0.3s at 60fps)
@@ -587,9 +587,10 @@ function goalieAutoPassToPlayer() {
     }
     if (!bestTarget) return;
     const dir = normalize(bestTarget.x - goalie.x, bestTarget.y - goalie.y);
-    releasePossession(dir.x * 15.0, dir.y * 13.0);
+    releasePossession(dir.x * 17.0, dir.y * 15.0);
     passAssist.target = bestTarget;
-    passAssist.timer = 40;
+    passAssist.timer = 55;
+    setControlledPlayer(bestTarget);
     playerGoaliePossessionTimer = 0;
 }
 
@@ -804,14 +805,18 @@ function carryBallWithOwner() {
     const owner = possession.owner;
     if (!owner) return;
 
-    // Spring-based dribbling for the controlled player: ball trails naturally
+    // Smooth lerp carry for the controlled player: ball sits cleanly at the player's feet
     if (possession.team === "player" && owner === players[0]) {
-        ball.vx += (owner.x - ball.x) * DRIBBLE_CONTROL_STRENGTH;
-        ball.vy += (owner.y - ball.y) * DRIBBLE_CONTROL_STRENGTH;
-        ball.vx *= DRIBBLE_DAMPING;
-        ball.vy *= DRIBBLE_DAMPING;
-        ball.x += ball.vx;
-        ball.y += ball.vy;
+        const holdDist = owner.r + ball.radius - 2;
+        const mag = Math.hypot(controlState.dirX, controlState.dirY);
+        const tdx = mag > 0 ? controlState.dirX / mag : 1;
+        const tdy = mag > 0 ? controlState.dirY / mag : 0;
+        const targetX = owner.x + tdx * holdDist;
+        const targetY = owner.y + tdy * holdDist;
+        ball.x += (targetX - ball.x) * 0.55;
+        ball.y += (targetY - ball.y) * 0.55;
+        ball.vx = 0;
+        ball.vy = 0;
         return;
     }
 
@@ -875,11 +880,12 @@ function performPass() {
         }
         if (best) {
             const toMate = normalize(best.x - goalie.x, best.y - goalie.y);
-            releasePossession(toMate.x * 10.0, toMate.y * 7.5);
+            releasePossession(toMate.x * 14.0, toMate.y * 12.0);
             passAssist.target = best;
-            passAssist.timer = 40;
+            passAssist.timer = 55;
+            setControlledPlayer(best);
         } else {
-            releasePossession(passDir.x * 9.0, passDir.y * 7.0);
+            releasePossession(passDir.x * 12.0, passDir.y * 10.0);
         }
         playerGoaliePossessionTimer = 0;
         return;
@@ -894,11 +900,12 @@ function performPass() {
 
     if (teammate) {
         const toMate = normalize(teammate.x - selected.x, teammate.y - selected.y);
-        releasePossession(toMate.x * 17, toMate.y * 15);
+        releasePossession(toMate.x * 20, toMate.y * 18);
         passAssist.target = teammate;
-        passAssist.timer = 40;
+        passAssist.timer = 55;
+        setControlledPlayer(teammate);
     } else {
-        releasePossession(dir.x * 16, dir.y * 14);
+        releasePossession(dir.x * 18, dir.y * 16);
     }
 }
 
@@ -933,7 +940,7 @@ function performChargedShot() {
     }
 
     const chargeRatio = Math.max(0.15, shotState.charge / shotState.maxCharge);
-    const power = 18 + chargeRatio * 22;
+    const power = 22 + chargeRatio * 26;
 
     ball.x = shooter.x + shooter.r + ball.radius - 2;
     ball.y = shooter.y + shotState.aimY * 3;
@@ -955,7 +962,7 @@ function performChargedPass() {
     if (possession.owner === goalies.player && possession.team === "player") {
         const goalie = goalies.player;
         const chargeRatio = Math.max(0.2, passState.charge / passState.maxCharge);
-        const passSpeed = 16 + chargeRatio * 12;
+        const passSpeed = 18 + chargeRatio * 16;
         const passDir = normalize(controlState.dirX, controlState.dirY);
         let best = null;
         let bestScore = -Infinity;
@@ -973,7 +980,8 @@ function performChargedPass() {
             const toMate = normalize(best.x - goalie.x, best.y - goalie.y);
             releasePossession(toMate.x * passSpeed, toMate.y * passSpeed);
             passAssist.target = best;
-            passAssist.timer = 40;
+            passAssist.timer = 55;
+            setControlledPlayer(best);
         } else {
             releasePossession(passDir.x * passSpeed, passDir.y * passSpeed);
         }
@@ -986,7 +994,7 @@ function performChargedPass() {
     if (!ensurePlayerControlForAction(selected, 22)) return;
 
     const chargeRatio = Math.max(0.2, passState.charge / passState.maxCharge);
-    const passSpeed = 16 + chargeRatio * 12;
+    const passSpeed = 18 + chargeRatio * 16;
 
     const dir = normalize(controlState.dirX, controlState.dirY);
     const teammate = findBestPassTarget(selected, dir);
@@ -995,7 +1003,8 @@ function performChargedPass() {
         const toMate = normalize(teammate.x - selected.x, teammate.y - selected.y);
         releasePossession(toMate.x * passSpeed, toMate.y * passSpeed);
         passAssist.target = teammate;
-        passAssist.timer = 40;
+        passAssist.timer = 55;
+        setControlledPlayer(teammate);
     } else {
         releasePossession(dir.x * passSpeed, dir.y * passSpeed);
     }
@@ -1032,8 +1041,8 @@ function findBestPassTarget(selected, dir) {
         const n = normalize(vx, vy);
         const alignment = n.x * dir.x + n.y * dir.y;
 
-        // Allow wider passing cone
-        if (alignment < 0.1) continue;
+        // Allow wider passing cone (slight backward passes allowed too)
+        if (alignment < -0.15) continue;
 
         // Prioritize forward + open players
         const space = distanceToNearestOpponent(mate);
@@ -1451,7 +1460,7 @@ function draw() {
     }
 
     // Controls legend (bottom of field)
-    const legendText = "Arrow Keys: Move  |  N: Pass (goalie too)  |  M: Shoot  |  K: Switch (def)  |  L: Tackle  |  X: Charged Pass  |  Space: Charged Shot";
+    const legendText = "Arrow Keys/WASD: Move  |  N: Pass  |  Hold M/Space: Shoot (longer = stronger)  |  Hold X: Charged Pass  |  L/Z: Tackle  |  K: Switch (def)  |  P: Pause";
     ctx.font = "bold 13px Arial";
     const legendW = ctx.measureText(legendText).width + 20;
     const legendX = (FIELD.width - legendW) / 2;
@@ -1526,11 +1535,11 @@ function openPauseMenu() {
     };
     menu.querySelector("#menu-team").onclick = () => openTeamManagementPanel();
     menu.querySelector("#menu-instructions").onclick = () => showMenuOverlayMessage(
-        "Controls: WASD move | N: pass (works from outfield players AND from goalie — aim with WASD first) — " +
-        "control switches to the recipient automatically | " +
-        "Hold M and aim with WASD then release to shoot (longer = stronger) | " +
+        "Controls: Arrow Keys / WASD move | N: quick pass (aim with arrow keys/WASD first, control auto-switches to recipient) | " +
+        "Hold M or Space and aim then release to shoot — longer hold = stronger shot | " +
+        "Hold X then release for charged pass | " +
         "Goalie auto-passes after 2 s if you don't act | " +
-        "L tackle | K switch on defense | P pause menu."
+        "L or Z: tackle | K: switch player on defense | P: pause menu."
     );
     menu.querySelector("#menu-exit").onclick = () => exitToMainMenu();
     menu.querySelector("#menu-resume").onclick = () => togglePauseMenu();
@@ -1700,8 +1709,7 @@ document.addEventListener("keydown", e => {
 
     if (key === "n" && !e.repeat) performPass();
     if (key === "x" && !e.repeat) { passState.held = true; passState.charge = 0; }
-    if (key === "m" && !e.repeat) performShot();
-    if (key === " " && !e.repeat) { shotState.held = true; shotState.charge = 0; shotState.aimX = controlState.dirX; shotState.aimY = controlState.dirY; }
+    if ((key === "m" || key === " ") && !e.repeat) { shotState.held = true; shotState.charge = 0; shotState.aimX = controlState.dirX; shotState.aimY = controlState.dirY; }
     if (key === "l" && tackleCooldown <= 0) { tackleActive = true; tackleCooldown = TACKLE_COOLDOWN_FRAMES; tackleTimer = 0; }
     if (key === "z" && tackleCooldown <= 0) { tackleActive = true; tackleCooldown = TACKLE_COOLDOWN_FRAMES; tackleTimer = 0; }
 
@@ -1715,7 +1723,7 @@ document.addEventListener("keyup", e => {
     const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
     setDirection(key, false);
 
-    if (key === " " && shotState.held) {
+    if ((key === "m" || key === " ") && shotState.held) {
         shotState.held = false;
         if (matchRunning && !matchPaused) performChargedShot();
         shotState.charge = 0;
