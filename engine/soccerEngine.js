@@ -104,6 +104,18 @@ const MIN_SHOOTING_DIR_X = 0.2;
 // Pickup radius offset for AI outfield players collecting a loose ball
 const AI_OUTFIELD_PICKUP_RADIUS = 14;
 
+// Player movement feel
+const PLAYER_ACCEL = 0.6;
+const PLAYER_MAX_SPEED = 4.2;
+const PLAYER_FRICTION = 0.85;
+
+// Ball dribbling spring constants (controlled player)
+const DRIBBLE_CONTROL_STRENGTH = 0.35;
+const DRIBBLE_DAMPING = 0.7;
+
+// Animation bounce scale
+const ANIM_SPEED_SCALE = 0.5;
+
 function showFormationSelect(onSelect) {
     screen.innerHTML = "";
     const div = document.createElement("div");
@@ -167,7 +179,7 @@ function initMatch() {
     for (let i = 0; i < 4; i++) {
         const ph = formation.playerHome[i];
         const ah = formation.aiHome[i];
-        players.push({ x: ph.x, y: ph.y, baseSpeed: 3.8, speed: 3.8, stamina: 100, r: 15, team: "player" });
+        players.push({ x: ph.x, y: ph.y, baseSpeed: 3.8, speed: 3.8, stamina: 100, r: 15, team: "player", vx: 0, vy: 0, animOffset: 0, number: i + 1 });
         aiPlayers.push({
             x: ah.x,
             y: ah.y,
@@ -176,12 +188,16 @@ function initMatch() {
             stamina: 100,
             r: 15,
             team: "ai",
-            tackleCooldown: 0
+            tackleCooldown: 0,
+            vx: 0,
+            vy: 0,
+            animOffset: 0,
+            number: i + 1
         });
     }
 
-    goalies.player = { x: 78, y: FIELD.height / 2, r: 17, speed: 2.95, box: FIELD.playerBox, team: "player", reactionTimer: 0, errorY: 0, diveTimer: 0, diveDir: 0 };
-    goalies.ai = { x: 1322, y: FIELD.height / 2, r: 17, speed: 2.95, box: FIELD.aiBox, team: "ai", reactionTimer: 0, errorY: 0, diveTimer: 0, diveDir: 0 };
+    goalies.player = { x: 78, y: FIELD.height / 2, r: 17, speed: 2.95, box: FIELD.playerBox, team: "player", reactionTimer: 0, errorY: 0, diveTimer: 0, diveDir: 0, animOffset: 0 };
+    goalies.ai = { x: 1322, y: FIELD.height / 2, r: 17, speed: 2.95, box: FIELD.aiBox, team: "ai", reactionTimer: 0, errorY: 0, diveTimer: 0, diveDir: 0, animOffset: 0 };
 }
 
 function gameLoop() {
@@ -301,6 +317,10 @@ function moveControlledPlayer() {
     const selected = players[0];
     if (!selected) return;
 
+    const accel = PLAYER_ACCEL;
+    const maxSpeed = PLAYER_MAX_SPEED;
+    const friction = PLAYER_FRICTION;
+
     let dx = 0;
     let dy = 0;
     if (input.up) dy -= 1;
@@ -312,11 +332,25 @@ function moveControlledPlayer() {
         const len = Math.hypot(dx, dy);
         const nx = dx / len;
         const ny = dy / len;
-        selected.x += nx * selected.speed;
-        selected.y += ny * selected.speed;
+        selected.vx += nx * accel;
+        selected.vy += ny * accel;
         controlState.dirX = nx;
         controlState.dirY = ny;
     }
+
+    const speed = Math.hypot(selected.vx, selected.vy);
+    if (speed > maxSpeed) {
+        selected.vx = (selected.vx / speed) * maxSpeed;
+        selected.vy = (selected.vy / speed) * maxSpeed;
+    }
+
+    selected.vx *= friction;
+    selected.vy *= friction;
+
+    selected.animOffset += speed * ANIM_SPEED_SCALE;
+
+    selected.x += selected.vx;
+    selected.y += selected.vy;
 
     selected.x = clamp(selected.x, selected.r, FIELD.width - selected.r);
     selected.y = clamp(selected.y, selected.r, FIELD.height - selected.r);
@@ -381,6 +415,7 @@ function updatePlayerOutfield() {
         if (dist > 6) {
             p.x += to.x * p.speed;
             p.y += to.y * p.speed;
+            p.animOffset += p.speed * ANIM_SPEED_SCALE;
         }
         p.x = clamp(p.x, p.r, FIELD.width - p.r);
         p.y = clamp(p.y, p.r, FIELD.height - p.r);
@@ -430,6 +465,7 @@ function updateAIOutfield() {
         const to = normalize(targetX - p.x, targetY - p.y);
         p.x += to.x * p.speed;
         p.y += to.y * p.speed;
+        p.animOffset += p.speed * ANIM_SPEED_SCALE;
         p.x = clamp(p.x, p.r, FIELD.width - p.r);
         p.y = clamp(p.y, p.r, FIELD.height - p.r);
 
@@ -664,6 +700,7 @@ function updateGoalie(goalie) {
     const to = normalize(defendX - goalie.x, defendY - goalie.y);
     goalie.x += to.x * activeSpeed;
     goalie.y += to.y * activeSpeed;
+    goalie.animOffset += activeSpeed * ANIM_SPEED_SCALE;
 
     if (goalie.diveTimer > 0) {
         goalie.diveTimer--;
@@ -760,6 +797,17 @@ function updatePassAssistCapture() {
 function carryBallWithOwner() {
     const owner = possession.owner;
     if (!owner) return;
+
+    // Spring-based dribbling for the controlled player: ball trails naturally
+    if (possession.team === "player" && owner === players[0]) {
+        ball.vx += (owner.x - ball.x) * DRIBBLE_CONTROL_STRENGTH;
+        ball.vy += (owner.y - ball.y) * DRIBBLE_CONTROL_STRENGTH;
+        ball.vx *= DRIBBLE_DAMPING;
+        ball.vy *= DRIBBLE_DAMPING;
+        ball.x += ball.vx;
+        ball.y += ball.vy;
+        return;
+    }
 
     let dirX = controlState.dirX;
     let dirY = controlState.dirY;
@@ -1203,11 +1251,11 @@ function draw() {
     ctx.lineWidth = 2;
     ctx.stroke();
 
-    players.forEach((p, idx) => drawPixelPlayer(p, idx === 0 ? "#67f3ff" : "#3f78ff", false));
-    aiPlayers.forEach(p => drawPixelPlayer(p, "#ff4d4d", false));
+    players.forEach((p, idx) => drawPixelPlayer(p, "#1e90ff", false, idx === 0));
+    aiPlayers.forEach(p => drawPixelPlayer(p, "#ff4747", false, false));
 
-    drawPixelPlayer(goalies.player, "#f8d96a", true);
-    drawPixelPlayer(goalies.ai, "#ffb17a", true);
+    drawPixelPlayer(goalies.player, "#f8d96a", true, false);
+    drawPixelPlayer(goalies.ai, "#ffb17a", true, false);
 
     // Scoreboard HUD (center top)
     const hudCx = FIELD.width / 2;
@@ -1538,40 +1586,53 @@ function drawPost(p) {
     ctx.fill();
 }
 
-function drawPixelPlayer(p, color, isGoalie) {
+function drawPixelPlayer(p, color, isGoalie, isControlled) {
     const x = p.x;
     const y = p.y;
+    const r = p.r;
+    const bounce = Math.sin(p.animOffset || 0) * 2;
+    const drawY = y + bounce;
 
-    const walkCycle = Math.sin(Date.now() * 0.008 + x * 0.05) * 2;
-
-    // body
-    ctx.fillStyle = color;
-    ctx.fillRect(x - 7, y - 9, 14, 18);
-
-    // head
-    ctx.fillStyle = "#ffd7b0";
-    ctx.fillRect(x - 5, y - 15, 10, 6);
-
-    // legs animated
-    ctx.fillStyle = "#111";
-    ctx.fillRect(x - 6, y + 9, 4, 6 + walkCycle);
-    ctx.fillRect(x + 2, y + 9, 4, 6 - walkCycle);
-
-    // subtle shadow
+    // Subtle shadow under player
     ctx.fillStyle = "rgba(0,0,0,0.2)";
-    ctx.fillRect(x - 8, y + 14, 16, 4);
+    ctx.beginPath();
+    ctx.ellipse(x, y + r + 4, r, r * 0.5, 0, 0, Math.PI * 2);
+    ctx.fill();
 
-    if (isGoalie) {
-        ctx.fillStyle = "#ffffff";
-        ctx.fillRect(x - 11, y - 2, 4, 4);
-        ctx.fillRect(x + 7, y - 2, 4, 4);
+    // Body
+    ctx.beginPath();
+    ctx.fillStyle = color;
+    ctx.arc(x, drawY, r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.lineWidth = isControlled ? 3 : 2;
+    ctx.strokeStyle = isControlled ? "yellow" : "black";
+    ctx.stroke();
+
+    // Head
+    ctx.beginPath();
+    ctx.fillStyle = "#f1c27d";
+    ctx.arc(x, drawY - r - 6, r * 0.6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = "black";
+    ctx.stroke();
+
+    // Jersey number (outfield players only)
+    if (!isGoalie && p.number !== undefined) {
+        ctx.fillStyle = "white";
+        ctx.font = "bold 12px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText(p.number, x, drawY + 4);
+        ctx.textAlign = "left";
     }
 
+    // Stamina bar for player team outfield
     if (!isGoalie && p.team === "player" && p.stamina !== undefined) {
+        const barY = drawY - r - 18;
         ctx.fillStyle = "black";
-        ctx.fillRect(x - 10, y - 22, 20, 4);
+        ctx.fillRect(x - 10, barY, 20, 4);
         ctx.fillStyle = "#00ff88";
-        ctx.fillRect(x - 10, y - 22, (p.stamina / 100) * 20, 4);
+        ctx.fillRect(x - 10, barY, (p.stamina / 100) * 20, 4);
     }
 }
 
