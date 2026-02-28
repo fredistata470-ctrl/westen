@@ -100,7 +100,7 @@ const PASS_ASSIST_STEER_STRENGTH = 0.06; // subtle curve per frame toward intend
 const GOALIE_CATCH_LOCK_DURATION = 18; // frames ball is held after a save (~0.3s at 60fps)
 const GOAL_MOUTH_BUFFER = 4;           // px: keeps ball from embedding inside goal mouth
 // Minimum rightward directional component required to shoot toward the right goal
-const MIN_SHOOTING_DIR_X = 0.2;
+const MIN_SHOOTING_DIR_X = -0.3;
 // Pickup radius offset for AI outfield players collecting a loose ball
 const AI_OUTFIELD_PICKUP_RADIUS = 14;
 
@@ -462,10 +462,13 @@ function updateAIOutfield() {
             targetY = supportY;
         }
 
-        const to = normalize(targetX - p.x, targetY - p.y);
-        p.x += to.x * p.speed;
-        p.y += to.y * p.speed;
-        p.animOffset += p.speed * ANIM_SPEED_SCALE;
+        const moveDist = distance(p.x, p.y, targetX, targetY);
+        if (moveDist > 6) {
+            const to = normalize(targetX - p.x, targetY - p.y);
+            p.x += to.x * p.speed;
+            p.y += to.y * p.speed;
+            p.animOffset += p.speed * ANIM_SPEED_SCALE;
+        }
         p.x = clamp(p.x, p.r, FIELD.width - p.r);
         p.y = clamp(p.y, p.r, FIELD.height - p.r);
 
@@ -697,10 +700,13 @@ function updateGoalie(goalie) {
     const defendX = goalie.team === "player" ? 85 : 1315;
 
     const activeSpeed = shotIncoming ? goalie.speed * 2.0 : goalie.speed;
-    const to = normalize(defendX - goalie.x, defendY - goalie.y);
-    goalie.x += to.x * activeSpeed;
-    goalie.y += to.y * activeSpeed;
-    goalie.animOffset += activeSpeed * ANIM_SPEED_SCALE;
+    const goalieMoveDist = distance(goalie.x, goalie.y, defendX, defendY);
+    if (goalieMoveDist > 3) {
+        const to = normalize(defendX - goalie.x, defendY - goalie.y);
+        goalie.x += to.x * activeSpeed;
+        goalie.y += to.y * activeSpeed;
+        goalie.animOffset += activeSpeed * ANIM_SPEED_SCALE;
+    }
 
     if (goalie.diveTimer > 0) {
         goalie.diveTimer--;
@@ -888,11 +894,11 @@ function performPass() {
 
     if (teammate) {
         const toMate = normalize(teammate.x - selected.x, teammate.y - selected.y);
-        releasePossession(toMate.x * 14.5, toMate.y * 12.5);
+        releasePossession(toMate.x * 17, toMate.y * 15);
         passAssist.target = teammate;
         passAssist.timer = 40;
     } else {
-        releasePossession(dir.x * 13.5, dir.y * 11.5);
+        releasePossession(dir.x * 16, dir.y * 14);
     }
 }
 
@@ -927,7 +933,7 @@ function performChargedShot() {
     }
 
     const chargeRatio = Math.max(0.15, shotState.charge / shotState.maxCharge);
-    const power = 16 + chargeRatio * 18;
+    const power = 18 + chargeRatio * 22;
 
     ball.x = shooter.x + shooter.r + ball.radius - 2;
     ball.y = shooter.y + shotState.aimY * 3;
@@ -1000,8 +1006,14 @@ function performShot() {
     if (!shooter) return;
     if (!ensurePlayerControlForAction(shooter, 22)) return;
 
-    const dir = normalize(FIELD.rightGoalX - shooter.x, FIELD.height / 2 - shooter.y);
-    releasePossession(dir.x * 12, dir.y * 12);
+    const targetX = FIELD.width - 2;
+    const targetY = clamp(
+        FIELD.height / 2 + controlState.dirY * 140,
+        FIELD.goalTop + 8,
+        FIELD.goalBottom - 8
+    );
+    const dir = normalize(targetX - shooter.x, targetY - shooter.y);
+    releasePossession(dir.x * 20, dir.y * 20);
     passAssist.target = null;
     passAssist.timer = 0;
 }
