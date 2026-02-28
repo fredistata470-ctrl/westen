@@ -113,8 +113,8 @@ const PLAYER_FRICTION = 0.85;
 const DRIBBLE_CONTROL_STRENGTH = 0.35;
 const DRIBBLE_DAMPING = 0.7;
 
-// Animation bounce scale
-const ANIM_SPEED_SCALE = 0.5;
+// Animation bounce scale (lower = smoother run cycle)
+const ANIM_SPEED_SCALE = 0.18;
 
 function showFormationSelect(onSelect) {
     screen.innerHTML = "";
@@ -183,8 +183,8 @@ function initMatch() {
         aiPlayers.push({
             x: ah.x,
             y: ah.y,
-            baseSpeed: 1.7,
-            speed: 1.7,
+            baseSpeed: 2.2,
+            speed: 2.2,
             stamina: 100,
             r: 15,
             team: "ai",
@@ -196,8 +196,8 @@ function initMatch() {
         });
     }
 
-    goalies.player = { x: 78, y: FIELD.height / 2, r: 17, speed: 2.95, box: FIELD.playerBox, team: "player", reactionTimer: 0, errorY: 0, diveTimer: 0, diveDir: 0, animOffset: 0 };
-    goalies.ai = { x: 1322, y: FIELD.height / 2, r: 17, speed: 2.95, box: FIELD.aiBox, team: "ai", reactionTimer: 0, errorY: 0, diveTimer: 0, diveDir: 0, animOffset: 0 };
+    goalies.player = { x: 78, y: FIELD.height / 2, r: 13, speed: 2.95, box: FIELD.playerBox, team: "player", reactionTimer: 0, errorY: 0, diveTimer: 0, diveDir: 0, animOffset: 0 };
+    goalies.ai = { x: 1322, y: FIELD.height / 2, r: 13, speed: 2.95, box: FIELD.aiBox, team: "ai", reactionTimer: 0, errorY: 0, diveTimer: 0, diveDir: 0, animOffset: 0 };
 }
 
 function gameLoop() {
@@ -472,7 +472,7 @@ function updateAIOutfield() {
         p.x = clamp(p.x, p.r, FIELD.width - p.r);
         p.y = clamp(p.y, p.r, FIELD.height - p.r);
 
-        if (playerCarrier && possession.lockTimer <= 0) {
+        if (playerCarrier && playerCarrier !== goalies.player && possession.lockTimer <= 0) {
             if (p.tackleCooldown > 0) {
                 p.tackleCooldown--;
             } else {
@@ -568,9 +568,6 @@ function updateAIOutfield() {
         const passDir = normalize(bestMate.x - carrier.x, bestMate.y - carrier.y);
         const aiPassSpeed = 7.8;
         releasePossession(passDir.x * aiPassSpeed, passDir.y * aiPassSpeed);
-        possession.owner = bestMate;
-        possession.team = "ai";
-        possession.lockTimer = 10;
     }
 }
 
@@ -1041,8 +1038,8 @@ function findBestPassTarget(selected, dir) {
         const n = normalize(vx, vy);
         const alignment = n.x * dir.x + n.y * dir.y;
 
-        // Allow wider passing cone (slight backward passes allowed too)
-        if (alignment < -0.15) continue;
+        // Allow wider passing cone (backward passes allowed too)
+        if (alignment < -0.45) continue;
 
         // Prioritize forward + open players
         const space = distanceToNearestOpponent(mate);
@@ -1085,6 +1082,9 @@ function attemptTackle() {
     }
 
     if (possession.owner.team === selected.team) return;
+
+    // Goalies cannot be tackled
+    if (possession.owner === goalies.ai || possession.owner === goalies.player) return;
 
     const target = possession.owner;
     const d = distance(selected.x, selected.y, target.x, target.y);
@@ -1237,6 +1237,38 @@ function endMatch(reason = "Match Finished") {
 function draw() {
     ctx.fillStyle = "#1f8d2e";
     ctx.fillRect(0, 0, FIELD.width, FIELD.height);
+
+    // --- Crowd in the stands (top and bottom strips) ---
+    const standH = 42;
+    // Stand background
+    ctx.fillStyle = "#3a3060";
+    ctx.fillRect(0, 0, FIELD.width, standH);
+    ctx.fillRect(0, FIELD.height - standH, FIELD.width, standH);
+    // Crowd figures: rows of small colored heads
+    for (let col = 0; col < FIELD.width; col += 18) {
+        for (let row = 0; row < 2; row++) {
+            const hue = (col * 13 + row * 97) % 360;
+            ctx.fillStyle = `hsl(${hue},65%,52%)`;
+            ctx.beginPath();
+            ctx.arc(col + 9, 8 + row * 16, 6, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = `hsl(${hue},40%,30%)`;
+            ctx.beginPath();
+            ctx.arc(col + 9, 14 + row * 16, 5, 0, Math.PI);
+            ctx.fill();
+        }
+        for (let row = 0; row < 2; row++) {
+            const hue = (col * 17 + row * 83) % 360;
+            ctx.fillStyle = `hsl(${hue},65%,52%)`;
+            ctx.beginPath();
+            ctx.arc(col + 9, FIELD.height - standH + 8 + row * 16, 6, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = `hsl(${hue},40%,30%)`;
+            ctx.beginPath();
+            ctx.arc(col + 9, FIELD.height - standH + 14 + row * 16, 5, 0, Math.PI);
+            ctx.fill();
+        }
+    }
 
     ctx.strokeStyle = "white";
     ctx.lineWidth = 3;
@@ -1611,7 +1643,7 @@ function drawPixelPlayer(p, color, isGoalie, isControlled) {
     const x = p.x;
     const y = p.y;
     const r = p.r;
-    const bounce = Math.sin(p.animOffset || 0) * 2;
+    const bounce = Math.sin(p.animOffset || 0) * 1.5;
     const drawY = y + bounce;
 
     // Subtle shadow under player
@@ -1629,13 +1661,49 @@ function drawPixelPlayer(p, color, isGoalie, isControlled) {
     ctx.strokeStyle = isControlled ? "yellow" : "black";
     ctx.stroke();
 
+    // Goalie gloves (white circles on sides of body)
+    if (isGoalie) {
+        const gloveR = r * 0.32;
+        ctx.fillStyle = "#ffffff";
+        ctx.strokeStyle = "#555";
+        ctx.lineWidth = 1;
+        // Left glove
+        ctx.beginPath();
+        ctx.arc(x - r - gloveR, drawY + r * 0.2, gloveR, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        // Right glove
+        ctx.beginPath();
+        ctx.arc(x + r + gloveR, drawY + r * 0.2, gloveR, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+    }
+
     // Head
+    const headR = r * 0.6;
+    const headX = x;
+    const headY = drawY - r - 6;
     ctx.beginPath();
     ctx.fillStyle = "#f1c27d";
-    ctx.arc(x, drawY - r - 6, r * 0.6, 0, Math.PI * 2);
+    ctx.arc(headX, headY, headR, 0, Math.PI * 2);
     ctx.fill();
     ctx.lineWidth = 1.5;
     ctx.strokeStyle = "black";
+    ctx.stroke();
+
+    // Face: eyes
+    ctx.fillStyle = "#1a1a1a";
+    ctx.beginPath();
+    ctx.arc(headX - headR * 0.3, headY - headR * 0.12, headR * 0.17, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(headX + headR * 0.3, headY - headR * 0.12, headR * 0.17, 0, Math.PI * 2);
+    ctx.fill();
+    // Face: mouth
+    ctx.beginPath();
+    ctx.arc(headX, headY + headR * 0.15, headR * 0.28, 0, Math.PI);
+    ctx.strokeStyle = "#774422";
+    ctx.lineWidth = 1;
     ctx.stroke();
 
     // Jersey number (outfield players only)
@@ -1713,9 +1781,16 @@ document.addEventListener("keydown", e => {
     if (key === "l" && tackleCooldown <= 0) { tackleActive = true; tackleCooldown = TACKLE_COOLDOWN_FRAMES; tackleTimer = 0; }
     if (key === "z" && tackleCooldown <= 0) { tackleActive = true; tackleCooldown = TACKLE_COOLDOWN_FRAMES; tackleTimer = 0; }
 
-    // K: cycle to next player on defense only
+    // K: switch to the player on the team nearest to the ball (best defensive position)
+    // Search from index 1: players[0] is already controlled, so we never switch to them.
     if (key === "k" && players.length > 1 && possession.team !== "player") {
-        players.push(players.shift());
+        let nearestIdx = 1; // default to next player if all are equidistant
+        let nearestDist = Infinity;
+        for (let i = 1; i < players.length; i++) {
+            const d = distance(players[i].x, players[i].y, ball.x, ball.y);
+            if (d < nearestDist) { nearestDist = d; nearestIdx = i; }
+        }
+        players.unshift(...players.splice(nearestIdx, 1));
     }
 });
 
