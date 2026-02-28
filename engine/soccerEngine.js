@@ -667,6 +667,14 @@ function updateGoalie(goalie) {
     const angleY = clamp(ball.y, FIELD.goalTop + 10, FIELD.goalBottom - 10);
     goalie.y += (angleY - goalie.y) * 0.08;
 
+    // Skip save attempt when the ball was just kicked and is not heading toward this goal.
+    // This prevents the goalie from immediately re-catching or deflecting a pass it just made.
+    if (possession.pickupCooldown > 0) {
+        const headingToGoal = (goalie.team === "player" && ball.vx < -2) ||
+                              (goalie.team === "ai"    && ball.vx >  2);
+        if (!headingToGoal) return;
+    }
+
     const interactionRadius = goalie.r + 8;
     if (distance(goalie.x, goalie.y, ball.x, ball.y) >= interactionRadius) return;
 
@@ -873,6 +881,36 @@ function performChargedShot() {
 }
 
 function performChargedPass() {
+    // If the player's goalie has the ball, perform a charged pass from the goalie
+    if (possession.owner === goalies.player && possession.team === "player") {
+        const goalie = goalies.player;
+        const chargeRatio = Math.max(0.2, passState.charge / passState.maxCharge);
+        const passSpeed = 10.5 + chargeRatio * 8.5;
+        const passDir = normalize(controlState.dirX, controlState.dirY);
+        let best = null;
+        let bestScore = -Infinity;
+        for (const mate of players) {
+            const vx = mate.x - goalie.x;
+            const vy = mate.y - goalie.y;
+            const dist = Math.hypot(vx, vy);
+            if (dist < 30) continue;
+            const n = normalize(vx, vy);
+            const alignment = n.x * passDir.x + n.y * passDir.y;
+            const score = alignment * 800 - dist * 0.3;
+            if (score > bestScore) { bestScore = score; best = mate; }
+        }
+        if (best) {
+            const toMate = normalize(best.x - goalie.x, best.y - goalie.y);
+            releasePossession(toMate.x * passSpeed, toMate.y * passSpeed);
+            passAssist.target = best;
+            passAssist.timer = 40;
+        } else {
+            releasePossession(passDir.x * passSpeed, passDir.y * passSpeed);
+        }
+        playerGoaliePossessionTimer = 0;
+        return;
+    }
+
     const selected = players[0];
     if (!selected) return;
     if (!ensurePlayerControlForAction(selected, 22)) return;
