@@ -93,6 +93,8 @@ const passState = { held: false, charge: 0, maxCharge: 60 };
 
 const PASS_ASSIST_COLOR = "#66aaff";
 const PASS_TARGET_RADIUS_OFFSET = 9;
+const PASS_ASSIST_STEER_RANGE = 220;    // px: distance within which magnetic steering is active
+const PASS_ASSIST_STEER_STRENGTH = 0.06; // subtle curve per frame toward intended recipient
 
 // Goalie save constants
 const GOALIE_CATCH_LOCK_DURATION = 18; // frames ball is held after a save (~0.3s at 60fps)
@@ -263,6 +265,18 @@ function update() {
     } else {
         ball.x += ball.vx;
         ball.y += ball.vy;
+
+        // Magnetic steering: subtly curve ball toward the intended pass recipient
+        if (passAssist.target) {
+            const target = passAssist.target;
+            const dx = target.x - ball.x;
+            const dy = target.y - ball.y;
+            const dist = Math.hypot(dx, dy);
+            if (dist < PASS_ASSIST_STEER_RANGE) {
+                ball.vx += dx * PASS_ASSIST_STEER_STRENGTH / dist;
+                ball.vy += dy * PASS_ASSIST_STEER_STRENGTH / dist;
+            }
+        }
     }
 
     handleFieldBoundariesAndPosts();
