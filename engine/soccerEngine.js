@@ -166,7 +166,16 @@ function initMatch() {
         const ph = formation.playerHome[i];
         const ah = formation.aiHome[i];
         players.push({ x: ph.x, y: ph.y, baseSpeed: 3.8, speed: 3.8, stamina: 100, r: 15, team: "player" });
-        aiPlayers.push({ x: ah.x, y: ah.y, speed: 2.1, r: 15, team: "ai", tackleCooldown: 0 });
+        aiPlayers.push({
+            x: ah.x,
+            y: ah.y,
+            baseSpeed: 1.7,
+            speed: 1.7,
+            stamina: 100,
+            r: 15,
+            team: "ai",
+            tackleCooldown: 0
+        });
     }
 
     goalies.player = { x: 78, y: FIELD.height / 2, r: 17, speed: 2.95, box: FIELD.playerBox, team: "player", reactionTimer: 0, errorY: 0, diveTimer: 0, diveDir: 0 };
@@ -375,6 +384,11 @@ function updateAIOutfield() {
     }, null)?.p;
 
     aiPlayers.forEach((p, i) => {
+        p.stamina -= 0.05;
+        p.stamina = clamp(p.stamina, 50, 100);
+        const fatigue = 0.7 + (p.stamina / 100) * 0.3;
+        p.speed = p.baseSpeed * fatigue;
+
         const aiFormHome = (FORMATIONS[currentFormation] || FORMATIONS["2-2"]).aiHome[i] || AI_HOME[i];
         let targetX = aiFormHome.x;
         let targetY = aiFormHome.y;
@@ -382,9 +396,19 @@ function updateAIOutfield() {
         if (p === pressAgent) {
             targetX = playerCarrier ? playerCarrier.x : ball.x;
             targetY = playerCarrier ? playerCarrier.y : ball.y;
+        } else if (playerCarrier) {
+            // Defensive shape: cut passing lanes
+            const laneX = clamp(playerCarrier.x + 180, 700, 1200);
+            const verticalSpread = (i - 1.5) * 130;
+
+            targetX = laneX;
+            targetY = clamp(playerCarrier.y + verticalSpread, 80, FIELD.height - 80);
         } else if (aiCarrier && p !== aiCarrier) {
-            const supportX = clamp(aiCarrier.x - 120 + i * 30, 520, 980);
-            const supportY = clamp(aiCarrier.y + (i - 1.5) * 80, 90, FIELD.height - 90);
+            // Support diagonally instead of stacking
+            const supportX = clamp(aiCarrier.x - 140, 600, 1100);
+            const sideOffset = (i % 2 === 0 ? -1 : 1) * 120;
+            const supportY = clamp(aiCarrier.y + sideOffset, 90, FIELD.height - 90);
+
             targetX = supportX;
             targetY = supportY;
         }
@@ -508,7 +532,7 @@ function goalieAutoPassToPlayer() {
     }
     if (!bestTarget) return;
     const dir = normalize(bestTarget.x - goalie.x, bestTarget.y - goalie.y);
-    releasePossession(dir.x * 10.0, dir.y * 7.5);
+    releasePossession(dir.x * 15.0, dir.y * 13.0);
     passAssist.target = bestTarget;
     passAssist.timer = 40;
     playerGoaliePossessionTimer = 0;
@@ -792,11 +816,11 @@ function performPass() {
 
     if (teammate) {
         const toMate = normalize(teammate.x - selected.x, teammate.y - selected.y);
-        releasePossession(toMate.x * 10.5, toMate.y * 7.2);
+        releasePossession(toMate.x * 14.5, toMate.y * 12.5);
         passAssist.target = teammate;
         passAssist.timer = 40;
     } else {
-        releasePossession(dir.x * 9.8, dir.y * 7);
+        releasePossession(dir.x * 13.5, dir.y * 11.5);
     }
 }
 
@@ -889,18 +913,26 @@ function findBestPassTarget(selected, dir) {
         const vx = mate.x - selected.x;
         const vy = mate.y - selected.y;
         const dist = Math.hypot(vx, vy);
-        if (dist < 40) continue;
+        if (dist < 35) continue;
 
         const n = normalize(vx, vy);
         const alignment = n.x * dir.x + n.y * dir.y;
-        if (alignment < 0.15) continue;
 
-        const score = alignment * 1200 - dist;
+        // Allow wider passing cone
+        if (alignment < -0.2) continue;
+
+        // Prioritize forward + open players
+        const space = distanceToNearestOpponent(mate);
+        const forwardBonus = vx * 0.6;
+
+        const score = alignment * 800 + space * 0.8 + forwardBonus - dist * 0.4;
+
         if (score > bestScore) {
             bestScore = score;
             best = mate;
         }
     }
+
     return best;
 }
 
