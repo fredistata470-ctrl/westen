@@ -269,8 +269,8 @@ function update() {
     detectGoals();
 
     if (!possession.owner) {
-        ball.vx *= 0.95;
-        ball.vy *= 0.95;
+        ball.vx *= 0.97;
+        ball.vy *= 0.97;
         if (Math.abs(ball.vx) < 0.03) ball.vx = 0;
         if (Math.abs(ball.vy) < 0.03) ball.vy = 0;
     }
@@ -481,7 +481,8 @@ function updateAIOutfield() {
         const outlet = bestTarget || aiPlayers[0];
         if (outlet) {
             const outletDir = normalize(outlet.x - carrier.x, outlet.y - carrier.y);
-            releasePossession(outletDir.x * 11.0, outletDir.y * 8.0);
+            const aiOutletSpeed = 8.5;
+            releasePossession(outletDir.x * aiOutletSpeed, outletDir.y * aiOutletSpeed);
         }
         goaliePossessionTimer = 0;
         return;
@@ -512,7 +513,8 @@ function updateAIOutfield() {
     const shouldPass = (nearestPlayerDef < 95 && Math.random() < 0.24) || (laneGain > 35 && Math.random() < 0.16);
     if (shouldPass) {
         const passDir = normalize(bestMate.x - carrier.x, bestMate.y - carrier.y);
-        releasePossession(passDir.x * 9.5, passDir.y * 8.2);
+        const aiPassSpeed = 7.8;
+        releasePossession(passDir.x * aiPassSpeed, passDir.y * aiPassSpeed);
         possession.owner = bestMate;
         possession.team = "ai";
         possession.lockTimer = 10;
@@ -730,7 +732,7 @@ function updatePassAssistCapture() {
     if (possession.owner || possession.pickupCooldown > 0) return;
 
     const d = distance(passAssist.target.x, passAssist.target.y, ball.x, ball.y);
-    if (d > passAssist.target.r + 16) return;
+    if (d > passAssist.target.r + 28) return;
 
     possession.owner = passAssist.target;
     possession.team = "player";
@@ -863,7 +865,7 @@ function performChargedShot() {
     }
 
     const chargeRatio = Math.max(0.15, shotState.charge / shotState.maxCharge);
-    const power = 11 + chargeRatio * 11;
+    const power = 16 + chargeRatio * 18;
 
     ball.x = shooter.x + shooter.r + ball.radius - 2;
     ball.y = shooter.y + shotState.aimY * 3;
@@ -875,7 +877,7 @@ function performChargedShot() {
         FIELD.goalBottom - 8
     );
     const shot = normalize(targetX - ball.x, targetY - ball.y);
-    releasePossession(Math.max(0.9, shot.x) * power, shot.y * (power * 0.32));
+    releasePossession(shot.x * power, shot.y * power);
     passAssist.target = null;
     passAssist.timer = 0;
 }
@@ -885,7 +887,7 @@ function performChargedPass() {
     if (possession.owner === goalies.player && possession.team === "player") {
         const goalie = goalies.player;
         const chargeRatio = Math.max(0.2, passState.charge / passState.maxCharge);
-        const passSpeed = 10.5 + chargeRatio * 8.5;
+        const passSpeed = 16 + chargeRatio * 12;
         const passDir = normalize(controlState.dirX, controlState.dirY);
         let best = null;
         let bestScore = -Infinity;
@@ -916,7 +918,7 @@ function performChargedPass() {
     if (!ensurePlayerControlForAction(selected, 22)) return;
 
     const chargeRatio = Math.max(0.2, passState.charge / passState.maxCharge);
-    const passSpeed = 10.5 + chargeRatio * 8.5;
+    const passSpeed = 16 + chargeRatio * 12;
 
     const dir = normalize(controlState.dirX, controlState.dirY);
     const teammate = findBestPassTarget(selected, dir);
@@ -957,7 +959,7 @@ function findBestPassTarget(selected, dir) {
         const alignment = n.x * dir.x + n.y * dir.y;
 
         // Allow wider passing cone
-        if (alignment < -0.2) continue;
+        if (alignment < 0.1) continue;
 
         // Prioritize forward + open players
         const space = distanceToNearestOpponent(mate);
