@@ -9,6 +9,7 @@ let onMatchComplete = null;
 let matchPaused = false;
 let pauseMenuEl = null;
 let matchClock = 180;
+let goalFlash = { timer: 0, team: null };
 let goaliePossessionTimer = 0;
 let playerGoaliePossessionTimer = 0;
 const GOALIE_AUTO_PASS_DELAY = 2; // seconds before a goalie auto-passes
@@ -99,8 +100,9 @@ const PASS_ASSIST_STEER_STRENGTH = 0.12; // curve per frame toward intended reci
 // Goalie save constants
 const GOALIE_CATCH_LOCK_DURATION = 18; // frames ball is held after a save (~0.3s at 60fps)
 const GOAL_MOUTH_BUFFER = 4;           // px: keeps ball from embedding inside goal mouth
+const GOAL_FLASH_DURATION = 150;       // frames the goal celebration overlay is shown
 // Minimum rightward directional component required to shoot toward the right goal
-const MIN_SHOOTING_DIR_X = -0.3;
+const MIN_SHOOTING_DIR_X = -0.85;
 // Pickup radius offset for AI outfield players collecting a loose ball
 const AI_OUTFIELD_PICKUP_RADIUS = 14;
 
@@ -174,6 +176,8 @@ function initMatch() {
     tackleCooldown = 0;
     tackleActive = false;
     tackleTimer = 0;
+    goalFlash.timer = 0;
+    goalFlash.team = null;
 
     const formation = FORMATIONS[currentFormation] || FORMATIONS["2-2"];
     for (let i = 0; i < 4; i++) {
@@ -183,8 +187,8 @@ function initMatch() {
         aiPlayers.push({
             x: ah.x,
             y: ah.y,
-            baseSpeed: 2.2,
-            speed: 2.2,
+            baseSpeed: 2.6,
+            speed: 2.6,
             stamina: 100,
             r: 15,
             team: "ai",
@@ -196,8 +200,8 @@ function initMatch() {
         });
     }
 
-    goalies.player = { x: 78, y: FIELD.height / 2, r: 13, speed: 2.95, box: FIELD.playerBox, team: "player", reactionTimer: 0, errorY: 0, diveTimer: 0, diveDir: 0, animOffset: 0 };
-    goalies.ai = { x: 1322, y: FIELD.height / 2, r: 13, speed: 2.95, box: FIELD.aiBox, team: "ai", reactionTimer: 0, errorY: 0, diveTimer: 0, diveDir: 0, animOffset: 0 };
+    goalies.player = { x: 78, y: FIELD.height / 2, r: 11, speed: 2.95, box: FIELD.playerBox, team: "player", reactionTimer: 0, errorY: 0, diveTimer: 0, diveDir: 0, animOffset: 0 };
+    goalies.ai = { x: 1322, y: FIELD.height / 2, r: 11, speed: 2.95, box: FIELD.aiBox, team: "ai", reactionTimer: 0, errorY: 0, diveTimer: 0, diveDir: 0, animOffset: 0 };
 }
 
 function gameLoop() {
@@ -215,6 +219,7 @@ function update() {
     if (passAssist.timer > 0) passAssist.timer--;
 
     if (tackleCooldown > 0) tackleCooldown--;
+    if (goalFlash.timer > 0) goalFlash.timer--;
     if (tackleActive) {
         tackleTimer++;
         if (tackleTimer > TACKLE_DURATION) {
@@ -354,6 +359,7 @@ function moveControlledPlayer() {
 
     selected.x = clamp(selected.x, selected.r, FIELD.width - selected.r);
     selected.y = clamp(selected.y, selected.r, FIELD.height - selected.r);
+    blockPlayerFromGoalArea(selected);
 }
 
 // Spread offsets for attack support (per teammate index 1..3)
@@ -378,9 +384,9 @@ const GOALIE_SHOT_LOOKAHEAD   = 10;
 const GOALIE_NORMAL_LOOKAHEAD = 4;
 
 // Controls how inaccurately the AI goalie reads the player's shot aim (higher = easier to fake)
-const GOALIE_AIM_READ_NOISE = 140;
+const GOALIE_AIM_READ_NOISE = 200;
 // Controls how much the AI goalie anticipates the aimed corner vs reacting to ball position
-const GOALIE_AIM_READ_WEIGHT = 0.55;
+const GOALIE_AIM_READ_WEIGHT = 0.30;
 
 // Hysteresis distance for auto-switching controlled player (prevents rapid flickering)
 const PLAYER_SWITCH_HYSTERESIS = 25;
@@ -419,6 +425,7 @@ function updatePlayerOutfield() {
         }
         p.x = clamp(p.x, p.r, FIELD.width - p.r);
         p.y = clamp(p.y, p.r, FIELD.height - p.r);
+        blockPlayerFromGoalArea(p);
     }
 }
 
@@ -471,6 +478,7 @@ function updateAIOutfield() {
         }
         p.x = clamp(p.x, p.r, FIELD.width - p.r);
         p.y = clamp(p.y, p.r, FIELD.height - p.r);
+        blockPlayerFromGoalArea(p);
 
         if (playerCarrier && playerCarrier !== goalies.player && possession.lockTimer <= 0) {
             if (p.tackleCooldown > 0) {
@@ -549,8 +557,8 @@ function updateAIOutfield() {
 
     const goalTargetY = clamp(FIELD.height / 2 + (Math.random() - 0.5) * 70, FIELD.goalTop + 10, FIELD.goalBottom - 10);
     const drive = normalize(FIELD.leftGoalX - carrier.x, goalTargetY - carrier.y);
-    carrier.x += drive.x * 1.55;
-    carrier.y += drive.y * 0.95;
+    carrier.x += drive.x * 2.0;
+    carrier.y += drive.y * 1.3;
 
     if (nearGoalX && inShotLane && (nearestPlayerDef > 85 || Math.random() < 0.35)) {
         const targetY = clamp(carrier.y + (Math.random() - 0.5) * 46, FIELD.goalTop + 12, FIELD.goalBottom - 12);
@@ -739,17 +747,17 @@ function updateGoalie(goalie) {
     const shotSpeed = Math.hypot(ball.vx, ball.vy);
     let saveChance;
     if (shotSpeed < 7) {
-        saveChance = 0.85; // weak shot — almost always saved
+        saveChance = 0.72; // weak shot — often saved
     } else if (shotSpeed < 11) {
-        saveChance = 0.55; // normal shot
+        saveChance = 0.42; // normal shot
     } else {
-        saveChance = 0.30; // powerful shot — often scores
+        saveChance = 0.20; // powerful shot — usually scores
     }
 
     // Reduce save chance if ball is far from keeper's body (angled / corner shot)
     const angleOffset = Math.abs(ball.y - goalie.y);
     if (angleOffset > 25) {
-        saveChance -= 0.2;
+        saveChance -= 0.25;
     }
 
     if (Math.random() < saveChance) {
@@ -936,8 +944,8 @@ function performChargedShot() {
         possession.lockTimer = 1;
     }
 
-    const chargeRatio = Math.max(0.15, shotState.charge / shotState.maxCharge);
-    const power = 22 + chargeRatio * 26;
+    const chargeRatio = Math.max(0.30, shotState.charge / shotState.maxCharge);
+    const power = 24 + chargeRatio * 26;
 
     ball.x = shooter.x + shooter.r + ball.radius - 2;
     ball.y = shooter.y + shotState.aimY * 3;
@@ -1179,12 +1187,16 @@ function detectGoals() {
     if (ball.x <= FIELD.leftGoalX && ball.y > FIELD.goalTop && ball.y < FIELD.goalBottom) {
         score.ai++;
         announceGoal("ai");
+        goalFlash.timer = GOAL_FLASH_DURATION;
+        goalFlash.team = "ai";
         resetBall();
     }
 
     if (ball.x >= FIELD.rightGoalX && ball.y > FIELD.goalTop && ball.y < FIELD.goalBottom) {
         score.player++;
         announceGoal("player");
+        goalFlash.timer = GOAL_FLASH_DURATION;
+        goalFlash.team = "player";
         resetBall();
     }
 }
@@ -1248,22 +1260,22 @@ function draw() {
     for (let col = 0; col < FIELD.width; col += 18) {
         for (let row = 0; row < 2; row++) {
             const hue = (col * 13 + row * 97) % 360;
-            ctx.fillStyle = `hsl(${hue},65%,52%)`;
+            ctx.fillStyle = `hsl(${hue},38%,32%)`;
             ctx.beginPath();
             ctx.arc(col + 9, 8 + row * 16, 6, 0, Math.PI * 2);
             ctx.fill();
-            ctx.fillStyle = `hsl(${hue},40%,30%)`;
+            ctx.fillStyle = `hsl(${hue},22%,18%)`;
             ctx.beginPath();
             ctx.arc(col + 9, 14 + row * 16, 5, 0, Math.PI);
             ctx.fill();
         }
         for (let row = 0; row < 2; row++) {
             const hue = (col * 17 + row * 83) % 360;
-            ctx.fillStyle = `hsl(${hue},65%,52%)`;
+            ctx.fillStyle = `hsl(${hue},38%,32%)`;
             ctx.beginPath();
             ctx.arc(col + 9, FIELD.height - standH + 8 + row * 16, 6, 0, Math.PI * 2);
             ctx.fill();
-            ctx.fillStyle = `hsl(${hue},40%,30%)`;
+            ctx.fillStyle = `hsl(${hue},22%,18%)`;
             ctx.beginPath();
             ctx.arc(col + 9, FIELD.height - standH + 14 + row * 16, 5, 0, Math.PI);
             ctx.fill();
@@ -1286,6 +1298,24 @@ function draw() {
     ctx.fillStyle = "white";
     ctx.fillRect(0, FIELD.goalTop, FIELD.leftGoalX, FIELD.goalBottom - FIELD.goalTop);
     ctx.fillRect(FIELD.rightGoalX, FIELD.goalTop, FIELD.width - FIELD.rightGoalX, FIELD.goalBottom - FIELD.goalTop);
+
+    // goal net pattern
+    ctx.save();
+    ctx.strokeStyle = "rgba(150,150,150,0.55)";
+    ctx.lineWidth = 0.8;
+    for (let nx = 10; nx < FIELD.leftGoalX; nx += 10) {
+        ctx.beginPath(); ctx.moveTo(nx, FIELD.goalTop); ctx.lineTo(nx, FIELD.goalBottom); ctx.stroke();
+    }
+    for (let ny = FIELD.goalTop + 14; ny < FIELD.goalBottom; ny += 14) {
+        ctx.beginPath(); ctx.moveTo(0, ny); ctx.lineTo(FIELD.leftGoalX, ny); ctx.stroke();
+    }
+    for (let nx = FIELD.rightGoalX + 10; nx < FIELD.width; nx += 10) {
+        ctx.beginPath(); ctx.moveTo(nx, FIELD.goalTop); ctx.lineTo(nx, FIELD.goalBottom); ctx.stroke();
+    }
+    for (let ny = FIELD.goalTop + 14; ny < FIELD.goalBottom; ny += 14) {
+        ctx.beginPath(); ctx.moveTo(FIELD.rightGoalX, ny); ctx.lineTo(FIELD.width, ny); ctx.stroke();
+    }
+    ctx.restore();
 
     // goalposts (side blockers)
     drawPost(FIELD.leftPostTop);
@@ -1517,6 +1547,28 @@ function draw() {
         ctx.setLineDash([]);
         ctx.restore();
     }
+
+    // Goal celebration flash overlay
+    if (goalFlash.timer > 0) {
+        const alpha = Math.min(1, goalFlash.timer / 50) * 0.55;
+        ctx.fillStyle = goalFlash.team === "player"
+            ? `rgba(30,100,255,${alpha})` : `rgba(255,50,50,${alpha})`;
+        ctx.fillRect(0, 0, FIELD.width, FIELD.height);
+        const textAlpha = Math.min(1, goalFlash.timer / 60);
+        ctx.save();
+        ctx.textAlign = "center";
+        ctx.font = "bold 92px Arial";
+        ctx.fillStyle = `rgba(255,255,255,${textAlpha})`;
+        ctx.strokeStyle = `rgba(0,0,0,${textAlpha})`;
+        ctx.lineWidth = 6;
+        ctx.strokeText("GOAL!", FIELD.width / 2, FIELD.height / 2 - 20);
+        ctx.fillText("GOAL!", FIELD.width / 2, FIELD.height / 2 - 20);
+        ctx.font = "bold 30px Arial";
+        const teamText = goalFlash.team === "player" ? "HOME TEAM SCORES!" : "AWAY TEAM SCORES!";
+        ctx.fillStyle = `rgba(255,255,100,${textAlpha * 0.9})`;
+        ctx.fillText(teamText, FIELD.width / 2, FIELD.height / 2 + 55);
+        ctx.restore();
+    }
 }
 
 function formatClock(value) {
@@ -1645,12 +1697,51 @@ function drawPixelPlayer(p, color, isGoalie, isControlled) {
     const r = p.r;
     const bounce = Math.sin(p.animOffset || 0) * 1.5;
     const drawY = y + bounce;
+    const legCycle = Math.sin(p.animOffset || 0);
+    const headR = r * 0.72;
+    const headY = drawY - r - headR * 0.55;
 
-    // Subtle shadow under player
+    // Shadow
     ctx.fillStyle = "rgba(0,0,0,0.2)";
     ctx.beginPath();
-    ctx.ellipse(x, y + r + 4, r, r * 0.5, 0, 0, Math.PI * 2);
+    ctx.ellipse(x, y + r + 6, r * 1.1, r * 0.45, 0, 0, Math.PI * 2);
     ctx.fill();
+
+    // Feet / cleats (drawn before body so body overlaps the base of the legs)
+    const shoeW = r * 0.30;
+    const shoeH = r * 0.16;
+    const shoeY = drawY + r - 1;
+    const footSwing = legCycle * r * 0.32;
+    ctx.fillStyle = "#111";
+    ctx.beginPath();
+    ctx.ellipse(x - r * 0.25 - footSwing, shoeY + shoeH + 2, shoeW, shoeH, -0.18, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(x + r * 0.25 + footSwing, shoeY + shoeH + 2, shoeW, shoeH, 0.18, 0, Math.PI * 2);
+    ctx.fill();
+    // Cleat accent stripe
+    ctx.fillStyle = "rgba(255,255,255,0.45)";
+    ctx.beginPath();
+    ctx.ellipse(x - r * 0.25 - footSwing, shoeY + shoeH, shoeW * 0.55, shoeH * 0.38, -0.18, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(x + r * 0.25 + footSwing, shoeY + shoeH, shoeW * 0.55, shoeH * 0.38, 0.18, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Hands (skin-tone circles that swing opposite to feet)
+    const handR = r * 0.24;
+    const armSwing = legCycle * r * 0.22;
+    ctx.fillStyle = "#f1c27d";
+    ctx.strokeStyle = "rgba(0,0,0,0.5)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(x - r - handR * 0.7 + armSwing, drawY + r * 0.25, handR, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(x + r + handR * 0.7 - armSwing, drawY + r * 0.25, handR, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
 
     // Body
     ctx.beginPath();
@@ -1661,52 +1752,65 @@ function drawPixelPlayer(p, color, isGoalie, isControlled) {
     ctx.strokeStyle = isControlled ? "yellow" : "black";
     ctx.stroke();
 
-    // Goalie gloves (white circles on sides of body)
+    // Goalie gloves
     if (isGoalie) {
         const gloveR = r * 0.32;
         ctx.fillStyle = "#ffffff";
         ctx.strokeStyle = "#555";
         ctx.lineWidth = 1;
-        // Left glove
         ctx.beginPath();
         ctx.arc(x - r - gloveR, drawY + r * 0.2, gloveR, 0, Math.PI * 2);
         ctx.fill();
         ctx.stroke();
-        // Right glove
         ctx.beginPath();
         ctx.arc(x + r + gloveR, drawY + r * 0.2, gloveR, 0, Math.PI * 2);
         ctx.fill();
         ctx.stroke();
     }
 
-    // Head
-    const headR = r * 0.6;
-    const headX = x;
-    const headY = drawY - r - 6;
+    // Head (larger for anime proportions)
     ctx.beginPath();
     ctx.fillStyle = "#f1c27d";
-    ctx.arc(headX, headY, headR, 0, Math.PI * 2);
+    ctx.arc(x, headY, headR, 0, Math.PI * 2);
     ctx.fill();
     ctx.lineWidth = 1.5;
     ctx.strokeStyle = "black";
     ctx.stroke();
 
-    // Face: eyes
+    // Hair (dark top — anime style)
+    ctx.fillStyle = "#1a1a2e";
+    ctx.beginPath();
+    ctx.arc(x, headY, headR, Math.PI + 0.25, 2 * Math.PI - 0.25);
+    ctx.lineTo(x, headY);
+    ctx.closePath();
+    ctx.fill();
+
+    // Anime eyes (large with white shine dot)
+    const eyeW = headR * 0.23;
+    const eyeH = headR * 0.32;
     ctx.fillStyle = "#1a1a1a";
     ctx.beginPath();
-    ctx.arc(headX - headR * 0.3, headY - headR * 0.12, headR * 0.17, 0, Math.PI * 2);
+    ctx.ellipse(x - headR * 0.3, headY - headR * 0.06, eyeW, eyeH, 0, 0, Math.PI * 2);
     ctx.fill();
     ctx.beginPath();
-    ctx.arc(headX + headR * 0.3, headY - headR * 0.12, headR * 0.17, 0, Math.PI * 2);
+    ctx.ellipse(x + headR * 0.3, headY - headR * 0.06, eyeW, eyeH, 0, 0, Math.PI * 2);
     ctx.fill();
-    // Face: mouth
+    ctx.fillStyle = "white";
     ctx.beginPath();
-    ctx.arc(headX, headY + headR * 0.15, headR * 0.28, 0, Math.PI);
+    ctx.arc(x - headR * 0.23, headY - headR * 0.14, headR * 0.09, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(x + headR * 0.37, headY - headR * 0.14, headR * 0.09, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Mouth
+    ctx.beginPath();
+    ctx.arc(x, headY + headR * 0.22, headR * 0.22, 0.1, Math.PI - 0.1);
     ctx.strokeStyle = "#774422";
     ctx.lineWidth = 1;
     ctx.stroke();
 
-    // Jersey number (outfield players only)
+    // Jersey number (outfield only)
     if (!isGoalie && p.number !== undefined) {
         ctx.fillStyle = "white";
         ctx.font = "bold 12px Arial";
@@ -1715,13 +1819,33 @@ function drawPixelPlayer(p, color, isGoalie, isControlled) {
         ctx.textAlign = "left";
     }
 
-    // Stamina bar for player team outfield
+    // Stamina bar (above head)
     if (!isGoalie && p.team === "player" && p.stamina !== undefined) {
-        const barY = drawY - r - 18;
+        const barY = headY - headR - 4;
         ctx.fillStyle = "black";
         ctx.fillRect(x - 10, barY, 20, 4);
         ctx.fillStyle = "#00ff88";
         ctx.fillRect(x - 10, barY, (p.stamina / 100) * 20, 4);
+    }
+
+    // Tackle animation: expanding ring + label
+    if (isControlled && tackleActive) {
+        const tiltSpeed = Math.hypot(p.vx || 0, p.vy || 0);
+        const label = tiltSpeed > 1.5 ? "SLIDE!" : "TACKLE!";
+        // Fade from 0.9 → 0 over TACKLE_DURATION frames (step ≈ 0.9 / TACKLE_DURATION)
+        const alpha = Math.max(0, 0.9 - tackleTimer * (0.9 / TACKLE_DURATION));
+        ctx.save();
+        ctx.strokeStyle = `rgba(255,200,50,${alpha})`;
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.arc(x, y, r + 8 + tackleTimer * 2.5, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.fillStyle = `rgba(255,220,80,${alpha})`;
+        ctx.font = "bold 11px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText(label, x, headY - headR - 10);
+        ctx.textAlign = "left";
+        ctx.restore();
     }
 }
 
@@ -1742,6 +1866,13 @@ function distanceToNearestOpponent(player) {
 
 function clamp(v, min, max) {
     return Math.max(min, Math.min(max, v));
+}
+
+function blockPlayerFromGoalArea(p) {
+    if (p.y > FIELD.goalTop && p.y < FIELD.goalBottom) {
+        if (p.x - p.r < FIELD.leftGoalX) p.x = FIELD.leftGoalX + p.r;
+        if (p.x + p.r > FIELD.rightGoalX) p.x = FIELD.rightGoalX - p.r;
+    }
 }
 
 function setDirection(key, pressed) {
