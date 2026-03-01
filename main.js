@@ -1,6 +1,6 @@
-// Asset placeholders — replace with real paths when assets are ready
-const main_menu_bg = null;       // Background image URL for the main menu
-const main_menu_theme = null;    // Audio file path for the main menu looping theme
+// Asset paths — drop files into assets/ folder to activate
+const main_menu_bg = "assets/images/main_menu_background.png";
+const main_menu_theme = "assets/audio/main_menu_music.mp3";
 
 const screen = document.getElementById("screen");
 

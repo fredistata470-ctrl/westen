@@ -92,6 +92,7 @@ function loadChapter(index) {
 function playStory(scene, onEnd) {
     setScene("DIALOGUE");
     var dialogueIndex = 0;
+    var currentPortrait = null;
 
     // Support both new scene.dialogue[] format and legacy scene.lines[] format
     var lines = (scene && (scene.dialogue || scene.lines)) || [];
@@ -109,8 +110,13 @@ function playStory(scene, onEnd) {
             audioManager.playVoice(line.voice);
         }
 
-        var portraitHTML = line.portrait
-            ? "<div class=\"dialogue-portrait\"><img src=\"" + escapeHTML(line.portrait) + "\" alt=\"" + escapeHTML(line.speaker) + "\" onerror=\"this.style.display='none'\"></div>"
+        // Update persistent portrait when line specifies one
+        if (line.portrait) {
+            currentPortrait = line.portrait;
+        }
+
+        var portraitHTML = currentPortrait
+            ? "<div class=\"dialogue-portrait\"><img src=\"" + escapeHTML(currentPortrait) + "\" alt=\"" + escapeHTML(line.speaker) + "\" onerror=\"this.style.display='none'\"></div>"
             : "";
 
         screen.innerHTML =

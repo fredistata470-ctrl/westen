@@ -146,6 +146,7 @@ const audioManager = {
             if (!this._cache[src]) {
                 this._cache[src] = new Audio(src);
                 this._cache[src].loop = true;
+                this._cache[src].volume = 0.6;
             }
             this._menuAudio = this._cache[src];
             this._menuAudio.currentTime = 0;
