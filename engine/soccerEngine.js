@@ -14,6 +14,9 @@ let goaliePossessionTimer = 0;
 let playerGoaliePossessionTimer = 0;
 const GOALIE_AUTO_PASS_DELAY = 2; // seconds before a goalie auto-passes
 
+// Set to true when running a Story Mode match so insulin and XP mechanics are active
+let isStoryMatch = false;
+
 let tackleCooldown = 0;
 let tackleActive = false;
 let tackleTimer = 0;
@@ -95,6 +98,18 @@ const passState = { held: false, charge: 0, maxCharge: 60 };
 // Pre-generated crowd pixel positions for efficient rendering
 let crowdPixels = [];
 
+// Crowd state — tracks atmosphere, momentum and reaction animations
+const crowdState = {
+    momentum: 0,          // 0–1 scale; increases with shots/goals
+    reactionTimer: 0,     // frames of active crowd reaction animation
+    reactionType: null,   // "cheer" | "boo" | "lean"
+    chantTimer: 0,        // countdown between chant pulses (frames)
+    leanOffset: 0,        // current crowd lean pixel offset
+    jumpOffset: 0         // current crowd jump pixel offset (for goal celebrations)
+};
+// Rate at which crowd momentum decays each frame (~0.54/min at 60fps)
+const MOMENTUM_DECAY_RATE = 0.00015;
+
 const PASS_ASSIST_COLOR = "#66aaff";
 const PASS_TARGET_RADIUS_OFFSET = 9;
 const PASS_ASSIST_STEER_RANGE = 300;    // px: distance within which magnetic steering is active
@@ -140,6 +155,7 @@ function showFormationSelect(onSelect) {
 
 function startMatch(chapter, done) {
     onMatchComplete = done || null;
+    isStoryMatch = chapter !== null && chapter !== undefined;
     showFormationSelect(() => {
         screen.innerHTML = "";
         canvas = document.createElement("canvas");
@@ -149,9 +165,14 @@ function startMatch(chapter, done) {
         ctx = canvas.getContext("2d");
 
         initMatch();
+        // Initialise Otto's insulin mechanic for story matches
+        if (isStoryMatch && typeof initOttoInsulin === "function") {
+            initOttoInsulin();
+        }
         matchPaused = false;
         removePauseMenu();
         matchRunning = true;
+        audioManager.startAmbient();
         requestAnimationFrame(gameLoop);
     });
 }
@@ -182,6 +203,15 @@ function initMatch() {
     goalFlash.timer = 0;
     goalFlash.team = null;
 
+    // Reset crowd atmosphere
+    crowdState.momentum = 0;
+    crowdState.reactionTimer = 0;
+    crowdState.reactionType = null;
+    crowdState.chantTimer = 0;
+    crowdState.leanOffset = 0;
+    crowdState.jumpOffset = 0;
+    audioManager.crowdVolume = 1.0;
+
     const formation = FORMATIONS[currentFormation] || FORMATIONS["2-2"];
     for (let i = 0; i < 4; i++) {
         const ph = formation.playerHome[i];
@@ -203,8 +233,8 @@ function initMatch() {
         });
     }
 
-    goalies.player = { x: 78, y: FIELD.height / 2, r: 13, speed: 2.95, box: FIELD.playerBox, team: "player", reactionTimer: 0, errorY: 0, diveTimer: 0, diveDir: 0, animOffset: 0 };
-    goalies.ai = { x: 1322, y: FIELD.height / 2, r: 13, speed: 2.95, box: FIELD.aiBox, team: "ai", reactionTimer: 0, errorY: 0, diveTimer: 0, diveDir: 0, animOffset: 0 };
+    goalies.player = { x: 78, y: FIELD.height / 2, r: 13, collisionRadius: 13 * 0.65, speed: 2.95, box: FIELD.playerBox, team: "player", reactionTimer: 0, shotReactionDelay: 0, errorY: 0, diveTimer: 0, diveDir: 0, animOffset: 0 };
+    goalies.ai = { x: 1322, y: FIELD.height / 2, r: 13, collisionRadius: 13 * 0.65, speed: 2.95, box: FIELD.aiBox, team: "ai", reactionTimer: 0, shotReactionDelay: 0, errorY: 0, diveTimer: 0, diveDir: 0, animOffset: 0 };
 
     // Pre-generate crowd pixels for top and bottom stands
     const standH = 42;
@@ -233,6 +263,9 @@ function update() {
 
     if (tackleCooldown > 0) tackleCooldown--;
     if (goalFlash.timer > 0) goalFlash.timer--;
+
+    // Update crowd atmosphere
+    updateCrowdState();
     if (tackleActive) {
         tackleTimer++;
         if (tackleTimer > TACKLE_DURATION) {
@@ -258,14 +291,24 @@ function update() {
     players.forEach(p => {
         if (!p.baseSpeed) return;
         const moving = input.up || input.down || input.left || input.right;
+
+        // Otto's insulin mechanic (story mode only) modifies stamina drain and speed
+        let staminaDrain = 0.15;
+        let speedMult = 1;
+        if (isStoryMatch && players[0] === p && typeof updateOttoInsulin === "function") {
+            const insulin = updateOttoInsulin();
+            staminaDrain = insulin.staminaDrain;
+            speedMult = insulin.speedMult;
+        }
+
         if (moving && players[0] === p) {
-            p.stamina -= 0.15;
+            p.stamina -= staminaDrain;
         } else {
             p.stamina += 0.08;
         }
         p.stamina = clamp(p.stamina, 0, 100);
         const fatigueFactor = 0.6 + (p.stamina / 100) * 0.4;
-        p.speed = p.baseSpeed * fatigueFactor;
+        p.speed = p.baseSpeed * fatigueFactor * speedMult;
     });
 
     updatePlayerOutfield();
@@ -682,6 +725,13 @@ function findBestAIAttacker() {
     return best;
 }
 
+// 220 ms reaction delay in frames at 60fps before keeper reacts to an incoming shot
+const GOALIE_SHOT_REACTION_FRAMES = 13; // Math.round(0.220 * 60)
+// Probability the goalkeeper misreads the shot direction (human error)
+const GOALIE_ERROR_CHANCE = 0.22;
+// Maximum additional Y offset added when keeper makes an error (pixels)
+const GOALIE_ERROR_OFFSET_MAX = 40;
+
 function updateGoalie(goalie) {
     if (goalie.reactionTimer > 0) {
         goalie.reactionTimer--;
@@ -693,6 +743,25 @@ function updateGoalie(goalie) {
     // Detect if a shot is incoming toward this goalie's goal
     const shotIncoming = (goalie.team === "player" && ball.vx < -7) ||
                          (goalie.team === "ai" && ball.vx > 7);
+
+    // 220ms reaction delay: when a shot is first detected, start a countdown
+    // before the keeper begins moving toward the predicted ball position.
+    if (shotIncoming) {
+        if (goalie.shotReactionDelay === 0) {
+            goalie.shotReactionDelay = GOALIE_SHOT_REACTION_FRAMES;
+            // 22% chance the keeper misreads — adds extra random Y offset
+            if (Math.random() < GOALIE_ERROR_CHANCE) {
+                goalie.errorY += (Math.random() - 0.5) * GOALIE_ERROR_OFFSET_MAX;
+            }
+        }
+    } else {
+        goalie.shotReactionDelay = 0;
+    }
+
+    const reactionFrozen = goalie.shotReactionDelay > 0 && shotIncoming;
+    if (reactionFrozen) {
+        goalie.shotReactionDelay--;
+    }
 
     const predictedY = ball.y + ball.vy * (shotIncoming ? GOALIE_SHOT_LOOKAHEAD : GOALIE_NORMAL_LOOKAHEAD) + goalie.errorY;
     const ballDist = distance(goalie.x, goalie.y, ball.x, ball.y);
@@ -718,7 +787,7 @@ function updateGoalie(goalie) {
     const defendY = clamp(blendedY, FIELD.goalTop - 25, FIELD.goalBottom + 25);
     const defendX = goalie.team === "player" ? 85 : 1315;
 
-    const activeSpeed = shotIncoming ? goalie.speed * 2.0 : goalie.speed;
+    const activeSpeed = (shotIncoming && !reactionFrozen) ? goalie.speed * 1.7 : goalie.speed;
     const goalieMoveDist = distance(goalie.x, goalie.y, defendX, defendY);
     if (goalieMoveDist > 3) {
         const to = normalize(defendX - goalie.x, defendY - goalie.y);
@@ -729,8 +798,8 @@ function updateGoalie(goalie) {
 
     if (goalie.diveTimer > 0) {
         goalie.diveTimer--;
-        goalie.y += goalie.diveDir * 4.8;
-    } else if (shotIncoming && Math.random() < 0.07) {
+        goalie.y += goalie.diveDir * 3.8;
+    } else if (shotIncoming && !reactionFrozen && Math.random() < 0.07) {
         goalie.diveTimer = 8 + Math.floor(Math.random() * 7);
         goalie.diveDir = (ball.y < goalie.y) ? -1 : 1;
     } else if (Math.random() < 0.004) {
@@ -753,7 +822,8 @@ function updateGoalie(goalie) {
         if (!headingToGoal) return;
     }
 
-    const interactionRadius = goalie.r + 8;
+    // Use reduced collision radius (65% of visual) so near-post shots slip through
+    const interactionRadius = (goalie.collisionRadius || goalie.r * 0.65) + 8;
     if (distance(goalie.x, goalie.y, ball.x, ball.y) >= interactionRadius) return;
 
     // Save probability based on shot speed (arcade-polished: strong shots can beat keeper)
@@ -1199,7 +1269,13 @@ function detectGoals() {
     if (ball.x <= FIELD.leftGoalX && ball.y > FIELD.goalTop && ball.y < FIELD.goalBottom) {
         score.ai++;
         announceGoal("ai");
-        audioManager.playSFX("goal_cheer");
+        // Away goal: home crowd boos, lower volume
+        audioManager.crowdVolume = 0.6;
+        audioManager.playSFX("goal_boo");
+        crowdState.reactionTimer = 90;
+        crowdState.reactionType = "boo";
+        crowdState.jumpOffset = 0;
+        crowdState.momentum = Math.max(0, crowdState.momentum - 0.2);
         goalFlash.timer = GOAL_FLASH_DURATION;
         goalFlash.team = "ai";
         resetBall();
@@ -1208,7 +1284,13 @@ function detectGoals() {
     if (ball.x >= FIELD.rightGoalX && ball.y > FIELD.goalTop && ball.y < FIELD.goalBottom) {
         score.player++;
         announceGoal("player");
+        // Home goal: full cheer, full volume
+        audioManager.crowdVolume = 1.0;
         audioManager.playSFX("goal_cheer");
+        crowdState.reactionTimer = 120;
+        crowdState.reactionType = "cheer";
+        crowdState.jumpOffset = 8;
+        crowdState.momentum = Math.min(1, crowdState.momentum + 0.3);
         goalFlash.timer = GOAL_FLASH_DURATION;
         goalFlash.team = "player";
         resetBall();
@@ -1231,7 +1313,52 @@ function releasePossession(kickVX, kickVY) {
     const speed = Math.hypot(kickVX, kickVY);
     if (speed >= 14) {
         audioManager.playSFX(Math.random() < 0.5 ? "crowd_ooh" : "crowd_ah");
+        // Crowd leans forward on big shot
+        crowdState.reactionTimer = 40;
+        crowdState.reactionType = "lean";
+        crowdState.leanOffset = 3;
+        // Increase momentum when player shots are powerful
+        crowdState.momentum = Math.min(1, crowdState.momentum + 0.1);
     }
+}
+
+// Update crowd state each frame: handle reaction timers, chant pulses, momentum decay.
+function updateCrowdState() {
+    // Decay momentum slowly over time
+    crowdState.momentum = Math.max(0, crowdState.momentum - MOMENTUM_DECAY_RATE);
+
+    // Decay reaction animation
+    if (crowdState.reactionTimer > 0) {
+        crowdState.reactionTimer--;
+        if (crowdState.reactionType === "cheer") {
+            // Jump eases back down
+            crowdState.jumpOffset = Math.max(0, crowdState.jumpOffset - 0.1);
+        } else if (crowdState.reactionType === "lean") {
+            crowdState.leanOffset = Math.max(0, crowdState.leanOffset - 0.08);
+        } else {
+            crowdState.jumpOffset = 0;
+            crowdState.leanOffset = 0;
+        }
+    } else {
+        crowdState.reactionType = null;
+        crowdState.jumpOffset = 0;
+        crowdState.leanOffset = 0;
+    }
+
+    // Chant pulses when momentum is high (home team has momentum)
+    if (crowdState.momentum > 0.4) {
+        crowdState.chantTimer--;
+        if (crowdState.chantTimer <= 0) {
+            audioManager.playSFX("crowd_chant", crowdState.momentum * 0.8);
+            // Next chant pulse: sooner when momentum is higher
+            crowdState.chantTimer = Math.floor(180 - crowdState.momentum * 100);
+        }
+    } else {
+        crowdState.chantTimer = 0;
+    }
+
+    // Sync ambient intensity with momentum
+    audioManager.setAmbientIntensity(crowdState.momentum);
 }
 
 function resetBall() {
@@ -1249,6 +1376,7 @@ function resetBall() {
 
 function endMatch(reason = "Match Finished") {
     matchRunning = false;
+    audioManager.stopAmbient();
     screen.innerHTML = `
         <h2>${reason}</h2>
         <p>Player ${score.player} - ${score.ai} AI</p>
@@ -1275,10 +1403,18 @@ function draw() {
     ctx.fillStyle = "#1a1a1a";
     ctx.fillRect(0, 0, FIELD.width, standH);
     ctx.fillRect(0, FIELD.height - standH, FIELD.width, standH);
-    // Crowd: pre-generated colorful pixel dots
+    // Crowd: pre-generated colorful pixel dots with reaction animation
+    const crowdJump = crowdState.jumpOffset;
+    const crowdLean = crowdState.leanOffset;
     for (const cp of crowdPixels) {
-        ctx.fillStyle = `hsl(${cp.hue},70%,60%)`;
-        ctx.fillRect(cp.x, cp.bottom ? FIELD.height - standH + cp.y : cp.y, 2, 2);
+        // Boost saturation/lightness when momentum is high
+        const sat = Math.round(60 + crowdState.momentum * 30);
+        const lit = Math.round(55 + crowdState.momentum * 20);
+        ctx.fillStyle = `hsl(${cp.hue},${sat}%,${lit}%)`;
+        const yOff = cp.bottom ? FIELD.height - standH + cp.y : cp.y;
+        // Jump: dots shift upward on goal; lean: rightward lean on shot
+        const jumpY = cp.bottom ? crowdJump : -crowdJump;
+        ctx.fillRect(cp.x + crowdLean, yOff + jumpY, 2, 2);
     }
 
     ctx.strokeStyle = "white";
@@ -1554,6 +1690,20 @@ function draw() {
         ctx.fillStyle = `rgba(255,255,100,${textAlpha * 0.9})`;
         ctx.fillText(teamText, FIELD.width / 2, FIELD.height / 2 + 55);
         ctx.restore();
+    }
+
+    // Low-insulin vignette warning (story mode only)
+    if (isStoryMatch && typeof updateOttoInsulin === "function" && ottoInsulin < 30) {
+        const severity = 1 - ottoInsulin / 30;
+        const vigAlpha = severity * 0.35;
+        const grad = ctx.createRadialGradient(
+            FIELD.width / 2, FIELD.height / 2, FIELD.width * 0.25,
+            FIELD.width / 2, FIELD.height / 2, FIELD.width * 0.75
+        );
+        grad.addColorStop(0, "rgba(0,0,0,0)");
+        grad.addColorStop(1, `rgba(160,0,0,${vigAlpha})`);
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, FIELD.width, FIELD.height);
     }
 }
 

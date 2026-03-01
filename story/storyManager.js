@@ -100,20 +100,84 @@ function playStory(chapter, onEnd) {
     showDialogue();
 }
 
+// Show a FIFA-style pre-match presentation screen (Story Mode only).
+// Displays stadium name, team names, home/away indicator, formation and lineup.
+// Fades into the match after a short delay or on click.
+function showPreMatchPresentation(chapter, onDone) {
+    setScene("PRE_MATCH");
+
+    // Resolve team info from chapter or fall back to defaults
+    const homeTeam = (chapter && chapter.homeTeam) || { name: "Westen FC", stadium: "Westward Arena", formation: "2-2", players: [] };
+    const awayTeam = (chapter && chapter.awayTeam) || { name: "Northbridge United", formation: "2-2", players: [] };
+
+    const homeLineup = (homeTeam.players && homeTeam.players.length)
+        ? homeTeam.players.map((p, i) => `<li>#${i + 1} ${escapeHTML(p)}</li>`).join("")
+        : "<li>#1 Goalkeeper</li><li>#2 Defender</li><li>#3 Midfielder</li><li>#4 Forward</li>";
+
+    const awayLineup = (awayTeam.players && awayTeam.players.length)
+        ? awayTeam.players.map((p, i) => `<li>#${i + 1} ${escapeHTML(p)}</li>`).join("")
+        : "<li>#1 GK</li><li>#2 DF</li><li>#3 MF</li><li>#4 FW</li>";
+
+    screen.innerHTML = `
+        <div class="prematch-screen">
+            <div class="prematch-stadium">${escapeHTML(homeTeam.stadium || "Westward Arena")}</div>
+            <div class="prematch-matchup">
+                <span class="prematch-home">${escapeHTML(homeTeam.name)} <span class="prematch-badge home-badge">HOME</span></span>
+                <span class="prematch-vs">vs</span>
+                <span class="prematch-away"><span class="prematch-badge away-badge">AWAY</span> ${escapeHTML(awayTeam.name)}</span>
+            </div>
+            <div class="prematch-details">
+                <div class="prematch-team-col">
+                    <div class="prematch-formation">Formation: ${escapeHTML(homeTeam.formation || "2-2")}</div>
+                    <ul class="prematch-lineup">${homeLineup}</ul>
+                </div>
+                <div class="prematch-team-col">
+                    <div class="prematch-formation">Formation: ${escapeHTML(awayTeam.formation || "2-2")}</div>
+                    <ul class="prematch-lineup">${awayLineup}</ul>
+                </div>
+            </div>
+            <div class="prematch-prompt">▶ Click to kick off</div>
+        </div>
+    `;
+
+    function proceed() {
+        clearTimeout(autoTimer);
+        screen.onclick = null;
+        if (onDone) onDone();
+    }
+
+    // Also auto-advance after 5 seconds
+    const autoTimer = setTimeout(() => {
+        if (currentScene === "PRE_MATCH") proceed();
+    }, 5000);
+
+    screen.onclick = () => proceed();
+}
+
 function startPreGameInterview(chapter) {
     playStory(chapter.preGame, () => {
-        setScene("MATCH");
-        startMatch(chapter, () => {
-            // Record match result in save data before post-game interview
-            if (typeof score !== "undefined") {
-                if (score.player > score.ai) {
-                    saveData.wins++;
-                } else {
-                    saveData.losses++;
+        // Show pre-match presentation before the match begins
+        showPreMatchPresentation(chapter, () => {
+            setScene("MATCH");
+            startMatch(chapter, () => {
+                // Record match result in save data before post-game interview
+                if (typeof score !== "undefined") {
+                    if (score.player > score.ai) {
+                        saveData.wins++;
+                        if (saveData.record) saveData.record.wins++;
+                    } else {
+                        saveData.losses++;
+                        if (saveData.record) saveData.record.losses++;
+                    }
+                    if (saveData.record) saveData.record.goals += score.player;
+                    // Award XP to Otto for story matches
+                    if (typeof awardMatchXP === "function") {
+                        awardMatchXP(score.player > score.ai ? "win" : "loss", score.player);
+                    }
+                    saveGame();
                 }
-                saveGame();
-            }
-            startPostGameInterview(chapter);
+                startPostGameInterview(chapter);
+            });
         });
     });
 }

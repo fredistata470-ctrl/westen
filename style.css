@@ -121,3 +121,108 @@ button:disabled {
 .dialogue-choice:hover {
     background: rgba(60, 90, 180, 0.95);
 }
+
+/* ── Pre-Match Presentation Screen ────────────────────────── */
+
+.prematch-screen {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(160deg, #0a0f1e 0%, #101828 60%, #0a1a10 100%);
+    gap: 18px;
+    cursor: pointer;
+    box-sizing: border-box;
+    padding: 20px;
+}
+
+.prematch-stadium {
+    font-size: 15px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: rgba(180, 200, 255, 0.65);
+}
+
+.prematch-matchup {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.prematch-home {
+    color: #6ab3ff;
+}
+
+.prematch-away {
+    color: #ff7a7a;
+}
+
+.prematch-vs {
+    font-size: 20px;
+    color: rgba(255,255,255,0.45);
+    font-style: italic;
+}
+
+.prematch-badge {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 3px;
+    letter-spacing: 1px;
+    vertical-align: middle;
+    margin: 0 4px;
+}
+
+.home-badge {
+    background: rgba(100, 170, 255, 0.3);
+    border: 1px solid rgba(100, 170, 255, 0.6);
+    color: #aad4ff;
+}
+
+.away-badge {
+    background: rgba(255, 100, 100, 0.3);
+    border: 1px solid rgba(255, 100, 100, 0.6);
+    color: #ffaaaa;
+}
+
+.prematch-details {
+    display: flex;
+    gap: 60px;
+    margin-top: 10px;
+}
+
+.prematch-team-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 160px;
+}
+
+.prematch-formation {
+    font-size: 14px;
+    color: rgba(200, 220, 255, 0.7);
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+}
+
+.prematch-lineup {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    color: #e0e8ff;
+    line-height: 1.9;
+    text-align: center;
+}
+
+.prematch-prompt {
+    margin-top: 24px;
+    font-size: 14px;
+    color: rgba(200, 200, 255, 0.5);
+    animation: blink 1.2s step-start infinite;
+}
+
