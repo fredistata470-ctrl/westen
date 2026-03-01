@@ -10,6 +10,8 @@ const audioManager = {
     // Ambient chant oscillator node (held for looping chant)
     _chantNode: null,
     _chantGain: null,
+    // Main menu theme (looping background music)
+    _menuAudio: null,
 
     _getAudioContext() {
         if (!this._ctx) {
@@ -133,6 +135,36 @@ const audioManager = {
             osc.start(ac.currentTime + delaySeconds);
             osc.stop(ac.currentTime + delaySeconds + duration + 0.05);
         } catch (_e) { /* ignore */ }
+    },
+
+    // Start looping main menu background theme. Call when entering the main menu.
+    // src: file path to the audio asset; silently skips if src is falsy (placeholder).
+    playMenuTheme(src) {
+        this.stopMenuTheme();
+        if (!src) return;
+        try {
+            if (!this._cache[src]) {
+                this._cache[src] = new Audio(src);
+                this._cache[src].loop = true;
+            }
+            this._menuAudio = this._cache[src];
+            this._menuAudio.currentTime = 0;
+            this._menuAudio.play().catch(() => {
+                // Autoplay blocked or file missing — skip silently
+            });
+        } catch (_e) {
+            // Audio API unavailable
+        }
+    },
+
+    // Stop the main menu theme immediately. Call when leaving the main menu.
+    stopMenuTheme() {
+        if (!this._menuAudio) return;
+        try {
+            this._menuAudio.pause();
+            this._menuAudio.currentTime = 0;
+        } catch (_e) { /* ignore */ }
+        this._menuAudio = null;
     },
 
     stop(src) {
