@@ -1,0 +1,10 @@
+{
+  "chapter3": {
+    "opponent": "northbridge_united",
+    "home": true
+  },
+  "chapter4": {
+    "opponent": "lakeside_city",
+    "home": false
+  }
+}

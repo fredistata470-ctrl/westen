@@ -3,12 +3,24 @@
     "id": "westen_fc",
     "name": "Westen FC",
     "color": "blue",
-    "formation": "2-2"
+    "stadium": "Westward Arena",
+    "formation": "2-2",
+    "players": ["Otto", "Reyes", "Malik", "Torres"]
   },
   {
     "id": "northbridge_united",
     "name": "Northbridge United",
     "color": "red",
-    "formation": "2-2"
+    "stadium": "Northbridge Park",
+    "formation": "2-2",
+    "players": ["Shaw", "Patel", "Nkosi", "Cruz"]
+  },
+  {
+    "id": "lakeside_city",
+    "name": "Lakeside City",
+    "color": "green",
+    "stadium": "Lakeside Stadium",
+    "formation": "3-1",
+    "players": ["Vega", "Osei", "Ruiz", "Kim"]
   }
 ]
