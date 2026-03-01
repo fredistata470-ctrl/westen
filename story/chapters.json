@@ -2,20 +2,38 @@
   {
     "type": "story",
     "lines": [
-      { "speaker": "Narrator", "text": "Prologue..." },
-      { "speaker": "Coach", "text": "Welcome to Westen." }
+      { "speaker": "Narrator", "text": "Somewhere in the city of Westen, a dream is about to begin..." },
+      { "speaker": "Narrator", "text": "Two young players — rivals since childhood — are called to the same academy." },
+      { "speaker": "Coach", "text": "Welcome to the Westen Champions League Academy. I'm Coach Rivera." },
+      { "speaker": "Coach", "text": "You've been selected because we see something special in you. Don't waste it." },
+      { "speaker": "Player", "text": "We won't disappoint you, Coach." },
+      { "speaker": "Zhao", "text": "Speak for yourself. I'm here to win." },
+      { "speaker": "Coach", "text": "Good. A little fire never hurt anyone. Now — let's get to work." }
     ]
   },
   {
     "type": "story",
     "lines": [
-      { "speaker": "Narrator", "text": "Chapter 1 begins..." }
+      { "speaker": "Narrator", "text": "Chapter 1 — First Days" },
+      { "speaker": "Coach", "text": "Before we talk tactics, you need to understand one thing: this is a team sport." },
+      { "speaker": "Zhao", "text": "I know how to play a team sport." },
+      { "speaker": "Coach", "text": "Do you? Because the scouts tell me you took 14 shots last match and passed zero times." },
+      { "speaker": "Zhao", "text": "... They went in, didn't they?" },
+      { "speaker": "Coach", "text": "Two of them did. Your teammates were open six more times. Learn to read the field." },
+      { "speaker": "Player", "text": "Coach — what's the plan for the upcoming qualifier?" },
+      { "speaker": "Coach", "text": "That's what we're here to figure out. Get some rest. Tomorrow it gets real." }
     ]
   },
   {
     "type": "story",
     "lines": [
-      { "speaker": "Narrator", "text": "Chapter 2..." }
+      { "speaker": "Narrator", "text": "Chapter 2 — Rising Pressure" },
+      { "speaker": "Narrator", "text": "Word has spread across the league. Westen's new recruits are drawing attention." },
+      { "speaker": "Zhao", "text": "Did you see that scout in the stands? He was watching us the whole session." },
+      { "speaker": "Player", "text": "I noticed. We can't afford to have a bad game right now." },
+      { "speaker": "Coach", "text": "Forget the scouts. Play for each other. The rest follows." },
+      { "speaker": "Coach", "text": "The qualifier is tomorrow. Pre-game interviews, then the match. Be ready." },
+      { "speaker": "Player", "text": "Understood. We'll be ready." }
     ]
   },
   {
@@ -23,19 +41,31 @@
     "preGame": {
       "type": "story",
       "lines": [
-        { "speaker": "Reporter", "text": "How do you feel today?" }
+        { "speaker": "Reporter", "text": "We're live on the sideline with Westen FC's rising stars! How are you feeling ahead of today's qualifier?" },
+        { "speaker": "Player", "text": "Focused. We've put in the work. Today we show what we're made of." },
+        { "speaker": "Reporter", "text": "Zhao — last season you were known as a solo player. Is that still the case?" },
+        { "speaker": "Zhao", "text": "People change. I've learned to trust my team. Watch what happens out there." },
+        { "speaker": "Reporter", "text": "Strong words. Westen fans are counting on you. Best of luck!" }
       ]
     },
     "postGame": {
       "type": "story",
       "lines": [
-        { "speaker": "Reporter", "text": "Great performance." }
+        { "speaker": "Reporter", "text": "What a match! Can you tell us what was going through your mind out there?" },
+        { "speaker": "Player", "text": "It was tough — they came out pressing hard. But we kept our shape and found our chances." },
+        { "speaker": "Zhao", "text": "I had two shots go wide. Not good enough. But the team pulled through." },
+        { "speaker": "Reporter", "text": "Coach Rivera, your thoughts?" },
+        { "speaker": "Coach", "text": "Proud of the effort. There's still work to do, but this is the foundation we needed." }
       ]
     },
     "storyAfterMatch": {
       "type": "story",
       "lines": [
-        { "speaker": "Narrator", "text": "System cycle unlocked: Pre-Game Interview → Match → Post-Game Interview → Story → Next Chapter." }
+        { "speaker": "Narrator", "text": "The result is in. Whatever happened today, the journey is only beginning." },
+        { "speaker": "Coach", "text": "Remember this feeling — win or lose. Let it drive you forward." },
+        { "speaker": "Zhao", "text": "Next match... I won't miss those shots." },
+        { "speaker": "Player", "text": "Neither will I. We're just getting started." },
+        { "speaker": "Narrator", "text": "The Champions League road continues. Westen FC presses on." }
       ]
     }
   }
