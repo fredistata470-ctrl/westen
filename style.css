@@ -138,6 +138,14 @@ button:disabled {
     padding: 20px;
 }
 
+.prematch-chapter {
+    font-size: 13px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255, 215, 100, 0.75);
+    margin-bottom: 4px;
+}
+
 .prematch-stadium {
     font-size: 15px;
     letter-spacing: 4px;

@@ -13,10 +13,24 @@
 <script src="scene/audioManager.js"></script>
 <script src="scene/saveSystem.js"></script>
 
-<!-- Story / dialogue system -->
-<script src="story/dialogueLoader.js"></script>
+<!-- Story Mode — dialogue schema (load first, scene files depend on it) -->
+<script src="story_mode/dialogue_template.js"></script>
+
+<!-- Story Mode — per-chapter scene files -->
+<script src="story_mode/prologue/dialogue_part_1.js"></script>
+<script src="story_mode/prologue/dialogue_part_2.js"></script>
+<script src="story_mode/chapter_1/story_scene.js"></script>
+<script src="story_mode/chapter_2/story_scene.js"></script>
+<script src="story_mode/chapter_3/pre_game.js"></script>
+<script src="story_mode/chapter_3/match.js"></script>
+<script src="story_mode/chapter_3/post_game.js"></script>
+<script src="story_mode/chapter_3/story_scene.js"></script>
+
+<!-- Story Mode — engine (load after all scene files) -->
+<script src="story_mode/story_engine.js"></script>
+
+<!-- Otto progression system -->
 <script src="story/ottoGrowth.js"></script>
-<script src="story/storyManager.js"></script>
 
 <!-- Gameplay engine -->
 <script src="engine/soccerEngine.js"></script>
