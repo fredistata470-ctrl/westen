@@ -4,6 +4,18 @@
 
 const audioManager = {
     _cache: {},
+    _ctx: null,
+
+    _getAudioContext() {
+        if (!this._ctx) {
+            try {
+                this._ctx = new (window.AudioContext || window.webkitAudioContext)();
+            } catch (_e) {
+                return null;
+            }
+        }
+        return this._ctx;
+    },
 
     // Play a voice-over file by path (e.g. "assets/audio/coach_line1.mp3").
     // Silently skips if src is falsy or the file is unavailable.
@@ -23,11 +35,46 @@ const audioManager = {
         }
     },
 
-    // Play a named sound effect.
+    // Play a named sound effect using Web Audio API tones as placeholders.
     // type: "goal_cheer" | "crowd_ooh" | "crowd_ah"
-    // TODO: wire up actual Audio objects here when sound assets are available.
+    // When real audio assets are added, replace _playTone calls with Audio file playback.
     playSFX(type) {
-        void type; // placeholder until asset files are added
+        const ac = this._getAudioContext();
+        if (!ac) return;
+        try {
+            if (type === "goal_cheer") {
+                // Rising cheerful tone burst
+                this._playTone(ac, 440, 0.18, 0.0, "sine");
+                this._playTone(ac, 554, 0.18, 0.12, "sine");
+                this._playTone(ac, 659, 0.22, 0.24, "sine");
+            } else if (type === "crowd_ooh") {
+                // Low crowd murmur
+                this._playTone(ac, 220, 0.08, 0.0, "sine");
+                this._playTone(ac, 260, 0.08, 0.10, "sine");
+            } else if (type === "crowd_ah") {
+                // Rising crowd exclamation
+                this._playTone(ac, 300, 0.09, 0.0, "sine");
+                this._playTone(ac, 360, 0.09, 0.12, "sine");
+            }
+        } catch (_e) {
+            // Audio API unavailable or blocked
+        }
+    },
+
+    // Internal helper: schedule a short tone burst via Web Audio API.
+    _playTone(ac, freq, duration, delaySeconds, type) {
+        try {
+            const osc = ac.createOscillator();
+            const gain = ac.createGain();
+            osc.type = type || "sine";
+            osc.frequency.value = freq;
+            gain.gain.setValueAtTime(0.15, ac.currentTime + delaySeconds);
+            gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + delaySeconds + duration);
+            osc.connect(gain);
+            gain.connect(ac.destination);
+            osc.start(ac.currentTime + delaySeconds);
+            osc.stop(ac.currentTime + delaySeconds + duration + 0.05);
+        } catch (_e) { /* ignore */ }
     },
 
     stop(src) {

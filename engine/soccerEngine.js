@@ -1199,6 +1199,7 @@ function detectGoals() {
     if (ball.x <= FIELD.leftGoalX && ball.y > FIELD.goalTop && ball.y < FIELD.goalBottom) {
         score.ai++;
         announceGoal("ai");
+        audioManager.playSFX("goal_cheer");
         goalFlash.timer = GOAL_FLASH_DURATION;
         goalFlash.team = "ai";
         resetBall();
@@ -1207,6 +1208,7 @@ function detectGoals() {
     if (ball.x >= FIELD.rightGoalX && ball.y > FIELD.goalTop && ball.y < FIELD.goalBottom) {
         score.player++;
         announceGoal("player");
+        audioManager.playSFX("goal_cheer");
         goalFlash.timer = GOAL_FLASH_DURATION;
         goalFlash.team = "player";
         resetBall();
@@ -1225,6 +1227,11 @@ function releasePossession(kickVX, kickVY) {
     possession.pickupCooldown = 18;
     ball.vx = kickVX;
     ball.vy = kickVY;
+    // Trigger crowd reaction for powerful shots heading toward either goal
+    const speed = Math.hypot(kickVX, kickVY);
+    if (speed >= 14) {
+        audioManager.playSFX(Math.random() < 0.5 ? "crowd_ooh" : "crowd_ah");
+    }
 }
 
 function resetBall() {
@@ -1280,6 +1287,18 @@ function draw() {
     ctx.moveTo(FIELD.width / 2, 0);
     ctx.lineTo(FIELD.width / 2, FIELD.height);
     ctx.stroke();
+
+    // Center circle
+    ctx.beginPath();
+    ctx.arc(FIELD.width / 2, FIELD.height / 2, 90, 0, Math.PI * 2);
+    ctx.strokeStyle = "white";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    // Center spot
+    ctx.beginPath();
+    ctx.arc(FIELD.width / 2, FIELD.height / 2, 5, 0, Math.PI * 2);
+    ctx.fillStyle = "white";
+    ctx.fill();
 
     // goalie boxes
     ctx.strokeStyle = "#f0f0f0";
@@ -1360,29 +1379,6 @@ function draw() {
     ctx.fillStyle = "#ffdd77";
     ctx.font = "bold 14px Arial";
     ctx.fillText(`${formatClock(matchClock)}`, hudCx, 76);
-    ctx.textAlign = "left";
-
-    // Corner scoreboard (top-left) – always visible even on smaller viewports
-    ctx.fillStyle = "rgba(0,0,0,0.82)";
-    ctx.fillRect(8, 8, 130, 52);
-    ctx.strokeStyle = "rgba(255,215,0,0.85)";
-    ctx.lineWidth = 1.5;
-    ctx.strokeRect(8, 8, 130, 52);
-    ctx.textAlign = "center";
-    ctx.fillStyle = "#67f3ff";
-    ctx.font = "bold 11px Arial";
-    ctx.fillText("HOME", 43, 22);
-    ctx.fillStyle = "#ff7070";
-    ctx.fillText("AWAY", 103, 22);
-    ctx.fillStyle = "white";
-    ctx.font = "bold 28px Arial";
-    ctx.fillText(`${score.player}`, 38, 50);
-    ctx.fillStyle = "#aaa";
-    ctx.font = "bold 20px Arial";
-    ctx.fillText("-", 73, 48);
-    ctx.fillStyle = "white";
-    ctx.font = "bold 28px Arial";
-    ctx.fillText(`${score.ai}`, 108, 50);
     ctx.textAlign = "left";
 
     // Bottom HUD: shot/pass power bar (always visible when charging)
