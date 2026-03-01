@@ -27,7 +27,25 @@ var STORY_CHAPTERS = [
         postGame: chapter3PostGameDialogue,
         storyAfterMatch: chapter3StoryScene,
         matchHooks: chapter3Match
-    }
+    },
+
+    // Chapter: The Golden Return
+    { type: "story", scene: chapterGoldenReturnScene },
+
+    // Chapter: They Say It Out Loud
+    { type: "story", scene: chapterTheySayItOutLoudScene },
+
+    // Chapter 12
+    { type: "story", scene: chapter12Scene },
+
+    // Chapter 13
+    { type: "story", scene: chapter13Scene },
+
+    // Chapter 14: Visibility
+    { type: "story", scene: chapter14Scene },
+
+    // Chapter 22: Fault Lines
+    { type: "story", scene: chapter22Scene }
 ];
 
 // ── HTML escaping ─────────────────────────────────────────────────────────────
