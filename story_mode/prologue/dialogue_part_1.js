@@ -10,7 +10,7 @@ var prologuePart1 = createDialogueScene({
         { speaker: "Narrator", emotion: "neutral", text: "Black screen. Sound of ocean waves. Low mechanical hum. Fade in. Wide cinematic shot: A large, official, professional government building sits on the edge of the ocean. Clean architecture. Tall glass panels. Flags moving in the wind. A boat approaches the dock. People disembark. Camera follows the protagonist walking toward the building. Automatic doors open." },
         { speaker: "Narrator", emotion: "neutral", text: "Interior. Bright, clean, modern lobby. Reception desk at center. The cute anime girl is turned slightly away, organizing documents. She hears the door. She turns. Leans slightly toward the camera." },
         { speaker: "Girl",     emotion: "happy",   text: "Oh, hello. Welcome. I didn't hear you come in." },
-        { speaker: "Girl",     emotion: "happy",   text: "My name is [INSERT NAME]. Are you just arriving from Breeder's Island?",
+        { speaker: "Girl",     emotion: "happy",   text: "My name is Ami. Are you just arriving from Breeder's Island?",
           choices: [{ text: "Yeah. I just came from the Breeder's Island.", next: "prologue_01_cont" }] },
         { speaker: "Girl",     emotion: "neutral", text: "Cool. Welcome to Weston." },
         { speaker: "Girl",     emotion: "neutral", text: "Do you have your paperwork and your ID?",
