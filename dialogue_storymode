@@ -1,0 +1,2014 @@
+
+
+
+
+=== CHAPTER 1: [Exact Chapter Title From PDF] ===
+
+
+
+Chapter titles must be bold and clear.
+
+Keep original wording exactly as written.
+
+B) DIALOGUE FORMAT
+
+Every line of dialogue must be formatted like this:
+
+
+
+
+
+[SPEECH_BUBBLE]
+
+CharacterName: Dialogue text exactly as written.
+
+
+
+Example:
+
+
+
+
+
+[SPEECH_BUBBLE]
+
+Maya: I don't think this is a good idea.
+
+
+
+If narration exists (no speaker), format it as:
+
+
+
+
+
+[NARRATION]
+
+Narration text here.
+
+
+
+C) PLAYER CHOICES FORMAT
+
+If the story includes decisions or choices, format them EXACTLY like this:
+
+
+
+
+
+[CHOICE]
+
+1. Option text exactly as written.
+
+2. Option text exactly as written.
+
+3. Option text exactly as written.
+
+
+
+If a choice leads to a specific branch, format it like this:
+
+
+
+
+
+[IF_CHOICE_1]
+
+(dialogue that follows choice 1)
+
+
+
+[IF_CHOICE_2]
+
+(dialogue that follows choice 2)
+
+
+
+Do NOT merge branches.
+
+
+
+Keep all paths separated clearly.
+
+D) SCENE TRANSITIONS
+
+If the PDF shows a scene change, format it as:
+
+
+
+
+
+--- SCENE CHANGE ---
+
+Location: (if mentioned)
+
+Time: (if mentioned)
+
+
+
+E) OUTPUT FORMAT
+
+Output as clean structured text.
+
+No commentary.
+
+
+
+No explanations.
+
+
+
+No extra text.
+
+
+
+No analysis.
+
+Only structured dialogue-ready format.
+
+Gemini said
+Dialogue Part 1
+
+[NARRATION]
+First Draft Westin-Xiao League of Champions 
++1
+
+=== CHAPTER: PROLOGUE – PART 1 "Welcome to Weston" === 
+
+--- SCENE CHANGE ---
+Location: ARRIVAL 
+Time:
+
+[NARRATION]
+Black screen. Sound of ocean waves Low mechanical hum Fade in. Wide cinematic shot: 
+A large, official, professional government buliding sits on the edge of the ocean, Clean architecture. Tall glass panels. Flags moving in the wind. A boat approaches the dock People disembark Camera follows the protagonist walking toward the building Automatic doors open. 
++4
+
+--- SCENE CHANGE ---
+Location: FRONT DESK 
+Time:
+
+[NARRATION]
+Interior. Bright, clean, modern lobby. Reception desk at center The cute anime girl is turned slightly away, organizing documents. She hears the door She turns. Leans slightly toward the camera. Idie animation: blinking, subtle breathing, hair moving gently. She smiles. 
++4
+
+[SPEECH_BUBBLE]
+Girl: Oh, heilo, Welcome, I didn't hear you come in. 
+
+[NARRATION]
+Pause 
+
+[SPEECH_BUBBLE]
+Girl: My name is [INSERT NAME . 
+
+[NARRATION]
+(Slight head tilt.) 
+
+[SPEECH_BUBBLE]
+Girl: Are you just arriving from Breeder's Island? 
+
+[CHOICE]
+
+Yeah. I just came from the Breeder's Island 
+
+[IF_CHOICE_1]
+[SPEECH_BUBBLE]
+Girl: Cool. Welcome to Weston. 
+[SPEECH_BUBBLE]
+Girl: Do you have your paperwork and your ID? 
+[SPEECH_BUBBLE]
+PLAYER: Yeah, I do. 
+[SPEECH_BUBBLE]
+Girl: Okay. Follow me. We have to go to the orientation building 
++3
+
+--- SCENE CHANGE ---
+Location: ORIENTATION ROOM 
+Time:
+
+[NARRATION]
+Professional presentation room overlooking the ocean, Large digital screen. She gestures to a seat 
++2
+
+[SPEECH_BUBBLE]
+Girl: Please sit down. 
+
+[NARRATION]
+Presentation begins. 
+
+[SPEECH_BUBBLE]
+Girl: Okay, all set. You're assigned to the city of West Ward. 
+[SPEECH_BUBBLE]
+Girl: Oh, bummer. I don't know much about West Ward. 
+[SPEECH_BUBBLE]
+Girl: But they're known for their coal mining 
+[SPEECH_BUBBLE]
+Girl: So let me give you a tour of Weston. 
++3
+
+[NARRATION]
+SLIDE 1 HISTORY Animated city visuals behind her 
++2
+
+[SPEECH_BUBBLE]
+Girl: Weston is over 1,000 years old. That's a lot of history. 
+[SPEECH_BUBBLE]
+Girl: We became one of the strongest countries in the world over 500 years ago. 
+[SPEECH_BUBBLE]
+Girl: Then the Great Xiao War happened. 
+[SPEECH_BUBBLE]
+Girl: It lasted over 10 years. 
+[SPEECH_BUBBLE]
+Girl: It was a dark time in our history 
+[SPEECH_BUBBLE]
+Girl: But now we made our govemment system for the benefit of the people. 
+[SPEECH_BUBBLE]
+Girl: And people are happy. 
++4
+
+[NARRATION]
+(Slight tonal shift. Smile doesn't fully reach her eyes.) SLIDE 2- LIFELINE SYSTEM 
++1
+
+[SPEECH_BUBBLE]
+Girl: Let me tell you about the basic lifeline of people who live here. 
+[SPEECH_BUBBLE]
+Girl: If you're bom in West Ward, you go to the education building. 
+[SPEECH_BUBBLE]
+Girl: Every city has a common education building for elementary, middle, and high school. 
+[SPEECH_BUBBLE]
+Girl: We learn about Westen, 
+[SPEECH_BUBBLE]
+Girl: We develop our skills. 
+[SPEECH_BUBBLE]
+Girl: Social skills. 
+[SPEECH_BUBBLE]
+Girl: And we graduate after passing our career exam to see what kind of career we're going to take 
+[SPEECH_BUBBLE]
+Girl: We learn the values and principles of being a Westenite 
+[SPEECH_BUBBLE]
+Girl: We have a record of being the best students and having the best test scores in the world. 
++4
+
+[NARRATION]
+SLIDE 3 YOUR PATH Slide changes. A highlighted map path appears. 
++3
+
+[SPEECH_BUBBLE]
+Girl: Then you go to the Selection University. 
+[SPEECH_BUBBLE]
+Girl: But I see here that you already went to university in a different country. 
+[SPEECH_BUBBLE]
+Girl: How particular. 
+[SPEECH_BUBBLE]
+Girl: I've never seen that before. 
+[SPEECH_BUBBLE]
+Girl: But since you already have a major... 
+[SPEECH_BUBBLE]
+Girl: And it looks like you already have a job... 
+[SPEECH_BUBBLE]
+Girl: We can skip that 
+[SPEECH_BUBBLE]
+Girl: But for you, because you are from Breeder Island 
+[SPEECH_BUBBLE]
+Girl: when you have kids.. 
+[SPEECH_BUBBLE]
+Girl: They will go to the Selection University for two years to master what they've been chosen to do. 
++4
+
+[NARRATION]
+SLIDE 4 LOTTERY CONVENTION 
++1
+
+[SPEECH_BUBBLE]
+Girl: Oh, "But for you, because you are from Breeder Island... you start off here at this step the lottery convention." 
+[SPEECH_BUBBLE]
+Girl: In a couple of years, when you tum 25, you get to enter the Lottery Convention. 
+[SPEECH_BUBBLE]
+Girl: You will go to the Grand Lottery Convention Hall in the capital city of Draco. 
+[SPEECH_BUBBLE]
+Girl: You fill out forms 
+[SPEECH_BUBBLE]
+Girl: You pay your taxes 
+[SPEECH_BUBBLE]
+Girl: Depending on your status... 
+[SPEECH_BUBBLE]
+Girl: You can find a higher-level mate or a lower-level mate for you. 
+[SPEECH_BUBBLE]
+Girl: I wish you all the luck in that. 
+[SPEECH_BUBBLE]
+Girl: But remember... 
+[SPEECH_BUBBLE]
+Girl: Mating before marriage is illegal and punishable. 
++4
+
+[NARRATION]
+SLIDE 5 - BREEDER'S LOG Breeder's Log building in northeast Everything else continues exactly the same as previously written: Submit paperwork Pay fee. Receive baby. Four-child limit. Eight with permission. Private internet servers. Punishment for outside servers. Army requirement. Two years before 37. One career switch rule. All unchanged. FINAL STATEMENT She steps forward slightly. 
++4
+
+[SPEECH_BUBBLE]
+Girl: Breeder Island-born Westenites and natural-born Westenites on the mainland are all the same. 
+[SPEECH_BUBBLE]
+Girl: We have to protect each other to make sure our society survives. 
++1
+
+[NARRATION]
+(Slight pause.) Softly: 
++1
+
+[SPEECH_BUBBLE]
+Girl: Because without unity there is no future. 
+
+[CHOICE]
+
+What? 
+
+[IF_CHOICE_1]
+[NARRATION]
+She blinks 
+[SPEECH_BUBBLE]
+Girl: Oh, Nothing. 
+[NARRATION]
+Hands folder.. 
+[SPEECH_BUBBLE]
+Girl: Here's your ticket 
+[SPEECH_BUBBLE]
+Girl: Here is the address of the apartment you have been given. 
+[SPEECH_BUBBLE]
+Girl: And here are 500 Westernite dollars. 
+[SPEECH_BUBBLE]
+Girl: Use them wisely 
+[SPEECH_BUBBLE]
+Girl: You are to report to work on Monday moming 
+[SPEECH_BUBBLE]
+Girl: Nice meeting you. 
+[SPEECH_BUBBLE]
+Girl: Good luck. 
++4
+
+[NARRATION]
+Fade to black. End Prologue Part 1. 
++1
+
+=== CHAPTER: PROLOGUE – PART 2 === 
+
+[NARRATION]
+*(Pitch black screen. No visuals at all.)" "(Only text bubbles and sound.)" 
++1
+
+[SPEECH_BUBBLE]
+UNKNOWN: Otto... are you okay? 
+
+[NARRATION]
+(Distant engines. Boots on pavement.)" 
+
+[SPEECH_BUBBLE]
+UNKNOWN: I have to leave. 
+
+[NARRATION]
+*(Pause)" 
+
+[SPEECH_BUBBLE]
+UNKNOWN: Mom will be back in an hour or two. You stay here. 
+
+[NARRATION]
+(Breathing grows unsteady.)" 
+
+[SPEECH_BUBBLE]
+UNKNOWN: I never scanned my ID when I turned twenty-one. 
+
+[NARRATION]
+(A low rumble in the distance.)" 
+
+[SPEECH_BUBBLE]
+UNKNOWN: They don't know where I am. They can't track me. 
+
+[NARRATION]
+(Shouting outside.)" 
+
+[SPEECH_BUBBLE]
+UNKNOWN: They're drafting everyone. 
+
+[NARRATION]
+(A sharp inhale.)" 
+
+[SPEECH_BUBBLE]
+UNKNOWN: I can't go to war 
+
+[NARRATION]
+
+
+(Silence.) 
+
+[SPEECH_BUBBLE]
+UNKNOWN: If they catch me, I'm gone. 
+[SPEECH_BUBBLE]
+UNKNOWN: Your still underage but 
+[SPEECH_BUBBLE]
+UNKNOWN: You're the oldest now. 
++2
+
+[NARRATION]
+(Engines roar closer)" 
+
+[SPEECH_BUBBLE]
+UNKNOWN: Protect them. 
+
+[NARRATION]
+(A massive "EXPLOSION CUT TO BLACK** 
++1
+
+--- SCENE CHANGE ---
+Location: THE WAR 
+Time:
+
+[NARRATION]
+"(Still mostly black. Brief flashes.)" Soldiers storm the town, Gunfine People running. A woman falls. One gunshot. Silence 
++4
+
+--- SCENE CHANGE ---
+Location: THE MESSAGE 
+Time: Early moming. Otto's house on the outskirts of town. 
++1
+
+[NARRATION]
+An elderly mana grandfather stands at the door. He looks broken. "(We don't hear his words.)" Oto listens His face changes. 
++4
+
+--- SCENE CHANGE ---
+Location: THE CHILDREN 
+Time: Inside. Four younger siblings sit on the floor. 
++1
+
+[NARRATION]
+Otto stands in front of them. He struggles 
++1
+
+[SPEECH_BUBBLE]
+Otto: Mom... isn't coming back. 
+
+[NARRATION]
+(Silence) 
+
+[SPEECH_BUBBLE]
+Otto: He... went away as well. 
+
+[NARRATION]
+(One child starts to cry. 
+
+[SPEECH_BUBBLE]
+Otto: but I'm here. 
+
+[NARRATION]
+CUT TO BLACK TITLE CARD** "EIGHT YEARS LATER™ 
++2
+
+=== CHAPTER 1: THE WESTEN-XIAO LEAGUE === 
+
+--- SCENE CHANGE ---
+Location: THE APARTMENT Time: EVENING 
+
+[NARRATION]
+(Small, cramped apartment.)" 
+(Otto enters, exhausted from work.)" 
++1
+
+[SPEECH_BUBBLE]
+REBECCA: You're late again. 
+[SPEECH_BUBBLE]
+Otto: I had to stay 
+[SPEECH_BUBBLE]
+rebecca: You look dead. 
+[SPEECH_BUBBLE]
+rebecca: Hey today at school everyone was talking about the tryouts and the new season that's coming. Your gonna go try out in a couple of days right? 
++3
+
+[NARRATION]
+Otto doesn't answer right away. 
+
+[SPEECH_BUBBLE]
+elizabeth: You can't give up. 
+[SPEECH_BUBBLE]
+elizabeth: I've seen you play. You're so good. 
+[SPEECH_BUBBLE]
+Otto: I don't know yet. 
+[SPEECH_BUBBLE]
+Otto: But I probably will. 
+[SPEECH_BUBBLE]
+REBECCA: You better 
+[SPEECH_BUBBLE]
+REBECCA: I'm tired of eating rice and beans almost every day. 
+[SPEECH_BUBBLE]
+ELIZABETH: Yeah. You say this every year. 
+[SPEECH_BUBBLE]
+ELIZABETH: And every year, you still go. 
++4
+
+[NARRATION]
+Otto exhales 
+
+[SPEECH_BUBBLE]
+Otto: Yeah your right 
+
+--- SCENE CHANGE ---
+Location: THE BREAKUP 
+Time:
+
+[NARRATION]
+(Morgan enters the room.)" 
+
+[SPEECH_BUBBLE]
+MORGAN: Otto... can I talk to you? 
+
+--- SCENE CHANGE ---
+Location: OUTSIDE Time: NIGHT 
+
+[NARRATION]
+They stand under a flickering light 
+
+[SPEECH_BUBBLE]
+MORGAN: I'm leaving. 
+[SPEECH_BUBBLE]
+MORGAN: I got selected. 
++1
+
+[NARRATION]
+Otto stiffens. 
+
+[SPEECH_BUBBLE]
+Otto: baby, what are you saying? 
+[SPEECH_BUBBLE]
+MORGAN: The government selected me to be a model. 
+[SPEECH_BUBBLE]
+MORGAN: I'm going to the capital 
+[SPEECH_BUBBLE]
+MORGAN: Otto, I deserve more. 
+[SPEECH_BUBBLE]
+MORGAN: I can't wait forever. 
+[SPEECH_BUBBLE]
+MORGAN: You've been trying for years 
+[SPEECH_BUBBLE]
+MORGAN: And you're still here. 
+[SPEECH_BUBBLE]
+MORGAN: You're messy. 
+[SPEECH_BUBBLE]
+MORGAN: You need to fix yourself. 
+[SPEECH_BUBBLE]
+MORGAN: can do better 
+[SPEECH_BUBBLE]
+MORGAN: You're a loser" and it took me a while but your lame" 
++4
+
+[NARRATION]
+She leaves. Otto stays standing 
++1
+
+--- SCENE CHANGE ---
+Location: BACK INSIDE 
+Time:
+
+[NARRATION]
+Otto sits alone. He injects insulin. Stares at the floor 
++2
+
+--- SCENE CHANGE ---
+Location: TRYOUT MORNING Time: Early morning 
++1
+
+[NARRATION]
+Otto wakes up. Eats "hard-boiled eggs** Chugs a bottle of electrolytes 
++2
+
+--- SCENE CHANGE ---
+Location: THE STREETS 
+Time:
+
+[NARRATION]
+The town is packed. Roads closed. People flooding toward the stadium Otto walks 
++3
+
+--- SCENE CHANGE ---
+Location: TRAINING FACILITY GATE 
+Time:
+
+[NARRATION]
+Soldiers guard the entrance One steps forward. 
++1
+
+[SPEECH_BUBBLE]
+SOLDIER: You trying out? 
+[SPEECH_BUBBLE]
+SOLDIER: סו" 
++1
+
+[NARRATION]
+Otto hands it over. The soldier scans it. Looks Otto up and down. 
++2
+
+[SPEECH_BUBBLE]
+SOLDIER: You look weak. 
+[SPEECH_BUBBLE]
+SOLDIER: But you're on the list. 
+[SPEECH_BUBBLE]
+SOLDIER: Here's your ID back 
+[SPEECH_BUBBLE]
+SOLDIER: Go on. 
++2
+
+--- SCENE CHANGE ---
+Location: THE FIELD 
+Time:
+
+[NARRATION]
+Players warming up. Tense Silent Coach steps forward. 
++3
+
+--- SCENE CHANGE ---
+Location: COACH BAKER 
+Time:
+
+[SPEECH_BUBBLE]
+COACH BAKER: Listen up 
+[SPEECH_BUBBLE]
+COACH BAKER: If you're here to dream-leave now. 
++1
+
+[NARRATION]
+No one moves 
+
+[SPEECH_BUBBLE]
+COACH BAKER: And if you made the team last year... 
+[SPEECH_BUBBLE]
+COACH BAKER: That means nothing. 
++1
+
+[NARRATION]
+Whistle blows "FADE OUT" 
++1
+
+=== CHAPTER 2: SELECTED === 
+
+--- SCENE CHANGE ---
+Location: Morning The List Time: Early moming light leaks through thin curtains. 
++1
+
+[NARRATION]
+[Phone Notification Buzzes] 
+Otto's eyes open. He doesn't move at first. He reaches for his phone On screen: "WESTWARD FC-SELECTED PLAYERS** His thumb scrolls. He stops. His name. OTTO HERRERA" 
++4
+
+[SPEECH_BUBBLE]
+Otto: ...I made it. 
+[SPEECH_BUBBLE]
+Otto: I made it. This feels... this feels so unreal. 
++1
+
+[NARRATION]
+He jumps out of bed and runs into the living room. 
+
+--- SCENE CHANGE ---
+Location: Living Room Family Reaction 
+Time:
+
+[NARRATION]
+Rebecca is at the table, eating cereal. Josh is half-asleep on the couch. 
+
+[SPEECH_BUBBLE]
+Rebecca: What's wrong with you? 
+
+[NARRATION]
+Otto grabs the remote and tums on the TV. 
+
+[SPEECH_BUBBLE]
+NEWS ANCHOR (TV): -Westward FC has officially announced its squad for the upcoming Western League season. 
+[SPEECH_BUBBLE]
+NEWS ANCHOR (TV): Selected players are advised to report to the training center by 10 a.m. today. 
++1
+
+[NARRATION]
+The list scrolls on screen. Otto points 
++1
+
+[SPEECH_BUBBLE]
+Otto: That's me, do you see my name! 
+
+[NARRATION]
+Rebecca squints 
+
+[SPEECH_BUBBLE]
+Rebecca: That's actually you. 
+
+[NARRATION]
+Josh sits up. 
+
+[SPEECH_BUBBLE]
+Josh: You made it? 
+
+[NARRATION]
+Amy peeks out from the hallway. 
+
+[SPEECH_BUBBLE]
+Amy: You're on TV? 
+
+[NARRATION]
+Elizabeth steps closer, arms crossed... 
+
+[SPEECH_BUBBLE]
+Elizabeth: So it finally happened. 
+
+[NARRATION]
+Otto nods, overwhelmed... Rebecca smirks 
++1
+
+[SPEECH_BUBBLE]
+Rebecca: Good. Maybe now we can eat something other than rice and beans. 
+
+[NARRATION]
+Josh grins 
+
+[SPEECH_BUBBLE]
+Josh: Does this mean you're famous? 
+[SPEECH_BUBBLE]
+Otto: No. It just means I have to work even harder. 
++1
+
+[NARRATION]
+He grabs his jacket 
+
+--- SCENE CHANGE ---
+Location: Outside Reporting In 
+Time:
+
+[NARRATION]
+Streets packed. Soldiers everywhere People funnel toward the training complex. Otto approaches the gale. The same soldier from tryouts steps forward. 
++2
+
+[SPEECH_BUBBLE]
+Soldier: מו" 
+
+[NARRATION]
+Otto hands it over. The soldier scans it, then looks up. 
++1
+
+[SPEECH_BUBBLE]
+Soldier: You made it. 
+
+[NARRATION]
+He hands the ID back.. 
+
+[SPEECH_BUBBLE]
+Soldier: I was reluctant about you. But congrats. 
+
+[NARRATION]
+He steps aside. 
+
+[SPEECH_BUBBLE]
+Soldier: Keep working hard. That's all I can tell you. 
+
+[NARRATION]
+Otto nods and walks in 
+
+--- SCENE CHANGE ---
+Location: Team Meeting Room 
+Time:
+
+[NARRATION]
+Players sit in rows. Nervous energy fills the room. Coach Baker steps forward 
++1
+
+[SPEECH_BUBBLE]
+Coach Baker: Congratulations. If you're sitting in this room, you made the team. 
+[SPEECH_BUBBLE]
+Coach Baker: I'm not going to lie to you. This team has less depth than last year. Less talent too. 
+[SPEECH_BUBBLE]
+Coach Baker: But if we're disciplined-if we work together we can avoid last year's mistakes. 
+[SPEECH_BUBBLE]
+Coach Baker: Going far in this league means money. Money means survival, For you. For your families. For Westward. 
+[SPEECH_BUBBLE]
+Coach Baker: You're not just players. You're hope. That's not a small responsibility. 
+[SPEECH_BUBBLE]
+Coach Baker: Report to training tomorrow morning. Be ready. 
++4
+
+--- SCENE CHANGE ---
+Location: One-on-One with Coach Baker 
+Time:
+
+[NARRATION]
+Otto approaches as players file out 
+
+[SPEECH_BUBBLE]
+Otto: Coach.. thank you. For picking me 
+
+[NARRATION]
+Coach Baker studies him for a moment 
+
+[SPEECH_BUBBLE]
+Coach Baker: Relax 
+
+[NARRATION]
+Otto stiffens 
+
+[SPEECH_BUBBLE]
+Coach Baker: You're depth, Very law on the chart. 
+
+[NARRATION]
+Otto nods. 
+
+[SPEECH_BUBBLE]
+Coach Baker: You'll need to train harder than everyone else. Maybe you get lucky and see minutes. 
+
+[NARRATION]
+A beat. 
+
+[SPEECH_BUBBLE]
+Coach Baker: But don't expect much this season. 
+[SPEECH_BUBBLE]
+Otto: understand im going to give it my best and surprise you 
++1
+
+[NARRATION]
+He means it and yet, he's smiling 
+
+--- SCENE CHANGE ---
+Location: Exit Gate-Brief Encounter 
+Time:
+
+[NARRATION]
+Otto heads out A female security guard leans against the post. 
++1
+
+[SPEECH_BUBBLE]
+Security Guard: don't recognize you. 
+
+[NARRATION]
+Otto freezes. 
+
+[SPEECH_BUBBLE]
+Otto: Iuh just made the team. 
+
+[NARRATION]
+She smiles. 
+
+[SPEECH_BUBBLE]
+Security Guard: Where are you from? 
+[SPEECH_BUBBLE]
+Otto: Outskirts of Westward. 
+[SPEECH_BUBBLE]
+Security Guard: Figures. Congrats. 
++2
+
+[NARRATION]
+Otto nods and walks off, heart pounding. 
+
+--- SCENE CHANGE ---
+Location: Street Walk - The Call 
+Time:
+
+[NARRATION]
+Otto's phone rings. "UNKNOWN NUMBER** He answers. 
++2
+
+[SPEECH_BUBBLE]
+Otto: Hello? 
+[SPEECH_BUBBLE]
+Jenny (phone): Hey... is this Otto Herrera? 
++1
+
+[NARRATION]
+Otto slows his steps 
+
+[SPEECH_BUBBLE]
+Otto: Yeah. Who's this? 
+[SPEECH_BUBBLE]
+Jenny: It's Jenny. Jenny Lee. umm. 
+[SPEECH_BUBBLE]
+Jenny: We went to high school together. Same graduating class. 
++2
+
+[NARRATION]
+Otto blinks 
+
+[SPEECH_BUBBLE]
+Otto: Oh-yeah. I remember 
+[SPEECH_BUBBLE]
+Jenny: I saw your name on the list. Congratulations, no one from our high school has ever made the team. 
+[SPEECH_BUBBLE]
+Otto: Thanks 
+[SPEECH_BUBBLE]
+Jenny: We never really talked back then uhhh but I thought maybe we could change that. 
+[SPEECH_BUBBLE]
+Jenny: Let me take you out sometime. Coffee, Lunch My boss owes the news station and he sponsors the team. He likes to meet and get to know the players on our state team. 
++4
+
+[NARRATION]
+Otto hesitates. 
+
+[SPEECH_BUBBLE]
+Otto: Yeah... yeah, okay. 
+[SPEECH_BUBBLE]
+Jenny: Good. Save my number. 
++1
+
+[NARRATION]
+The call ends. Otto stops walking. 
++1
+
+--- SCENE CHANGE ---
+Location: Otto's Internal Voice 
+Time:
+
+[NARRATION]
+Otto exhales 
+
+[SPEECH_BUBBLE]
+Otto (inner voice): ...Jenny Lee. 
+[SPEECH_BUBBLE]
+Otto (inner voice): Oh. Jenny Lee 
+[SPEECH_BUBBLE]
+Otto (inner voice): She was my high school crush. 
+[SPEECH_BUBBLE]
+Otto (inner voice): thought she was the most beautiful girl in school. 
+[SPEECH_BUBBLE]
+Otto (inner voice): I was way too scared to ever talk to her. 
+[SPEECH_BUBBLE]
+Otto (inner voice): Such a dweeb. 
++4
+
+[NARRATION]
+He pockets his phone and keeps walking END OF CHAPTER 2 
++1
+
+=== CHAPTER: THE GOLDEN RETURN === 
+
+--- SCENE CHANGE ---
+Location: SPORTS BROADCAST STUDIO Time: NIGHT 
+
+[NARRATION]
+Bright lights. Polished desk. A massive screen behind the anchors shows highlights from last season-confetti, trophies, heartbreak. 
+
+[SPEECH_BUBBLE]
+ANCHOR: And with the new season underway, one name keeps dominating the conversation 
+
+[NARRATION]
+The screen cuts to QUINN LOPEZ 
+
+[SPEECH_BUBBLE]
+MORGAN: You didn't try very hard. 
+[SPEECH_BUBBLE]
+QUINN: Fair. 
+[SPEECH_BUBBLE]
+MORGAN: People talk about you like you’re a savior. 
+[SPEECH_BUBBLE]
+QUINN: That’s dangerous. 
+[SPEECH_BUBBLE]
+MORGAN: Why come back, really? 
+[SPEECH_BUBBLE]
+QUINN: Because winning somewhere else didn’t feel like winning. 
+[SPEECH_BUBBLE]
+QUINN: And because this city doesn’t get second chances. 
+[SPEECH_BUBBLE]
+MORGAN: Careful. That kind of thinking makes people follow you. 
+[SPEECH_BUBBLE]
+QUINN: I’m counting on it. 
++4
+
+--- SCENE CHANGE ---
+Location:
+Time:
+
+[NARRATION]
+Their eyes linger a second too long. 
+
+=== CHAPTER: THEY SAY IT OUT LOUD === 
+
+--- SCENE CHANGE ---
+Location: WESTWARD LOCKER ROOM Time: NIGHT 
+
+[NARRATION]
+The team crowds around the TV again. 
+Same station. Different segment. A RIVAL PLAYER from another club sits comfortably in a studio chair, arms crossed. 
++1
+
+[SPEECH_BUBBLE]
+ANCHOR: You’re facing Westward next. 
+[SPEECH_BUBBLE]
+RIVAL PLAYER: Yeah. We saw the schedule. 
+[SPEECH_BUBBLE]
+ANCHOR: Any concerns? 
+[SPEECH_BUBBLE]
+RIVAL PLAYER: Look, let’s stop pretending. 
+[SPEECH_BUBBLE]
+RIVAL PLAYER: Westward doesn’t have discipline. They don’t have structure. Their people... 
++2
+
+--- SCENE CHANGE ---
+Location: CITY NIGHT (AFTERMATH) 
+Time:
+
+[NARRATION]
+Neon lights. Glass towers. A city that feels unreal. 
+
+[SPEECH_BUBBLE]
+TEAMMATE 1: This place doesn’t sleep. 
+[SPEECH_BUBBLE]
+TEAMMATE 2: This place doesn’t forgive either. 
+
+[NARRATION]
+(They laugh, nervous.) 
+
+[SPEECH_BUBBLE]
+TEAMMATE 1: One drink. 
+
+[NARRATION]
+(Otto hesitates.) 
+
+[SPEECH_BUBBLE]
+OTTO: One. 
+
+--- SCENE CHANGE ---
+Location: THE CLUB 
+Time:
+
+[NARRATION]
+Small club. Music low enough to talk. Otto bumps into someone. 
++1
+
+[SPEECH_BUBBLE]
+OLIVIA: Oh... 
+
+[NARRATION]
+82nd minute. One broken press. One mistake. Otto cuts inside. No hesitation. 
+He shoots. Silence — then eruption. Westward scores. They hold on. Final Score: Westward wins —Northfield loses 
++2
+
+--- SCENE CHANGE ---
+Location: MVP CEREMONY 
+Time:
+
+[NARRATION]
+Fireworks crackle overhead. 
+Otto stands awkwardly on a small stage. A woman approaches holding the Match MVP plaque. Poised. Sharp. Confident. Ashley. Her boss leans in behind her. 
++2
+
+[SPEECH_BUBBLE]
+ASHLEY’S BOSS: You present it. 
+
+[NARRATION]
+Ashley nods. PRESENTATION She hands Otto the award. Their fingers brush. 
++1
+
+[SPEECH_BUBBLE]
+ASHLEY: Otto Herrera. Match MVP. 
+[SPEECH_BUBBLE]
+OTTO: …Thank you. 
+
+[NARRATION]
+She smiles — just a little. 
+
+[SPEECH_BUBBLE]
+ASHLEY: Not bad for a depth player. 
+[SPEECH_BUBBLE]
+OTTO: You watched? 
+[SPEECH_BUBBLE]
+ASHLEY: I was forced to , it's my job.. 
++1
+
+[NARRATION]
+Their eyes linger a second too long. 
+
+--- SCENE CHANGE ---
+Location: FORMAL INTRODUCTION 
+Time: The next day. Government complex. Neutral halls. 
+
+[NARRATION]
+Ashley meets Otto properly this time. 
+
+[SPEECH_BUBBLE]
+ASHLEY: Otto Herrera. Forg 
+
+[NARRATION]
+Otto opens the folder. Inside are not just league profiles, but surveillance notes, financial records of team sponsors, and a highlighted section about “narrative influence.” At the bottom of the last page, a handwritten note: “Your insulin shipments have been flagged for ‘review.’ — A” His phone vibrates. 
++1
+
+[SPEECH_BUBBLE]
+REBECCA (TEXT): Someone from the school board came by today. Asked about you. They were… polite. But it felt wrong. 
+
+[NARRATION]
+Otto stares at the note, then at the door Ashley left through. He has a decision to make. MULTI-CHOICE FOLLOW-UP — WHAT DOES OTTO DO NEXT? 
+
+[CHOICE]
+
+CONFRONT ASHLEY DIRECTLY 
+
+[IF_CHOICE_1]
+[NARRATION]
+Otto leaves the room and catches up to Ashley in the hallway. 
+[SPEECH_BUBBLE]
+OTTO: Was this a threat or a warning? 
+[SPEECH_BUBBLE]
+ASHLEY: It’s data. What you do with it determines the category. 
++1
+
+[SPEECH_BUBBLE]
+OTTO: You keep up with stats? 
+[SPEECH_BUBBLE]
+MEI LING: I keep up with you. 
+
+[NARRATION]
+She says it plainly, no flirtation in her tone—just fact. But her eyes are bright. 
+
+[SPEECH_BUBBLE]
+OTTO: That’s… a lot of homework. 
+[SPEECH_BUBBLE]
+MEI LING: I like to be prepared. And I like knowing things. Especially about people I’m… meeting through the lottery. 
++1
+
+[NARRATION]
+There’s a slight pause. Otto’s nerves ease. He feels oddly comfortable. 
+
+[SPEECH_BUBBLE]
+OTTO: Well, you can ask me anything as well. I’m an open book. But maybe let’s start with… since you’re smart, do you like to read? What’s your favorite book? 
+[SPEECH_BUBBLE]
+MEI LING: ‘The Art of War.’ Sun Tzu. And… Harry Potter. 
+[SPEECH_BUBBLE]
+OTTO: ‘Art of War’—of course it is. Harry Potter? Where’s that? What’s that about? 
+[SPEECH_BUBBLE]
+MEI LING: It’s an old book from a long time ago. It’s not really talked about nowadays. I had to search it up at the library. It’s about old empires that used to read these kinds of stories. 
+[SPEECH_BUBBLE]
+OTTO: Oh, that’s interesting. 
+[SPEECH_BUBBLE]
+MEI LING: What’s yours? 
+[SPEECH_BUBBLE]
+OTTO: I don’t really 
++4
+
+[CHOICE]
+
+OPTION A — SEND ALL TO REBECCA 
+
+OPTION B — SEND HALF, SAVE HALF 
+
+OPTION C — KEEP MOST FOR HIMSELF 
+
+[IF_CHOICE_1]
+[SPEECH_BUBBLE]
+Rebecca: …Thanks, bro. I love you. 
+[SPEECH_BUBBLE]
+Rebecca: 😭😭😭 We’re gonna have meat tomorrow. Thank you again. Elizabeth says to stop shooting with the knuckleball. Shoot normally because you suck at the knuckleball 😂 
+
+[IF_CHOICE_2]
+[NARRATION]
+Text to Rebecca: “Sending you half. Use it for groceries and bills.” 
+[SPEECH_BUBBLE]
+Rebecca: Thanks bro. Don’t forget to treat yourself too. 
++1
+
+[IF_CHOICE_3]
+[NARRATION]
+Text to Rebecca: “Sent you something. It’s not much, but it’ll help.” 
+[SPEECH_BUBBLE]
+Rebecca: Got it. Thanks. 
++1
+
+[NARRATION]
+Otto then texts Olivia: 
+
+[SPEECH_BUBBLE]
+OLIVIA: So. What did you want to talk about? 
+[SPEECH_BUBBLE]
+OTTO: I just wanted to get to know you more. You left me thinking about you the other day. Things you said… you seem like an interesting person. Can you tell me more about… like, what’s going on in the government? You said you want to make changes. And I was thinking about what you said—how come they don’t teach the same things in Westward schools like they do in your hometown? 
++1
+
+[NARRATION]
+Olivia’s smile fades slightly. She takes a slow sip from her fresh pint. 
+
+[SPEECH_BUBBLE]
+OLIVIA: Only a certain amount of people really have the power in Weston. And they’re lying. But… they give us a good life. Me and my family. A good life. 
+
+[NARRATION]
+She looks down into her glass. 
+
+[SPEECH_BUBBLE]
+OLIVIA: My dad… he’s getting sad. Regretting his decisions in life. My mom’s happy to be rich, but my dad… it’s hitting him hard. He’s in his office a lot of the times at home. He drinks a lot. And he teaches me things… some things I can’t really tell you. Unless I really trust you. 
+
+[CHOICE]
+
+OPTION B — LOOK OUT THE WINDOW / SCREAM BACK 
+
+OPTION C — GET OFF THE BUS AND FIGHT 
+
+[IF_CHOICE_1]
+[SPEECH_BUBBLE]
+OTTO: STOP ACTING LIKE ANIMALS! WE’RE NOT YOUR ENEMY! 
+
+--- SCENE CHANGE ---
+Location: AFTER THE INCIDENT 
+Time:
+
+[NARRATION]
+The bus reroutes, arrives back at the stadium. 
+Players are shaken. Otto gets a call. 
++1
+
+[SPEECH_BUBBLE]
+JENNY: Are you okay? I saw the footage. 
+[SPEECH_BUBBLE]
+OTTO: Yeah. We’re safe. We’re locked in the stadium now. 
+[SPEECH_BUBBLE]
+JENNY: Do you know when you’ll be out? 
+[SPEECH_BUBBLE]
+OTTO: Honestly? No. 
+[SPEECH_BUBBLE]
+JENNY: I happen to be in town. In Westward. I wanted to see you. 
++2
+
+[CHOICE]
+
+OPTION A: “I’ll call you when I know more.” 
+
+[SPEECH_BUBBLE]
+JENNY: But you’re different. 
+[SPEECH_BUBBLE]
+OTTO: Is that good? 
+[SPEECH_BUBBLE]
+JENNY: Maybe. You’re just lucky that you’re kind of cute. In an ugly way. 
+[SPEECH_BUBBLE]
+OTTO: I don’t know how to take that, but I’ll take my chances. 
+[SPEECH_BUBBLE]
+JENNY: Yeah. Next home game, my boss will be at the stadium. I’ll introduce you to him. 
+[SPEECH_BUBBLE]
+OTTO: I guess. 
+[SPEECH_BUBBLE]
+JENNY: You might want to have him as a friend. He’s helped me a lot through some tough times. 
+[SPEECH_BUBBLE]
+OTTO: Can I take your word for it? 
+[SPEECH_BUBBLE]
+JENNY: We went to the same high school. I know where you live. If I wanted to do something, I would’ve done it by now. 
+[SPEECH_BUBBLE]
+OTTO: I guess. But just in case… can I know where you live? So I can get back at you if something happens. 
++4
+
+[NARRATION]
+Ashley pauses, doesn’t turn. 
+
+[SPEECH_BUBBLE]
+ASHLEY: Don’t thank me yet. 
+
+[NARRATION]
+Then she’s gone. 
+
+--- SCENE CHANGE ---
+Location: JENNY’S CALL & CONFRONTATION 
+Time:
+
+[NARRATION]
+Otto’s phone rings ten minutes after Ashley leaves. 
+It’s Jenny. Her voice is a hushed, tense whisper, like she’s speaking from inside a closet. 
++1
+
+[SPEECH_BUBBLE]
+JENNY: Otto, it’s getting worse. My boss—he’s always fought for the truth. But now he’s screaming at everyone to pull stories, kill segments. He’s scared. I’ve never seen him scared. 
+[SPEECH_BUBBLE]
+OTTO: What aren’t they telling us? 
+[SPEECH_BUBBLE]
+JENNY: I don’t know. But it’s not just Westward. It’s everywhere. They’re scrubbing feeds, deleting archives. This is bigger than football. This is about who gets to tell the story. 
++2
+
+[NARRATION]
+A beat. Otto can hear her breathing—shallow, nervous. 
+
+[SPEECH_BUBBLE]
+OTTO: Wait. I need to ask you something before I let you go. 
+[SPEECH_BUBBLE]
+JENNY: Okay. What is it? 
++1
+
+--- SCENE CHANGE ---
+Location: MATCH DAY (ROWDY ATMOSPHERE) 
+Time:
+
+[NARRATION]
+Despite the tension, the stadium is packed. Fans are sitting on laps, standing in aisles, pressed against fences. It’s a home game, and Westward has never needed a win more. The energy is electric, volatile. Chants mix with shouts. Banners hang: “WESTWARD STANDS” and “WE REMEMBER.” 
+Otto scores early. The roar is deafening. But by the second half, protests erupt outside the gates. The sound of sirens blends with cheers. Final whistle: Westward wins 2–1. But as the players head to the tunnel, fans storm the field—not in celebration, but in protest. Security swarms. Otto is shoved toward the locker room. 
++1
+
+[SPEECH_BUBBLE]
+COACH BAKER: Don’t stop! Don’t look back! Go! 
+
+[NARRATION]
+In the locker room, they can still hear the chants. “NO JUSTICE, NO PEACE.” 
+
+[SPEECH_BUBBLE]
+OLIVIA: I’m not lying to you, Otto. 
+
+--- SCENE CHANGE ---
+Location: THE EVENING NEWS 
+Time:
+
+[NARRATION]
+Back in the dormitory, the team watches Jenny on screen. She looks pale under the studio lights. 
+
+[SPEECH_BUBBLE]
+JENNY (ON SCREEN): Several Westward residents were arrested today in connection with underground news distribution. 
+[SPEECH_BUBBLE]
+JENNY (ON SCREEN): Authorities warn that anyone caught consuming or sharing illegal broadcasts will be detained. 
++1
+
+[NARRATION]
+She lists names. Otto recognizes two—a guy he played street ball with, a woman who worked at the grocery store. 
+
+[SPEECH_BUBBLE]
+JENNY (ON SCREEN): The state reminds citizens that unity is our strength. 
+[SPEECH_BUBBLE]
+JENNY (ON SCREEN): Division will not be tolerated. 
++1
+
+[NARRATION]
+The broadcast cuts to a commercial. The room is silent. 
+
+[SPEECH_BUBBLE]
+TEAMMATE: They’re making examples. 
+[SPEECH_BUBBLE]
+OTTO: Whatever’s coming… it’s bigger than football. Things just changed. 
++1
+
+[NARRATION]
+He looks at his phone. No new messages. Just the quiet before the storm. 
+
+=== CHAPTER 12 === 
+
+--- SCENE CHANGE ---
+Location: THE BROADCAST 
+Time:
+
+[SPEECH_BUBBLE]
+OTTO (TEXT): Rebecca tell me exactly what you’re hearing. 
+
+[NARRATION]
+Otto turns on the TV. Every channel. Same footage. WESTWARD — CITY CENTER 
+Thousands of people. Not a riot. Not chaos. Organized. Workers. Students. Families. Old banners pulled out of storage. New ones painted overnight. One word repeats across them all: ACCOUNTABILITY The anchor’s voice trembles — just slightly. 
+
+[SPEECH_BUBBLE]
+ANCHOR: Authorities confirm a coordinated, unauthorized mass demonstration in Westward— 
+
+[NARRATION]
+The screen cuts. Replaced by a government seal. EMERGENCY STATEMENT 
++1
+
+--- SCENE CHANGE ---
+Location: ASHLEY (INSIDE THE SYSTEM) 
+Time: A government conference room. Tense. Loud. Controlled panic. 
+
+[NARRATION]
+Screens show aerial shots of Westward. 
+
+[SPEECH_BUBBLE]
+OFFICIAL #1: This isn’t spontaneous. 
+[SPEECH_BUBBLE]
+OFFICIAL #2: It’s logistical. Food stations. Medical volunteers. They planned this for weeks. 
+
+[NARRATION]
+The door opens. The President enters. The room stands. 
+
+[SPEECH_BUBBLE]
+PRESIDENT: Sit. 
+
+[NARRATION]
+They do. 
+
+[SPEECH_BUBBLE]
+PRESIDENT: Arrests begin immediately. Leadership first. Then facil 
+
+[NARRATION]
+People who trained him. Covered his shifts. Helped him when his mom got sick. People who told him to chase football. Police zip-tie Marcos Vega. 
+Marcos looks straight into the camera. Unafraid. 
++1
+
+--- SCENE CHANGE ---
+Location: REBECCA CALLS 
+Time:
+
+[NARRATION]
+Otto answers instantly. 
+
+[SPEECH_BUBBLE]
+OTTO: Where are you? 
+[SPEECH_BUBBLE]
+REBECCA: Inside. Curtains closed. 
+[SPEECH_BUBBLE]
+OTTO: I know those people they’re arresting. 
++1
+
+[NARRATION]
+Silence. 
+
+[SPEECH_BUBBLE]
+REBECCA: Everyone does. 
+
+--- SCENE CHANGE ---
+Location: JENNY (THE MEDIA COLLAPSE) 
+Time:
+
+[NARRATION]
+Otto’s phone rings again. JENNY. 
+
+[SPEECH_BUBBLE]
+JENNY: Deleting clips. People are being told to “stick to the statement.” 
+[SPEECH_BUBBLE]
+OTTO: They’re arresting civilians. 
+[SPEECH_BUBBLE]
+JENNY: I know. And they don’t want the country seeing how many. 
++2
+
+[NARRATION]
+A pause. 
+
+[SPEECH_BUBBLE]
+JENNY: Otto… they’re preparing a list. 
+[SPEECH_BUBBLE]
+OTTO: A list of what? 
+[SPEECH_BUBBLE]
+JENNY: Cities. People. Athletes. 
++1
+
+[NARRATION]
+Otto exhales slowly. 
+
+--- SCENE CHANGE ---
+Location: TEAM REACTION Time: The team lounge. 
+
+[NARRATION]
+Everyone’s watching now. No jokes. No trash talk. 
+
+[SPEECH_BUBBLE]
+TEAMMATE 1: That’s your city, right? 
+
+[NARRATION]
+Otto nods. 
+
+[SPEECH_BUBBLE]
+COACH: Phones away in ten minutes. 
+
+[NARRATION]
+Otto doesn’t move. 
+
+[SPEECH_BUBBLE]
+COACH: Otto… Y 
+
+=== CHAPTER 13 === 
+
+--- SCENE CHANGE ---
+Location: PRE-GAME INTERVIEW (vs Northfield Away) Time: Under the harsh stadium lights 
+
+[NARRATION]
+Otto stands in front of a microphone. The interviewer’s voice echoes across the stadium. 
+
+[SPEECH_BUBBLE]
+INTERVIEWER: Otto, tonight’s match against Northfield is more than just a game. You’re in their city, facing Quinn Lopez’s team. What’s your message to them? 
+
+[NARRATION]
+Otto hesitates, then speaks with quiet resolve. 
+
+[SPEECH_BUBBLE]
+OTTO: They can say what they want. But we’re here to play. And we’re here to win. No matter what they throw at us. 
+
+--- SCENE CHANGE ---
+Location: THE MATCH BEGINS 
+Time:
+
+[NARRATION]
+The game kicks off. The atmosphere is tense. Northfield is confid 
++1
+
+[SPEECH_BUBBLE]
+MORGAN: I’m not going to let you keep that. Or the money. Her father owes Quinn’s parents. If you throw this game, maybe things get easier for you. 
+[SPEECH_BUBBLE]
+OTTO: Leave me alone. 
+[SPEECH_BUBBLE]
+MORGAN: F*ck off, Otto. You were a dweeb then, and you’re still a loser now. No personality. Still going to be poor. 
++1
+
+[NARRATION]
+Otto’s face darkens. 
+
+[SPEECH_BUBBLE]
+OTTO: F*ck off. You’re a trashy liar. You’re not even good in bed. You’re loose. 
+
+[NARRATION]
+Morgan’s eyes widen in shock. Before she can respond, a security guard steps between them. 
+
+[SPEECH_BUBBLE]
+SECURITY GUARD: Enough! Break it up! 
+
+[NARRATION]
+He separates Otto and Morgan, escorting her away. 
+
+--- SCENE CHANGE ---
+Location: THE GAME 
+Time:
+
+[NARRATION]
+The whistle blows. Otto’s team looks focused. Otto is tense, knowing the stakes. Options emerge for the player: 
++1
+
+[CHOICE]
+
+OPTION A — WIN THE GAME 
+
+OPTION B — THROW THE GAME 
+
+[IF_CHOICE_1]
+[NARRATION]
+Otto plays his best. 
+The team fights hard, and they win. The crowd roars. Otto’s side celebrates. 
+[SPEECH_BUBBLE]
+Otto: This is what we fight for. No matter what they say, we’re strong. We’re Westward. 
++2
+
+--- SCENE CHANGE ---
+Location:
+Time:
+
+[SPEECH_BUBBLE]
+REPORTER: Otto, tough game tonight. Some are saying Northfield’s players were overly aggressive. How do you respond? 
+
+[CHOICE]
+
+OPTION 1 — DEFIANT 
+
+OPTION 2 — HUMBLE 
+
+OPTION 3 — AGGRESSIVE 
+
+[IF_CHOICE_1]
+[SPEECH_BUBBLE]
+OTTO: People talk crap about us, but we’re a strong team. We fight hard. We’ve got heart. 
+
+[IF_CHOICE_2]
+[SPEECH_BUBBLE]
+OTTO: We just focused on our game. The score speaks for itself. 
+
+[IF_CHOICE_3]
+[SPEECH_BUBBLE]
+OTTO: They talk a lot. But on the field, we let our play do the talking. 
+
+--- SCENE CHANGE ---
+Location: MORGAN AND QUINN’S DAD Time: Later that night, in a luxury suite overlooking the stadium 
+
+[NARRATION]
+Morgan approaches Quinn’s father, a stern-looking man in a tailored suit. 
+
+[SPEECH_BUBBLE]
+MORGAN: It’s okay, Quinn. You’ll get them next time. They just got lucky. 
+
+[NARRATION]
+She turns to Quinn’s dad and hands him a small flash drive. 
+
+[SPEECH_BUBBLE]
+QUINN’S DAD: What is this? 
+[SPEECH_BUBBLE]
+MORGAN: I spoke with Otto. I recorded it. We’re going to need this later on. 
++1
+
+[NARRATION]
+Quinn’s dad takes He scrolls through old photos: Warehouse shifts Team lunches People now labeled “agitators” A final news alert appears: “WESTWARD UNDER TEMPORARY SECURITY OVERSIGHT.” 
+Otto locks his phone. For the first time since joining Westward FC— Football doesn’t feel like an escape anymore. It feels like a spotlight. 
+(game) (Westward wins) END OF CHAPTER 13 
++2
+
+=== CHAPTER 14: Visibility === 
+
+--- SCENE CHANGE ---
+Location: MATCH DAY (vs Oakridge AWAY) Time: Halcyon Coast Arena 
+
+[NARRATION]
+City of cars ATTENDANCE: 78,000 Wind off the sea. Salt in the air. YUMI’S MESSAGE Otto’s phone buzzes with an unknown number. 
++1
+
+[SPEECH_BUBBLE]
+UNKNOWN: Remember the slide where you hid your lunch money? The one with the red handle. Be there at midnight. Don’t tell anyone. 
+
+[NARRATION]
+Otto stares at the message. He knows instantly—it’s Yumi. 
+
+--- SCENE CHANGE ---
+Location: THE OLD PLAYGROUND Time: Midnight. 
+
+[NARRATION]
+The old elementary school playground in Westward is empty and dark. Wind rustles the chains of a broken swing. 
+Otto walks toward the back corner where a small, rusted slide sits half-hidden by overgrown bushes. He looks around. No one. 
++2
+
+[SPEECH_BUBBLE]
+OTTO: Yumi? 
+
+[NARRATION]
+No answer. He kneels, peers into the tunnel of the slide. A shadow moves inside. 
+
+[SPEECH_BUBBLE]
+YUMI: Took you long enough. 
+
+[NARRATION]
+Yumi crawls out, dusting off her dark clothes. Her hair is tied back, face smudged with dirt. 
++1
+
+[SPEECH_BUBBLE]
+YUMI: So. Have you made a decision? 
+[SPEECH_BUBBLE]
+OTTO: About what? 
+[SPEECH_BUBBLE]
+YUMI: The government’s halting factory payments in Westward. They’re cutting off resources to force compliance. They’re going to starve people. 
+[SPEECH_BUBBLE]
+OTTO: What do you want 
++2
+
+[NARRATION]
+She looks away, almost embarrassed. 
+
+[SPEECH_BUBBLE]
+YUMI: I actually had a crush on you at that time. 
+[SPEECH_BUBBLE]
+OTTO: What? How can this be true? 
+[SPEECH_BUBBLE]
+YUMI: It’s true. I never forgot. 
++1
+
+[CHOICE]
+
+OPTION A — HUG YUMI 
+
+OPTION B — KISS YUMI ON... 
+
+[IF_CHOICE_1]
+[NARRATION]
+Otto steps forward and wraps his arms around her. She tenses at first, then relaxes into the hug. 
+[SPEECH_BUBBLE]
+YUMI: That felt… natural. 
+
+Dialogue Part 2
+
+--- SCENE CHANGE ---
+Location: HOLDING CELL Time: Dim light. 
++1
+
+[NARRATION]
+Rebecca sitting alone. Bruise forming on her cheek 
++1
+
+[SPEECH_BUBBLE]
+Interrogator: Tell us where they meet. 
+[SPEECH_BUBBLE]
+Rebecca: I don't know. 
++1
+
+[NARRATION]
+Interrogator leans in: 
+
+[SPEECH_BUBBLE]
+Interrogator: You think he can save you? your his sister you know whats hes up to! 
+[SPEECH_BUBBLE]
+Rebecca: He doesn't need to. 
+[SPEECH_BUBBLE]
+Interrogator: tell me now you worthless westward scum hoe!! 
+[SPEECH_BUBBLE]
+Rebecca: What!! Wait, you look familiar? 
+[SPEECH_BUBBLE]
+Interrogator: Becca? You don't remember me? 
++4
+
+[NARRATION]
+She refuses again. Door slams. 
++1
+
+--- SCENE CHANGE ---
+Location: OTTO BREAKS 
+Time:
+
+[NARRATION]
+Otto storms into underground meeting. 
+
+[SPEECH_BUBBLE]
+Rebel Leader: They're escalating. 
+[SPEECH_BUBBLE]
+Otto: They touched my family 
+[SPEECH_BUBBLE]
+Leader: That's the price. 
++2
+
+[NARRATION]
+Otto grabs table 
+
+[SPEECH_BUBBLE]
+Otto: No. That's war. 
+[SPEECH_BUBBLE]
+Leader: we will see what we can do 
++1
+
+[NARRATION]
+His anger now fuels rebellion GOVERNMENT CRACKDOWN rises further. PUBLIC SUPPORT may rise too This is point of no return. If thresholds NOT met: Raid happens but she escapes last second. Still intense. But no capture. ☑ QUIET ROUTE TRIGGER Conditions: GOVERNMENT_TRUST > 75 PUBLIC SUPPORT < 30 MEDIA CONTROL < 25 If true Protest shooting activates 
++4
+
+--- SCENE CHANGE ---
+Location: PUBLIC EVENT 
+Time:
+
+[NARRATION]
+Otto standing beside government officials at unity rally. Crowd divided. Protesters outside barricades. Chants growing louder. Love in crowd. Otto spots her briefly. She smiles nervously. Then chaos. Someone throws something. Police respond aggressively. Shots fired Screams Otto turns. Sees her fall. Time slows He runs. Security grabs him. 
++4
+
+[SPEECH_BUBBLE]
+Ofto: LET ME GOГ 
+
+[NARRATION]
+She's bleeding. Not dead. But serious. News cameras capture everything. 
++3
+
+--- SCENE CHANGE ---
+Location: HOSPITAL 
+Time:
+
+[NARRATION]
+Beeping machines. Love unconscious 
++1
+
+[SPEECH_BUBBLE]
+Doctor: She's stable... but it was close. 
+
+[NARRATION]
+Otto sits alone TV in waiting room shows government statement: 
++1
+
+[SPEECH_BUBBLE]
+TV: Violence caused by extremist agitators. 
+
+[NARRATION]
+Otto watches in silence. Realization setting in Silence didn't protect her. Alignment didn't protect her. If thresholds NOT met: Protest tense but controlled. No shooting But warming energy. 
++4
+
+--- SCENE CHANGE ---
+Location: PRESIDENTIAL RESPONSE (Both Routes) 
+Time:
+
+[SPEECH_BUBBLE]
+Vice President: The situation has escalated 
+[SPEECH_BUBBLE]
+President: send in the secret agents 
+[SPEECH_BUBBLE]
+Vice President: This could spiral 
+[SPEECH_BUBBLE]
+President: That depends on him, let prepare for plan Doorbell 
++3
+
+[NARRATION]
+The president looks at Otto's televised image. 
+
+[SPEECH_BUBBLE]
+President: Let's see what he chooses now 
+[SPEECH_BUBBLE]
+President: Stupid lower race END OF CHAPTER 21 FEELING 
++2
+
+=== CHAPTER 22: "Fault Lines" === 
+
+[NARRATION]
+This chapter has four pillars: 
+
+Emotional aftermath 
+
+Locker room fracture 
+
+Public speech decision 
+
+Political recalibration This is not explosive. It's heavy. 
++2
+
+--- SCENE CHANGE ---
+Location: AFTERMATH SILENCE (REBELLION ROUTE - Rebecca Captured) - REBEL SAFEHOUSE Time: NIGHT 
++1
+
+[NARRATION]
+Otto sitting alone. News reports replay footage of Rebecca being led away. 
++1
+
+[SPEECH_BUBBLE]
+Reporter: The government claims evidence links her to organized resistance. 
+
+[NARRATION]
+Otto stares at screen 
+
+[SPEECH_BUBBLE]
+Rebel Leader: They want you angry. 
+[SPEECH_BUBBLE]
+Otto: They have me 
+[SPEECH_BUBBLE]
+Leader: That's what they need. 
+[SPEECH_BUBBLE]
+Otto: No... what they need is fear. 
++1
+
+[NARRATION]
+He stands. 
+
+[SPEECH_BUBBLE]
+Otto: They won't get that. 
+
+[NARRATION]
+This is the first mament Otto becomes colder. 
+
+--- SCENE CHANGE ---
+Location: QUIET ROUTE (Love Shot) - HOSPITAL ROOM Time: NIGHT 
+
+[NARRATION]
+Love asleep. Bandaged shoulder or side. Otto sitting beside bed. Her hand twitches She wakes weakly. 
+
+[SPEECH_BUBBLE]
+Love: You okay? 
+
+[NARRATION]
+Otto almost laughs 
+
+[SPEECH_BUBBLE]
+Otto: I should be asking you that. 
+
+[NARRATION]
+She studies him.. 
+
+[SPEECH_BUBBLE]
+Love: Don't do something reckless. 
+[SPEECH_BUBBLE]
+Ofto: I didn't do anything. And this still happened. 
++1
+
+[NARRATION]
+That line hits. She squeezes his hand 
+
+[SPEECH_BUBBLE]
+Love: Then do something meaningful. 
+
+[NARRATION]
+This plants seed. 
+
+--- SCENE CHANGE ---
+Location: LOCKER ROOM FRACTURE - WESTWARD LOCKER ROOM Time: DAY 
+
+[NARRATION]
+Tension thick 
+
+[SPEECH_BUBBLE]
+Teammate #1: My family's scared because of this. 
+[SPEECH_BUBBLE]
+Teammate #2: We're athletes, not activists. 
++1
+
+[NARRATION]
+Silence Coach Baker enters. 
+
+[SPEECH_BUBBLE]
+Coach: This team was built on unity. 
+
+[NARRATION]
+He looks at Otto. 
+
+[SPEECH_BUBBLE]
+Coach: But unity doesn't mean silence. 
+[SPEECH_BUBBLE]
+Another player: Or rebellion. 
+[SPEECH_BUBBLE]
+Coach: We have a Semi-Final in two days. 
+[SPEECH_BUBBLE]
+Coach: Figure yourselves out or else everything we worked for will be for nothing, and that's how they keep us poor. 
+[SPEECH_BUBBLE]
+Coach: divided 
++3
+
+[NARRATION]
+He leaves. Otto stands in the middle of the room 
+No speech. Just tension 
+
+--- SCENE CHANGE ---
+Location: PUBLIC SPEECH DECISION 
+Time:
+
+[NARRATION]
+Press conference announced. Entire nation watching. Otto steps to podium. Flashbulbs 
+
+[SPEECH_BUBBLE]
+Reporter: Are you responsible for what happened? 
+[SPEECH_BUBBLE]
+Reporter: Will you denounce the protests? 
+[SPEECH_BUBBLE]
+Reporter: Will you condemn the government? 
+
+[NARRATION]
+Silence Player must choose tone 
+
+[CHOICE]
+REBELLION ROUTE OPTIONS: 
+
+Direct condemnation of government 
+
+Controlled but firm criticism 
+
+[IF_CHOICE_1]
+[SPEECH_BUBBLE]
+Otto: You don't raid families to protect a country. 
+[SPEECH_BUBBLE]
+Otto: You do that when you're afraid of it 
++1
+
+[NARRATION]
+Room erupts. 
+
+[CHOICE]
+QUIET ROUTE OPTIONS: 
+
+Condemn government force 
+
+Call for unity without blame 
+
+[IF_CHOICE_1]
+[SPEECH_BUBBLE]
+Otto (Strong version line): I stood beside leaders who promised safety. Safety failed. 
+
+[NARRATION]
+Silence Powerful but careful. 
+
+--- SCENE CHANGE ---
+Location: PRIVATE MOMENT (LOVE OR INTERNAL) 
+Time:
+
+[NARRATION]
+If Love Alive: She watches speech on TV. 
+
+[SPEECH_BUBBLE]
+Love: You chose. 
+[SPEECH_BUBBLE]
+Otto: Yeah. 
+[SPEECH_BUBBLE]
+Love: Was it the right one? 
+[SPEECH_BUBBLE]
+Ofto: I don't know yet. 
+[SPEECH_BUBBLE]
+Love: can i get a kiss now? 
+
+[NARRATION]
+They sit laughing 
+If Rebecca Captured: Otto visits prison. Rebecca behind glass. 
+
+[SPEECH_BUBBLE]
+Rebecca: You look different. 
+[SPEECH_BUBBLE]
+Otto: They made me. 
+[SPEECH_BUBBLE]
+Rebecca: Good fuck them. 
+
+[NARRATION]
+She smiles faintly 
+
+[SPEECH_BUBBLE]
+Rebecca: Just don't get power hungry. 
+
+[NARRATION]
+That line matters. 
+
+--- SCENE CHANGE ---
+Location: PRESIDENTIAL WAR ROOM 
+Time:
+
+[SPEECH_BUBBLE]
+Vice President: He escalated. 
+[SPEECH_BUBBLE]
+President: He committed 
+[SPEECH_BUBBLE]
+Vice President: To which side? 
+[SPEECH_BUBBLE]
+President: That's what makes him dangerous. 
++2
+
+[NARRATION]
+President leans forward. 
+
+[SPEECH_BUBBLE]
+President: Prepare the Semi-Final security operation 
+[SPEECH_BUBBLE]
+Vice President: You think he'll use it? 
+[SPEECH_BUBBLE]
+President: I hope he does. 
+[SPEECH_BUBBLE]
+Vice president: what that outside Mr president move!!! 
++2
+
+[NARRATION]
+They shot the vice president 
+
+[SPEECH_BUBBLE]
+Mr president: call an ambulance!! 
+[SPEECH_BUBBLE]
+Mr president: someone help 
+[SPEECH_BUBBLE]
+Royal guard: mr president!! 
++1
+
+[NARRATION]
+END OF CHAPTER 22 FEELING The country is polarized. The team is divided Otto has chosen a tone publicly Now the Semi-Final becomes symbolic Next is Chapter 23- The Semi-Final.
