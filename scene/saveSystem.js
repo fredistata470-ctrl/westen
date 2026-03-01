@@ -5,9 +5,15 @@
 const SAVE_KEY = "westen_save_v1";
 
 let saveData = {
+    // Player identity (display name for save slot)
+    playerName: "Otto",
+
     // Story progress
     chapter: 0,
     storyProgress: 0,
+
+    // Save timestamp (ISO string, set when saveGame() is called)
+    timestamp: null,
 
     // Flat win/loss counters (legacy — also mirrored in record below)
     wins: 0,
@@ -48,8 +54,10 @@ let saveData = {
 
 // Default shape used when merging partial saves from localStorage
 const _defaultSave = () => ({
+    playerName: "Otto",
     chapter: 0,
     storyProgress: 0,
+    timestamp: null,
     wins: 0,
     losses: 0,
     story: { currentChapter: 0, currentScene: "prologue", completedMatches: [] },
@@ -80,6 +88,8 @@ function loadGame() {
             const defaults = _defaultSave();
             // Deep-merge top-level keys; nested objects are merged without mutating defaults
             saveData = Object.assign({}, defaults, parsed, {
+                playerName: parsed.playerName || defaults.playerName,
+                timestamp: parsed.timestamp || defaults.timestamp,
                 story: Object.assign({}, defaults.story, parsed.story || {}),
                 player: Object.assign({}, defaults.player, parsed.player || {}, {
                     stats: Object.assign({}, defaults.player.stats, (parsed.player || {}).stats || {})
