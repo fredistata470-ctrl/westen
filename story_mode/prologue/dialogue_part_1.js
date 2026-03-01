@@ -1,5 +1,5 @@
 // Prologue — Part 1: Welcome to Weston
-// Source: story lines part 1.pdf
+// Source: dialogue part 1.pdf
 // Drop additional dialogue lines into the dialogue array without breaking the engine.
 
 var prologuePart1 = createDialogueScene({

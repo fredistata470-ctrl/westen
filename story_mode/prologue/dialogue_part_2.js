@@ -1,5 +1,5 @@
 // Prologue — Part 2: Otto's Origin
-// Source: story lines part 1.pdf — "PROLOGUE – PART 2" section
+// Source: dialogue part 1.pdf — "PROLOGUE – PART 2" section
 // Drop additional dialogue lines into the dialogue array without breaking the engine.
 
 var prologuePart2 = createDialogueScene({
