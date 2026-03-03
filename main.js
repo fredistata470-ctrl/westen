@@ -12,7 +12,20 @@ function init() {
 
 function showBootScreen() {
     setScene("MENU");
-    screen.innerHTML = "<h1>Click To Start</h1>";
+
+    if (main_menu_bg) {
+        screen.style.backgroundImage = "url(\"" + main_menu_bg + "\")";
+        screen.style.backgroundSize = "cover";
+        screen.style.backgroundPosition = "center";
+    }
+
+    screen.innerHTML = `
+        <div class="boot-screen">
+            <h1 class="boot-title">Westen &amp; Zhao Champions League</h1>
+            <div class="boot-prompt">&#9654; Click anywhere to start</div>
+        </div>
+    `;
+
     screen.onclick = () => {
         screen.onclick = null;
         showMainMenu();
