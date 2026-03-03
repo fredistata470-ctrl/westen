@@ -33,5 +33,5 @@ var prologuePart2 = createDialogueScene({
         { speaker: "Otto",     emotion: "serious", text: "But I'm here." },
         { speaker: "Narrator", emotion: "neutral", text: "Cut to black. Title card: EIGHT YEARS LATER." }
     ],
-    next: "chapter_01"
+    next: "chapter_1_scene"
 });
