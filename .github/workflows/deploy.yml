@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - copilot/move-files-to-story-file
 
 permissions:
   contents: read
