@@ -32,8 +32,38 @@ var STORY_CHAPTERS = [
     // Chapter: The Golden Return
     { type: "story", scene: chapterGoldenReturnScene },
 
+    // Chapter: Morgan and Quinn
+    { type: "story", scene: chapterMorganAndQuinnScene },
+
     // Chapter: They Say It Out Loud
     { type: "story", scene: chapterTheySayItOutLoudScene },
+
+    // Chapter: Dinner
+    { type: "story", scene: chapterDinnerScene },
+
+    // Chapter 4
+    { type: "story", scene: chapter4Scene },
+
+    // Chapter 5
+    { type: "story", scene: chapter5Scene },
+
+    // Chapter 6
+    { type: "story", scene: chapter6Scene },
+
+    // Chapter 7
+    { type: "story", scene: chapter7Scene },
+
+    // Chapter 8
+    { type: "story", scene: chapter8Scene },
+
+    // Chapter 9
+    { type: "story", scene: chapter9Scene },
+
+    // Chapter 10
+    { type: "story", scene: chapter10Scene },
+
+    // Chapter 11
+    { type: "story", scene: chapter11Scene },
 
     // Chapter 12
     { type: "story", scene: chapter12Scene },
@@ -43,6 +73,27 @@ var STORY_CHAPTERS = [
 
     // Chapter 14: Visibility
     { type: "story", scene: chapter14Scene },
+
+    // Chapter 15
+    { type: "story", scene: chapter15Scene },
+
+    // Chapter 16
+    { type: "story", scene: chapter16Scene },
+
+    // Chapter 17
+    { type: "story", scene: chapter17Scene },
+
+    // Chapter 18
+    { type: "story", scene: chapter18Scene },
+
+    // Chapter 19
+    { type: "story", scene: chapter19Scene },
+
+    // Chapter 20
+    { type: "story", scene: chapter20Scene },
+
+    // Chapter 21
+    { type: "story", scene: chapter21Scene },
 
     // Chapter 22: Fault Lines
     { type: "story", scene: chapter22Scene }
@@ -98,9 +149,13 @@ function playStory(scene, onEnd) {
     var lines = (scene && (scene.dialogue || scene.lines)) || [];
 
     function showDialogue() {
+        // Clear any existing click handler immediately so that a click event currently
+        // propagating (e.g. from a menu button or a choice button) cannot also advance
+        // the dialogue.
+        screen.onclick = null;
+
         var line = lines[dialogueIndex];
         if (!line) {
-            screen.onclick = null;
             if (onEnd) onEnd();
             return;
         }
@@ -139,7 +194,9 @@ function playStory(scene, onEnd) {
                 var btn = document.createElement("button");
                 btn.className = "dialogue-choice";
                 btn.innerText = choice.text;
-                btn.onclick = function() {
+                btn.onclick = function(e) {
+                    // Stop the click from bubbling to screen.onclick and skipping a line
+                    if (e) e.stopPropagation();
                     dialogueIndex++;
                     if (dialogueIndex >= lines.length) {
                         if (onEnd) onEnd();
@@ -150,15 +207,20 @@ function playStory(scene, onEnd) {
                 boxEl.appendChild(btn);
             });
         } else {
-            screen.onclick = function() {
-                dialogueIndex++;
-                if (dialogueIndex >= lines.length) {
-                    screen.onclick = null;
-                    if (onEnd) onEnd();
-                } else {
-                    showDialogue();
-                }
-            };
+            // Defer setting screen.onclick by one tick so that any click event currently
+            // propagating (e.g. bubbling up from a menu button that started this scene)
+            // fires against the null handler above rather than immediately advancing.
+            setTimeout(function() {
+                screen.onclick = function() {
+                    dialogueIndex++;
+                    if (dialogueIndex >= lines.length) {
+                        screen.onclick = null;
+                        if (onEnd) onEnd();
+                    } else {
+                        showDialogue();
+                    }
+                };
+            }, 0);
         }
     }
 
