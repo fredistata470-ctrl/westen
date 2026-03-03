@@ -401,10 +401,11 @@ function _launchTrainingMatch() {
     }
 
     setScene("MATCH");
-    // Pass null so the engine treats this as a non-story match (no insulin/XP hooks)
+    // Pass null so the engine treats this as a non-story match (no insulin/XP hooks).
+    // Pass true to skip the engine's formation select (training mode already has its own).
     startMatch(null, function() {
         _showTrainingPostMatch();
-    });
+    }, true);
 }
 
 function _showTrainingPostMatch() {

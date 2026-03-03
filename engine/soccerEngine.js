@@ -153,10 +153,10 @@ function showFormationSelect(onSelect) {
     screen.appendChild(div);
 }
 
-function startMatch(chapter, done) {
+function startMatch(chapter, done, skipFormationSelect) {
     onMatchComplete = done || null;
     isStoryMatch = chapter !== null && chapter !== undefined;
-    showFormationSelect(() => {
+    function beginMatch() {
         screen.innerHTML = "";
         canvas = document.createElement("canvas");
         canvas.width = FIELD.width;
@@ -174,7 +174,12 @@ function startMatch(chapter, done) {
         matchRunning = true;
         audioManager.startAmbient();
         requestAnimationFrame(gameLoop);
-    });
+    }
+    if (skipFormationSelect) {
+        beginMatch();
+    } else {
+        showFormationSelect(() => { beginMatch(); });
+    }
 }
 
 function initMatch() {
@@ -356,8 +361,8 @@ function update() {
         }
     }
 
-    handleFieldBoundariesAndPosts();
     detectGoals();
+    handleFieldBoundariesAndPosts();
 
     if (!possession.owner) {
         ball.vx *= 0.97;
