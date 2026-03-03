@@ -1,10 +1,98 @@
 {
+  "_note": "Chapter 12 has no match — it is a political story chapter only.",
   "chapter3": {
-    "opponent": "northbridge_united",
-    "home": true
+    "opponent": "northfield",
+    "home": true,
+    "note": "Chapter 3 — The Qualifier vs Northfield"
   },
   "chapter4": {
-    "opponent": "lakeside_city",
-    "home": false
+    "opponent": "silverton",
+    "home": false,
+    "note": "Chapter 4 — Away match, Westward wins"
+  },
+  "chapter5": {
+    "opponent": "ashvale",
+    "home": false,
+    "note": "Chapter 5 — Away vs Ashbourne (Ashvale FC)"
+  },
+  "chapter6": {
+    "opponent": "ironcliff",
+    "home": false,
+    "note": "Chapter 6 — Away vs Ironclad (Ironcliff FC), Attendance 100,000"
+  },
+  "chapter7": {
+    "opponent": "silverton",
+    "home": true,
+    "note": "Chapter 7 — Home vs Silverton"
+  },
+  "chapter8": {
+    "opponent": "stonebridge",
+    "home": true,
+    "note": "Chapter 8 — Home match"
+  },
+  "chapter9": {
+    "opponent": "mapleford",
+    "home": true,
+    "note": "Chapter 9 — Westward Stadium Night vs Meadowvale (Mapleford FC)"
+  },
+  "chapter10": {
+    "opponent": "everpeak",
+    "home": false,
+    "note": "Chapter 10 — Away vs Eastvale (Everpeak FC)"
+  },
+  "chapter11": {
+    "opponent": "stonehaven",
+    "home": false,
+    "note": "Chapter 11 — Saltreach Away vs Southgate (Stonehaven FC)"
+  },
+  "chapter13": {
+    "opponent": "northfield",
+    "home": false,
+    "note": "Chapter 13 — Away vs Northfield (Quinn Lopez's team)"
+  },
+  "chapter14": {
+    "opponent": "oakridge",
+    "home": false,
+    "note": "Chapter 14 — Away vs Oakridge, Halcyon Coast Arena"
+  },
+  "chapter15": {
+    "opponent": "pinecrest",
+    "home": true,
+    "note": "Chapter 15 — Pine City match"
+  },
+  "chapter16": {
+    "opponent": "redrock",
+    "home": true,
+    "note": "Chapter 16 — Home match"
+  },
+  "chapter17": {
+    "opponent": "rivermoor",
+    "home": true,
+    "note": "Chapter 17 — Home vs Riverton (Rivermoor FC)"
+  },
+  "chapter18": {
+    "opponent": "sunridge",
+    "home": true,
+    "note": "Chapter 18 — Home match, clinical win"
+  },
+  "chapter19": {
+    "opponent": "wolfpine",
+    "home": false,
+    "note": "Chapter 19 — Away, Westward wins late"
+  },
+  "chapter20": {
+    "opponent": "thornwood",
+    "home": false,
+    "note": "Chapter 20 — High-stakes away match, Westward wins narrowly"
+  },
+  "chapter21": {
+    "opponent": "stormhold",
+    "home": true,
+    "note": "Chapter 21 — Home match, tensions rising"
+  },
+  "chapter22": {
+    "opponent": "briarcliff",
+    "home": true,
+    "note": "Chapter 22 — Fault Lines, home match"
   }
 }

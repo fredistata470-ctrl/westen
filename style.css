@@ -462,6 +462,15 @@ button:disabled {
     color: #e0eeff;
 }
 
+.training-player-ovr {
+    font-size: 13px;
+    font-weight: bold;
+    color: #ffdd55;
+    min-width: 28px;
+    text-align: right;
+    margin-right: 6px;
+}
+
 .training-player-check {
     font-size: 16px;
     color: #44dd88;

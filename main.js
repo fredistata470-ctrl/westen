@@ -1,6 +1,6 @@
-// Asset paths — drop files into assets/ folder to activate
-const main_menu_bg = "assets/images/main_menu_background.png";
-const main_menu_theme = "assets/audio/main_menu_music.mp3";
+// Asset paths — matches actual filenames in assets/ folder
+const main_menu_bg = "assets/images/mainmenu background.png";
+const main_menu_theme = "assets/audio/main menu music.wav";
 
 const screen = document.getElementById("screen");
 
@@ -24,7 +24,7 @@ function showMainMenu() {
     audioManager.playMenuTheme(main_menu_theme);
 
     if (main_menu_bg) {
-        screen.style.backgroundImage = "url(" + main_menu_bg + ")";
+        screen.style.backgroundImage = "url(\"" + main_menu_bg + "\")";
         screen.style.backgroundSize = "cover";
         screen.style.backgroundPosition = "center";
     }
