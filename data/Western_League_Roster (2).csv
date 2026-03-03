@@ -1,0 +1,976 @@
+Team,Player Name,Positions,Defense,Midfield,Attack
+Northfield,Quinn Lopez,ST,85,95,86
+Northfield,Alex Smith,LB,89,86,93
+Northfield,Morgan Brown,GK,89,81,83
+Northfield,Casey Davis,RM,72,81,85
+Northfield,Quinn Wilson,LW,76,96,90
+Northfield,Jamie Wilson,RB,83,87,93
+Northfield,Cameron Anderson,"RM, LW",82,83,94
+Northfield,Quinn Davis,CF,91,76,90
+Northfield,Cameron Brown,LB,89,89,97
+Northfield,Morgan Johnson,LW,86,83,86
+Northfield,Taylor Anderson,"LB, RM",79,86,88
+Northfield,Alex Smith,"RM, CM",94,93,84
+Northfield,Drew Brown,CM,81,80,96
+Northfield,Jamie Smith,"RB, LM",90,81,90
+Northfield,Jamie Martinez,CM,91,80,86
+Northfield,Riley Martinez,LW,85,87,92
+Northfield,Jordan Lopez,ST,93,83,83
+Northfield,Casey Johnson,CB,87,84,88
+Northfield,Jordan Johnson,LM,82,92,93
+Northfield,Jamie Lopez,"CM, RW",89,82,84
+Northfield,Jamie Smith,"LW, GK",87,84,80
+Northfield,Casey Wilson,CM,83,90,84
+Northfield,Morgan Lopez,GK,88,85,95
+Northfield,Taylor Johnson,GK,72,75,94
+Northfield,Jamie Davis,CM,87,87,87
+Silverton,Quinn Davis,ST,75,92,77
+Silverton,Taylor Davis,"CF, RB",73,85,77
+Silverton,Jamie Lopez,"RM, CF",71,81,87
+Silverton,Jordan Davis,CF,80,72,73
+Silverton,Taylor Martinez,"LB, RB",82,98,76
+Silverton,Quinn Lopez,CF,72,87,84
+Silverton,Casey Garcia,GK,67,90,88
+Silverton,Casey Lee,RM,81,77,74
+Silverton,Jamie Wilson,"CB, LB",80,82,67
+Silverton,Cameron Lopez,"CM, LM",83,80,74
+Silverton,Taylor Johnson,"RB, LW",73,84,85
+Silverton,Casey Smith,"ST, LM",70,83,78
+Silverton,Quinn Lopez,RB,76,79,77
+Silverton,Alex Garcia,LB,81,88,80
+Silverton,Taylor Davis,LW,75,77,73
+Silverton,Morgan Martinez,"GK, CB",67,87,75
+Silverton,Riley Smith,LW,78,84,79
+Silverton,Cameron Martinez,"LM, ST",78,98,77
+Silverton,Drew Brown,"LB, CF",70,96,71
+Silverton,Jamie Lee,"CF, RW",73,83,83
+Silverton,Jamie Garcia,CB,82,88,81
+Silverton,Riley Lee,"RW, CM",71,82,85
+Silverton,Quinn Anderson,ST,81,83,75
+Silverton,Jamie Brown,RM,72,73,82
+Silverton,Jamie Johnson,LB,82,86,78
+Goldcrest,Morgan Lee,RW,87,84,82
+Goldcrest,Quinn Lee,"RW, CM",90,88,82
+Goldcrest,Quinn Smith,LM,96,84,79
+Goldcrest,Riley Garcia,ST,93,80,78
+Goldcrest,Quinn Smith,CM,78,79,75
+Goldcrest,Riley Johnson,"LB, RM",81,84,84
+Goldcrest,Quinn Johnson,"CM, CB",90,88,80
+Goldcrest,Quinn Smith,"LM, CB",84,73,77
+Goldcrest,Alex Johnson,CM,83,91,80
+Goldcrest,Riley Johnson,CM,82,74,78
+Goldcrest,Jamie Brown,CM,86,87,91
+Goldcrest,Taylor Smith,"GK, RM",83,82,83
+Goldcrest,Alex Wilson,"CB, LM",84,86,83
+Goldcrest,Morgan Wilson,"LB, CB",92,86,85
+Goldcrest,Taylor Anderson,LW,86,85,82
+Goldcrest,Drew Smith,RM,92,89,88
+Goldcrest,Riley Lee,"ST, LB",83,84,89
+Goldcrest,Riley Martinez,"LM, CB",89,76,90
+Goldcrest,Cameron Johnson,CB,85,79,77
+Goldcrest,Jamie Davis,"LB, RM",95,84,81
+Goldcrest,Quinn Lopez,ST,83,91,85
+Goldcrest,Riley Brown,"ST, CM",93,84,94
+Goldcrest,Taylor Lee,"RM, LB",86,85,89
+Goldcrest,Taylor Anderson,LW,92,78,81
+Goldcrest,Alex Davis,"CM, LW",87,88,85
+Rivermoor,Jordan Smith,RW,67,86,72
+Rivermoor,Jamie Martinez,CB,70,83,80
+Rivermoor,Cameron Brown,"RM, RW",81,81,77
+Rivermoor,Taylor Garcia,"ST, RW",77,87,78
+Rivermoor,Drew Anderson,RB,84,75,77
+Rivermoor,Jamie Johnson,RM,76,89,80
+Rivermoor,Taylor Smith,LM,76,77,74
+Rivermoor,Jamie Johnson,"RW, ST",76,84,74
+Rivermoor,Cameron Johnson,RB,73,77,72
+Rivermoor,Jordan Wilson,"LM, GK",74,84,73
+Rivermoor,Quinn Davis,"LW, ST",87,80,75
+Rivermoor,Quinn Smith,"CB, RB",74,80,72
+Rivermoor,Drew Lopez,"RB, ST",78,79,73
+Rivermoor,Cameron Anderson,CF,83,76,77
+Rivermoor,Alex Martinez,"LB, CM",79,90,81
+Rivermoor,Riley Anderson,GK,82,94,80
+Rivermoor,Jamie Smith,"LB, GK",78,77,68
+Rivermoor,Alex Martinez,CB,80,92,70
+Rivermoor,Casey Lee,RM,79,83,65
+Rivermoor,Quinn Lopez,ST,75,87,70
+Rivermoor,Cameron Lopez,GK,72,87,82
+Rivermoor,Riley Lopez,GK,88,84,76
+Rivermoor,Alex Anderson,CB,70,79,74
+Rivermoor,Jordan Lee,"RB, CB",80,82,78
+Rivermoor,Riley Lopez,LM,72,93,76
+Ashvale,Drew Brown,RM,79,75,89
+Ashvale,Jamie Wilson,LM,90,72,83
+Ashvale,Casey Anderson,"CF, ST",95,76,88
+Ashvale,Jamie Davis,"CF, RB",99,71,90
+Ashvale,Morgan Garcia,LB,85,83,91
+Ashvale,Riley Lee,"GK, CF",88,77,92
+Ashvale,Cameron Johnson,"GK, LB",92,78,91
+Ashvale,Riley Anderson,CB,89,73,84
+Ashvale,Alex Lee,CM,88,64,96
+Ashvale,Drew Lopez,CM,85,71,89
+Ashvale,Riley Garcia,GK,93,73,92
+Ashvale,Jamie Davis,RB,85,73,81
+Ashvale,Taylor Lopez,RM,83,82,89
+Ashvale,Drew Wilson,RB,89,70,89
+Ashvale,Morgan Martinez,LW,95,73,95
+Ashvale,Morgan Lee,LW,88,71,96
+Ashvale,Quinn Lopez,CB,92,75,88
+Ashvale,Riley Smith,CF,92,71,88
+Ashvale,Alex Johnson,CB,89,78,89
+Ashvale,Quinn Lee,"CF, RM",86,69,84
+Ashvale,Casey Lee,"CM, CF",99,73,99
+Ashvale,Morgan Wilson,CF,86,75,82
+Ashvale,Jamie Garcia,LM,87,75,95
+Ashvale,Drew Brown,CB,92,70,85
+Ashvale,Morgan Lopez,GK,96,79,85
+Stonehaven,Jordan Lopez,"LW, CB",78,85,88
+Stonehaven,Quinn Lopez,"GK, RW",71,73,80
+Stonehaven,Jamie Johnson,"LB, LM",68,80,83
+Stonehaven,Jordan Smith,"LM, GK",79,78,82
+Stonehaven,Jordan Lopez,LM,73,75,78
+Stonehaven,Drew Brown,CM,83,69,80
+Stonehaven,Quinn Martinez,GK,77,76,77
+Stonehaven,Alex Lopez,CM,77,80,83
+Stonehaven,Drew Brown,LM,70,83,85
+Stonehaven,Taylor Wilson,"CM, RB",75,72,80
+Stonehaven,Jordan Johnson,RW,77,83,79
+Stonehaven,Cameron Anderson,"LB, RW",66,72,83
+Stonehaven,Jamie Brown,"LB, ST",70,75,81
+Stonehaven,Riley Smith,"CF, CM",74,73,78
+Stonehaven,Drew Martinez,LB,79,77,81
+Stonehaven,Drew Wilson,CM,76,70,82
+Stonehaven,Riley Davis,GK,77,82,96
+Stonehaven,Jamie Martinez,LB,75,77,80
+Stonehaven,Taylor Wilson,GK,71,76,79
+Stonehaven,Morgan Smith,"ST, RW",65,79,87
+Stonehaven,Jordan Lopez,LW,75,86,77
+Stonehaven,Jamie Garcia,ST,80,73,76
+Stonehaven,Morgan Davis,RB,75,80,80
+Stonehaven,Morgan Wilson,"ST, CF",66,78,91
+Stonehaven,Morgan Lopez,"CB, ST",77,84,88
+Brightwater,Morgan Anderson,"RM, CF",71,90,92
+Brightwater,Jordan Lopez,CF,62,82,88
+Brightwater,Alex Smith,CB,72,89,92
+Brightwater,Quinn Brown,RB,72,90,89
+Brightwater,Casey Anderson,CB,78,92,76
+Brightwater,Taylor Johnson,LM,78,93,88
+Brightwater,Cameron Smith,"RW, CM",77,86,87
+Brightwater,Drew Garcia,GK,79,94,86
+Brightwater,Drew Brown,"CM, CB",74,97,99
+Brightwater,Riley Davis,"GK, RM",74,91,80
+Brightwater,Alex Davis,LM,81,85,84
+Brightwater,Jamie Smith,ST,73,86,84
+Brightwater,Casey Smith,GK,71,91,80
+Brightwater,Drew Brown,RB,71,90,82
+Brightwater,Riley Davis,LW,74,90,95
+Brightwater,Casey Lopez,CM,72,92,94
+Brightwater,Quinn Brown,"CB, RW",76,93,82
+Brightwater,Quinn Lee,"CM, ST",75,90,84
+Brightwater,Alex Davis,CB,76,99,94
+Brightwater,Morgan Wilson,CB,77,86,86
+Brightwater,Cameron Anderson,"LB, RW",77,87,98
+Brightwater,Jamie Lopez,CM,78,90,90
+Brightwater,Drew Davis,RW,84,92,81
+Brightwater,Morgan Lopez,RW,81,85,97
+Brightwater,Casey Garcia,RM,91,89,81
+Oakridge,Casey Lopez,GK,79,86,89
+Oakridge,Riley Davis,CF,76,83,84
+Oakridge,Jordan Lee,"ST, CF",92,82,83
+Oakridge,Casey Smith,"ST, LW",89,90,93
+Oakridge,Riley Wilson,"LB, RW",88,77,94
+Oakridge,Taylor Davis,RW,78,78,89
+Oakridge,Taylor Smith,"GK, LM",77,95,89
+Oakridge,Alex Lee,CF,85,85,86
+Oakridge,Casey Davis,CF,84,87,91
+Oakridge,Riley Johnson,CB,79,94,84
+Oakridge,Alex Brown,LB,78,87,83
+Oakridge,Casey Johnson,GK,84,80,88
+Oakridge,Alex Anderson,RW,86,79,82
+Oakridge,Quinn Martinez,"RW, CM",76,84,89
+Oakridge,Quinn Smith,CB,77,87,89
+Oakridge,Morgan Wilson,LB,77,90,96
+Oakridge,Riley Smith,"LM, CF",74,86,87
+Oakridge,Quinn Wilson,"CF, LM",73,76,80
+Oakridge,Drew Davis,"RB, LB",84,83,99
+Oakridge,Alex Anderson,"ST, RM",76,79,90
+Oakridge,Cameron Davis,"CM, LB",80,84,93
+Oakridge,Taylor Lee,LM,85,80,91
+Oakridge,Jordan Lee,LW,76,93,85
+Oakridge,Riley Smith,"CF, GK",79,80,87
+Oakridge,Taylor Martinez,CM,85,93,87
+Ironcliff,Casey Brown,"LW, LB",73,81,82
+Ironcliff,Taylor Anderson,LM,75,90,87
+Ironcliff,Alex Anderson,CB,75,88,79
+Ironcliff,Casey Lopez,"RM, CF",79,89,76
+Ironcliff,Alex Martinez,LB,71,90,82
+Ironcliff,Quinn Anderson,"CM, RB",79,88,82
+Ironcliff,Jordan Lee,CM,77,92,83
+Ironcliff,Jamie Smith,"LW, RB",79,89,79
+Ironcliff,Casey Davis,"CF, CB",81,91,73
+Ironcliff,Alex Davis,"RB, LB",67,71,82
+Ironcliff,Jamie Smith,"LW, GK",76,82,79
+Ironcliff,Cameron Smith,ST,71,84,82
+Ironcliff,Drew Lee,"CB, LM",73,93,86
+Ironcliff,Taylor Brown,"ST, GK",70,78,80
+Ironcliff,Drew Smith,CB,75,79,89
+Ironcliff,Taylor Wilson,LB,81,84,81
+Ironcliff,Riley Lee,GK,76,80,83
+Ironcliff,Alex Wilson,CM,71,83,81
+Ironcliff,Cameron Davis,"RB, RM",76,90,81
+Ironcliff,Riley Brown,CM,73,83,86
+Ironcliff,Taylor Brown,"LW, CB",80,76,82
+Ironcliff,Jamie Davis,CF,78,80,72
+Ironcliff,Taylor Martinez,RW,83,88,83
+Ironcliff,Casey Lee,CM,77,84,83
+Ironcliff,Jordan Wilson,RW,71,91,82
+Windermere,Riley Johnson,CM,88,64,85
+Windermere,Taylor Wilson,"CM, LB",91,76,85
+Windermere,Alex Anderson,"LM, CM",76,79,91
+Windermere,Quinn Smith,"CM, LM",84,79,94
+Windermere,Jamie Garcia,CM,80,78,86
+Windermere,Morgan Johnson,ST,75,75,84
+Windermere,Taylor Lee,LB,82,71,83
+Windermere,Riley Garcia,LB,75,75,85
+Windermere,Alex Smith,"RB, RM",82,69,88
+Windermere,Casey Anderson,LW,76,76,87
+Windermere,Cameron Lopez,"ST, RB",79,77,86
+Windermere,Morgan Anderson,"CB, CM",82,78,88
+Windermere,Taylor Smith,"CM, LW",79,66,90
+Windermere,Jordan Garcia,"LM, RW",78,76,84
+Windermere,Morgan Johnson,"CM, RM",78,73,77
+Windermere,Jordan Wilson,CB,73,74,84
+Windermere,Quinn Davis,LM,75,76,91
+Windermere,Morgan Anderson,"LB, LW",76,75,85
+Windermere,Taylor Lee,"LW, GK",78,66,86
+Windermere,Riley Davis,RW,73,75,84
+Windermere,Quinn Lopez,"GK, LW",78,75,81
+Windermere,Cameron Garcia,RW,76,84,89
+Windermere,Cameron Davis,"CF, RB",76,73,88
+Windermere,Morgan Lopez,"RM, CB",78,82,92
+Windermere,Jamie Smith,CM,80,74,90
+Mapleford,Riley Garcia,RM,81,71,86
+Mapleford,Alex Wilson,GK,89,81,84
+Mapleford,Jordan Wilson,RW,80,80,88
+Mapleford,Quinn Lee,LW,89,73,83
+Mapleford,Taylor Martinez,RB,88,79,83
+Mapleford,Riley Smith,"RB, CF",93,90,85
+Mapleford,Morgan Wilson,ST,91,78,85
+Mapleford,Drew Lee,CF,99,79,88
+Mapleford,Taylor Garcia,GK,92,78,82
+Mapleford,Riley Davis,CM,85,75,78
+Mapleford,Casey Martinez,"LB, CF",92,75,81
+Mapleford,Quinn Johnson,"RM, GK",97,86,82
+Mapleford,Drew Anderson,LW,93,82,87
+Mapleford,Jamie Anderson,GK,83,76,82
+Mapleford,Taylor Johnson,CB,97,77,84
+Mapleford,Drew Lopez,LW,95,91,77
+Mapleford,Taylor Davis,RW,83,76,89
+Mapleford,Quinn Garcia,GK,78,84,85
+Mapleford,Quinn Brown,RW,91,72,87
+Mapleford,Drew Brown,CB,84,84,83
+Mapleford,Quinn Anderson,"RW, ST",95,75,91
+Mapleford,Casey Martinez,"CF, GK",92,92,83
+Mapleford,Casey Lopez,LM,93,79,79
+Mapleford,Quinn Davis,RW,96,82,84
+Mapleford,Morgan Davis,LB,86,83,91
+Evergrove,Riley Lopez,"RW, CM",86,69,78
+Evergrove,Alex Johnson,GK,83,66,73
+Evergrove,Casey Smith,RM,87,79,66
+Evergrove,Taylor Smith,"RW, GK",84,77,76
+Evergrove,Jordan Lopez,"CM, LB",79,75,78
+Evergrove,Casey Smith,"ST, RM",79,87,70
+Evergrove,Casey Garcia,"GK, LB",83,76,74
+Evergrove,Quinn Davis,"GK, RB",83,93,82
+Evergrove,Taylor Lopez,GK,80,79,75
+Evergrove,Jamie Lee,CF,89,72,66
+Evergrove,Riley Lopez,"CF, GK",82,84,78
+Evergrove,Riley Lopez,"CF, CM",89,85,72
+Evergrove,Casey Smith,"LW, RB",74,84,81
+Evergrove,Morgan Johnson,CM,86,77,70
+Evergrove,Riley Martinez,LM,83,86,73
+Evergrove,Jamie Lopez,LB,81,81,76
+Evergrove,Alex Martinez,"ST, CF",89,80,70
+Evergrove,Riley Johnson,"LB, ST",79,71,71
+Evergrove,Taylor Anderson,"ST, GK",84,88,76
+Evergrove,Drew Anderson,CM,77,83,72
+Evergrove,Quinn Davis,ST,83,78,70
+Evergrove,Jamie Anderson,"RB, GK",82,79,75
+Evergrove,Morgan Wilson,"LM, CB",82,75,72
+Evergrove,Jordan Anderson,GK,76,74,79
+Evergrove,Casey Johnson,CM,81,77,80
+Lakeshire,Taylor Martinez,"RM, RW",82,91,83
+Lakeshire,Quinn Lee,"RM, LB",78,92,97
+Lakeshire,Casey Smith,"RW, LB",82,99,90
+Lakeshire,Drew Lopez,"CF, LW",86,87,84
+Lakeshire,Quinn Lopez,"LM, CF",74,82,78
+Lakeshire,Quinn Wilson,"RB, CB",75,82,88
+Lakeshire,Taylor Davis,"CF, CM",84,86,86
+Lakeshire,Drew Wilson,CF,78,92,78
+Lakeshire,Jordan Smith,LM,69,91,90
+Lakeshire,Quinn Martinez,LM,73,89,92
+Lakeshire,Casey Garcia,"CF, CM",82,86,82
+Lakeshire,Quinn Wilson,LB,78,95,87
+Lakeshire,Drew Lopez,LM,82,91,82
+Lakeshire,Taylor Wilson,LW,72,86,89
+Lakeshire,Drew Anderson,"CM, ST",75,96,92
+Lakeshire,Taylor Brown,RM,76,91,92
+Lakeshire,Casey Lee,CM,73,84,82
+Lakeshire,Alex Smith,"CM, LB",82,87,93
+Lakeshire,Jordan Smith,"CM, CF",73,87,81
+Lakeshire,Drew Martinez,"LB, ST",78,82,84
+Lakeshire,Drew Brown,"RM, RB",86,92,94
+Lakeshire,Quinn Lee,"CB, ST",79,82,76
+Lakeshire,Taylor Wilson,"CB, RB",83,85,73
+Lakeshire,Casey Martinez,LM,75,91,91
+Lakeshire,Quinn Smith,"ST, RB",79,93,93
+Pinecrest,Quinn Martinez,ST,81,79,89
+Pinecrest,Morgan Smith,"LW, GK",74,85,83
+Pinecrest,Alex Smith,"CB, CF",84,75,89
+Pinecrest,Cameron Brown,CM,77,86,83
+Pinecrest,Cameron Smith,"RB, RW",80,82,92
+Pinecrest,Casey Wilson,LB,75,88,87
+Pinecrest,Alex Garcia,RW,78,80,96
+Pinecrest,Taylor Davis,GK,74,88,96
+Pinecrest,Riley Martinez,"CB, LM",74,88,89
+Pinecrest,Cameron Garcia,RW,73,82,82
+Pinecrest,Alex Wilson,RM,82,87,84
+Pinecrest,Casey Smith,ST,71,80,93
+Pinecrest,Morgan Smith,"ST, RM",81,86,84
+Pinecrest,Riley Anderson,LW,83,80,90
+Pinecrest,Riley Johnson,RW,82,90,86
+Pinecrest,Jamie Lopez,"CF, ST",88,81,86
+Pinecrest,Jordan Martinez,RW,70,82,83
+Pinecrest,Drew Johnson,CB,82,87,91
+Pinecrest,Quinn Davis,CF,85,85,88
+Pinecrest,Jamie Wilson,GK,80,81,86
+Pinecrest,Jordan Lopez,GK,84,92,87
+Pinecrest,Riley Garcia,RW,69,81,87
+Pinecrest,Casey Brown,"CM, ST",69,70,93
+Pinecrest,Jordan Johnson,"LB, CB",79,93,90
+Pinecrest,Casey Martinez,RM,79,80,87
+Redrock,Casey Anderson,LM,78,91,83
+Redrock,Drew Lopez,LW,78,79,83
+Redrock,Quinn Lee,LM,83,78,83
+Redrock,Morgan Wilson,RM,74,80,88
+Redrock,Casey Davis,RB,76,81,92
+Redrock,Jordan Smith,ST,71,78,87
+Redrock,Taylor Brown,CF,79,80,90
+Redrock,Morgan Johnson,CB,77,69,89
+Redrock,Riley Wilson,"LB, LW",72,77,84
+Redrock,Jordan Anderson,"CB, RM",83,81,80
+Redrock,Quinn Lee,"CF, GK",81,77,79
+Redrock,Morgan Garcia,"GK, ST",71,81,91
+Redrock,Taylor Lee,LB,77,68,93
+Redrock,Riley Lopez,"CM, CF",75,75,81
+Redrock,Drew Brown,CB,79,83,88
+Redrock,Casey Johnson,"LW, LM",81,76,82
+Redrock,Jamie Anderson,LM,81,79,97
+Redrock,Jamie Garcia,LM,80,89,79
+Redrock,Jordan Brown,RW,71,80,91
+Redrock,Jordan Anderson,"LB, ST",81,77,91
+Redrock,Drew Lopez,"RW, RB",74,75,92
+Redrock,Jordan Garcia,RB,81,79,94
+Redrock,Drew Brown,LM,83,77,80
+Redrock,Riley Wilson,GK,71,87,92
+Redrock,Riley Anderson,ST,69,80,82
+Cedarhill,Jamie Johnson,"RM, CB",73,86,81
+Cedarhill,Alex Lee,"CB, GK",77,81,85
+Cedarhill,Morgan Lopez,"CM, GK",82,76,81
+Cedarhill,Taylor Lopez,RB,84,81,71
+Cedarhill,Casey Wilson,"ST, CB",76,95,77
+Cedarhill,Jamie Anderson,LM,88,83,77
+Cedarhill,Quinn Smith,"LM, RW",79,80,70
+Cedarhill,Quinn Lopez,RW,86,73,79
+Cedarhill,Riley Lee,"GK, LB",80,86,82
+Cedarhill,Alex Lee,"CM, RW",80,80,73
+Cedarhill,Cameron Smith,"CF, CB",86,83,79
+Cedarhill,Quinn Brown,CB,84,87,79
+Cedarhill,Cameron Garcia,"CF, RB",74,84,80
+Cedarhill,Quinn Garcia,LW,76,84,77
+Cedarhill,Morgan Anderson,LB,80,79,80
+Cedarhill,Alex Garcia,CF,82,87,80
+Cedarhill,Casey Lopez,"CB, CF",88,82,77
+Cedarhill,Alex Anderson,RB,83,81,77
+Cedarhill,Alex Smith,GK,82,89,81
+Cedarhill,Casey Garcia,"RB, GK",86,80,86
+Cedarhill,Alex Johnson,LW,75,89,80
+Cedarhill,Riley Brown,"GK, CB",71,81,78
+Cedarhill,Morgan Johnson,LW,88,72,83
+Cedarhill,Alex Lopez,"RM, CM",76,84,88
+Cedarhill,Alex Lopez,RB,78,83,81
+Wolfpine,Riley Martinez,LM,79,90,81
+Wolfpine,Drew Davis,"RW, LW",65,82,84
+Wolfpine,Jamie Davis,"CM, LW",73,86,78
+Wolfpine,Casey Davis,"LW, CF",67,80,77
+Wolfpine,Cameron Lee,RB,70,77,82
+Wolfpine,Jordan Lopez,RB,74,86,75
+Wolfpine,Drew Lopez,"CF, RW",79,85,82
+Wolfpine,Morgan Garcia,RW,77,80,79
+Wolfpine,Jamie Smith,"CM, LW",76,82,85
+Wolfpine,Drew Wilson,"CB, CM",65,89,79
+Wolfpine,Drew Lopez,CB,69,95,81
+Wolfpine,Jordan Davis,RB,74,89,82
+Wolfpine,Casey Garcia,CM,76,90,82
+Wolfpine,Drew Lopez,LB,76,83,89
+Wolfpine,Taylor Martinez,"CM, RB",69,93,79
+Wolfpine,Casey Smith,CF,69,84,87
+Wolfpine,Cameron Anderson,"RW, CB",77,89,86
+Wolfpine,Quinn Brown,CF,80,95,86
+Wolfpine,Taylor Wilson,CM,74,75,86
+Wolfpine,Morgan Davis,CF,70,87,87
+Wolfpine,Casey Anderson,RB,72,91,78
+Wolfpine,Taylor Martinez,GK,76,84,82
+Wolfpine,Quinn Johnson,CF,75,82,79
+Wolfpine,Jamie Brown,CM,74,84,90
+Wolfpine,Alex Johnson,"LW, ST",72,81,83
+Hawkridge,Quinn Smith,"LM, CM",77,99,84
+Hawkridge,Jordan Martinez,CM,79,86,87
+Hawkridge,Alex Smith,RM,84,89,77
+Hawkridge,Quinn Lee,"LM, LW",74,82,86
+Hawkridge,Quinn Martinez,"CB, CM",73,91,75
+Hawkridge,Jamie Anderson,CF,80,88,84
+Hawkridge,Jamie Davis,RB,90,86,84
+Hawkridge,Riley Wilson,LM,75,82,90
+Hawkridge,Drew Garcia,RB,85,96,83
+Hawkridge,Taylor Anderson,CB,79,89,87
+Hawkridge,Drew Anderson,LM,77,87,84
+Hawkridge,Quinn Lee,RM,69,88,92
+Hawkridge,Jordan Smith,CB,75,86,85
+Hawkridge,Cameron Lee,"LW, LB",79,96,75
+Hawkridge,Quinn Martinez,"CF, LM",82,87,79
+Hawkridge,Quinn Wilson,"GK, RB",70,90,83
+Hawkridge,Cameron Wilson,RM,76,87,77
+Hawkridge,Cameron Garcia,LM,78,84,86
+Hawkridge,Alex Martinez,"GK, LM",80,99,89
+Hawkridge,Taylor Brown,"LB, ST",70,97,84
+Hawkridge,Riley Wilson,"RM, RW",77,93,89
+Hawkridge,Casey Garcia,CF,75,92,81
+Hawkridge,Jordan Brown,"RM, RB",75,89,88
+Hawkridge,Jordan Brown,LB,81,95,86
+Hawkridge,Alex Garcia,CM,76,82,93
+Falconridge,Quinn Wilson,LM,82,71,79
+Falconridge,Cameron Davis,RW,79,84,92
+Falconridge,Jordan Anderson,"CB, RW",73,85,75
+Falconridge,Casey Anderson,CF,78,78,95
+Falconridge,Casey Lee,GK,81,76,84
+Falconridge,Taylor Garcia,"CB, CF",84,83,93
+Falconridge,Quinn Lopez,"LM, LW",87,78,86
+Falconridge,Riley Wilson,RB,81,80,88
+Falconridge,Morgan Martinez,"LM, CF",79,85,88
+Falconridge,Morgan Smith,ST,80,80,77
+Falconridge,Casey Smith,GK,79,90,87
+Falconridge,Taylor Lee,"LB, CM",81,77,86
+Falconridge,Jordan Garcia,"ST, LM",75,69,82
+Falconridge,Drew Lee,RW,81,76,88
+Falconridge,Morgan Lee,RW,75,74,76
+Falconridge,Taylor Brown,LM,81,83,85
+Falconridge,Morgan Brown,"ST, RB",78,81,91
+Falconridge,Morgan Martinez,RM,85,80,82
+Falconridge,Jordan Brown,"GK, RW",82,82,87
+Falconridge,Cameron Garcia,ST,69,74,80
+Falconridge,Jamie Brown,LM,79,89,88
+Falconridge,Alex Davis,"LB, LW",90,77,75
+Falconridge,Quinn Anderson,RB,86,83,86
+Falconridge,Alex Johnson,GK,84,80,88
+Falconridge,Jamie Lopez,ST,76,72,78
+Snowpeak,Riley Martinez,CB,77,75,82
+Snowpeak,Jamie Anderson,"CB, ST",89,91,78
+Snowpeak,Drew Anderson,RW,87,78,68
+Snowpeak,Jamie Lee,CB,85,79,74
+Snowpeak,Jamie Garcia,LW,84,83,74
+Snowpeak,Alex Lee,LW,85,88,59
+Snowpeak,Casey Lopez,CM,83,79,83
+Snowpeak,Taylor Anderson,"LB, ST",86,81,77
+Snowpeak,Quinn Lee,GK,81,83,70
+Snowpeak,Quinn Lopez,LB,80,79,85
+Snowpeak,Taylor Lopez,RW,81,82,78
+Snowpeak,Alex Garcia,"CB, RM",78,80,75
+Snowpeak,Alex Lopez,"LB, RM",75,86,79
+Snowpeak,Casey Martinez,"RW, CM",92,89,74
+Snowpeak,Drew Lopez,LM,91,78,66
+Snowpeak,Cameron Garcia,"LM, CM",87,83,72
+Snowpeak,Jamie Lee,LM,77,80,72
+Snowpeak,Quinn Brown,"LB, RM",84,88,71
+Snowpeak,Jordan Lee,"LB, LM",97,78,83
+Snowpeak,Alex Garcia,"CM, CF",78,85,74
+Snowpeak,Jamie Martinez,"CM, RM",81,85,82
+Snowpeak,Drew Johnson,LB,86,79,73
+Snowpeak,Quinn Martinez,LB,79,82,69
+Snowpeak,Taylor Martinez,RW,84,80,82
+Snowpeak,Jordan Lee,GK,91,81,81
+Amberfield,Drew Brown,"GK, CF",86,80,99
+Amberfield,Casey Wilson,RW,71,74,84
+Amberfield,Cameron Lopez,LB,84,77,91
+Amberfield,Alex Garcia,CM,82,74,88
+Amberfield,Jamie Martinez,"ST, LM",85,89,98
+Amberfield,Casey Martinez,RB,69,73,91
+Amberfield,Casey Smith,"LB, RW",76,72,84
+Amberfield,Jordan Garcia,CF,82,68,89
+Amberfield,Jamie Lee,CB,80,80,82
+Amberfield,Alex Davis,ST,79,70,85
+Amberfield,Alex Lee,RW,76,73,82
+Amberfield,Casey Lopez,"CM, LW",83,78,95
+Amberfield,Quinn Wilson,RB,81,74,97
+Amberfield,Cameron Wilson,CB,78,81,77
+Amberfield,Drew Brown,CM,72,78,79
+Amberfield,Cameron Garcia,"RB, GK",66,75,91
+Amberfield,Quinn Martinez,"GK, LM",79,76,91
+Amberfield,Jamie Garcia,GK,79,86,85
+Amberfield,Jamie Lopez,ST,83,77,89
+Amberfield,Riley Johnson,"GK, LW",77,71,83
+Amberfield,Taylor Brown,"LB, CB",67,71,96
+Amberfield,Drew Brown,ST,80,76,90
+Amberfield,Jordan Garcia,CB,73,74,76
+Amberfield,Casey Wilson,"ST, CB",82,81,94
+Amberfield,Jordan Lee,LM,85,74,84
+Foxglove,Morgan Johnson,LB,83,76,90
+Foxglove,Jamie Anderson,RW,84,85,88
+Foxglove,Riley Johnson,RW,88,81,89
+Foxglove,Drew Lopez,LB,98,82,82
+Foxglove,Taylor Anderson,"CB, RM",88,87,90
+Foxglove,Riley Brown,ST,89,79,85
+Foxglove,Riley Garcia,LB,91,84,94
+Foxglove,Quinn Anderson,GK,90,84,88
+Foxglove,Morgan Martinez,LM,92,86,78
+Foxglove,Jamie Brown,CM,76,77,89
+Foxglove,Alex Wilson,"RW, GK",86,90,81
+Foxglove,Riley Garcia,CB,97,86,84
+Foxglove,Jamie Brown,RW,80,80,86
+Foxglove,Jordan Smith,LM,86,85,84
+Foxglove,Taylor Davis,GK,87,78,91
+Foxglove,Jordan Garcia,CF,90,74,81
+Foxglove,Taylor Lee,CM,87,76,86
+Foxglove,Drew Lopez,LM,76,85,91
+Foxglove,Casey Anderson,"CM, RB",78,79,79
+Foxglove,Jamie Johnson,GK,88,76,86
+Foxglove,Morgan Martinez,"CB, LM",84,79,91
+Foxglove,Drew Davis,LM,91,80,87
+Foxglove,Cameron Smith,LM,87,81,99
+Foxglove,Alex Anderson,"RB, RM",87,85,88
+Foxglove,Alex Davis,CF,86,87,92
+Thornwood,Jamie Garcia,ST,82,82,81
+Thornwood,Drew Lee,ST,84,77,76
+Thornwood,Riley Wilson,GK,78,80,81
+Thornwood,Alex Lopez,"ST, LB",78,71,76
+Thornwood,Drew Brown,"ST, LW",89,69,80
+Thornwood,Riley Wilson,GK,75,72,73
+Thornwood,Morgan Garcia,"ST, RB",88,79,87
+Thornwood,Jordan Garcia,"ST, LM",78,71,83
+Thornwood,Cameron Garcia,"GK, RB",83,78,74
+Thornwood,Quinn Martinez,GK,93,74,87
+Thornwood,Cameron Smith,"CF, LB",78,70,77
+Thornwood,Casey Martinez,ST,81,77,81
+Thornwood,Taylor Garcia,LW,79,74,79
+Thornwood,Alex Anderson,CF,83,79,82
+Thornwood,Jordan Garcia,"GK, LM",76,71,66
+Thornwood,Cameron Lee,CF,90,71,85
+Thornwood,Casey Martinez,ST,80,80,74
+Thornwood,Drew Lopez,RB,79,81,79
+Thornwood,Casey Johnson,CB,78,78,79
+Thornwood,Drew Garcia,RW,87,65,75
+Thornwood,Riley Brown,"LW, RB",83,73,81
+Thornwood,Alex Johnson,ST,77,75,82
+Thornwood,Alex Anderson,"CF, RW",83,73,90
+Thornwood,Drew Anderson,RB,88,69,84
+Thornwood,Jamie Brown,CF,79,75,78
+Bluehaven,Jamie Brown,"RM, RW",85,89,77
+Bluehaven,Morgan Johnson,CB,85,90,88
+Bluehaven,Jamie Smith,GK,87,90,81
+Bluehaven,Alex Martinez,"LM, GK",86,87,81
+Bluehaven,Jamie Garcia,"CM, LM",84,98,86
+Bluehaven,Morgan Lee,LW,78,84,81
+Bluehaven,Jordan Brown,CF,82,84,78
+Bluehaven,Morgan Garcia,CM,76,88,78
+Bluehaven,Drew Martinez,CB,74,82,86
+Bluehaven,Jamie Johnson,"LW, RB",84,92,75
+Bluehaven,Drew Wilson,RM,80,91,81
+Bluehaven,Quinn Johnson,LM,78,87,82
+Bluehaven,Drew Anderson,"CB, RM",81,78,78
+Bluehaven,Alex Smith,"RW, LW",78,86,76
+Bluehaven,Quinn Smith,"RM, RW",79,86,78
+Bluehaven,Alex Martinez,"LM, GK",79,87,74
+Bluehaven,Drew Johnson,"RB, RW",82,79,76
+Bluehaven,Taylor Wilson,ST,72,85,84
+Bluehaven,Jordan Davis,"LW, CF",87,92,81
+Bluehaven,Morgan Garcia,RM,85,82,81
+Bluehaven,Jamie Davis,RW,83,89,83
+Bluehaven,Quinn Smith,CM,82,85,77
+Bluehaven,Casey Lee,LW,72,82,89
+Bluehaven,Jamie Brown,CF,81,88,80
+Bluehaven,Drew Lee,CB,87,88,81
+Shadowvale,Alex Johnson,"CF, LB",74,88,82
+Shadowvale,Jamie Wilson,CM,80,90,76
+Shadowvale,Morgan Smith,"LW, ST",83,93,73
+Shadowvale,Riley Lopez,"LM, RW",88,88,85
+Shadowvale,Drew Lopez,"LW, CF",81,84,83
+Shadowvale,Drew Brown,"LM, RM",81,84,76
+Shadowvale,Jordan Anderson,RW,75,94,93
+Shadowvale,Cameron Johnson,CF,84,89,79
+Shadowvale,Riley Anderson,"CF, LW",81,84,82
+Shadowvale,Cameron Martinez,"ST, RB",83,94,75
+Shadowvale,Jordan Garcia,LM,86,85,69
+Shadowvale,Riley Martinez,RM,74,93,83
+Shadowvale,Drew Brown,ST,83,91,85
+Shadowvale,Taylor Garcia,RW,85,94,77
+Shadowvale,Cameron Davis,CB,87,89,78
+Shadowvale,Casey Davis,"GK, CB",79,87,84
+Shadowvale,Jordan Garcia,"CM, LB",86,89,83
+Shadowvale,Cameron Brown,GK,87,87,79
+Shadowvale,Drew Johnson,"GK, RB",81,89,84
+Shadowvale,Cameron Lee,GK,91,89,86
+Shadowvale,Alex Brown,LM,86,87,87
+Shadowvale,Cameron Martinez,"CM, LW",90,82,77
+Shadowvale,Cameron Lee,"RW, RB",76,84,81
+Shadowvale,Quinn Smith,"LW, LB",80,92,81
+Shadowvale,Quinn Lopez,RW,83,90,74
+Crimsonport,Morgan Johnson,CB,81,81,94
+Crimsonport,Riley Garcia,GK,83,84,82
+Crimsonport,Jamie Martinez,RM,84,90,83
+Crimsonport,Taylor Lopez,CB,84,83,83
+Crimsonport,Jamie Garcia,"CB, LW",79,88,76
+Crimsonport,Taylor Wilson,"CB, LB",87,93,84
+Crimsonport,Riley Wilson,"RM, CB",88,84,75
+Crimsonport,Alex Lopez,"ST, RM",94,82,91
+Crimsonport,Casey Davis,"RB, LM",89,87,83
+Crimsonport,Jamie Martinez,"CF, LB",93,89,85
+Crimsonport,Casey Smith,"LB, CB",83,85,81
+Crimsonport,Jamie Brown,LM,80,85,74
+Crimsonport,Casey Anderson,RM,87,83,84
+Crimsonport,Alex Wilson,"ST, LM",97,87,76
+Crimsonport,Riley Garcia,"CF, LM",89,88,81
+Crimsonport,Casey Lopez,"RM, LM",80,84,96
+Crimsonport,Riley Anderson,"LB, RW",81,87,83
+Crimsonport,Casey Wilson,"CF, LW",89,95,80
+Crimsonport,Drew Johnson,CM,87,91,75
+Crimsonport,Cameron Wilson,RM,90,92,83
+Crimsonport,Jamie Brown,CM,84,84,82
+Crimsonport,Jamie Brown,RM,79,87,75
+Crimsonport,Cameron Lee,RW,86,76,83
+Crimsonport,Taylor Lee,LB,85,87,79
+Crimsonport,Jamie Johnson,"ST, RB",80,86,85
+Briarcliff,Alex Garcia,CF,85,76,78
+Briarcliff,Drew Garcia,RB,81,89,89
+Briarcliff,Morgan Martinez,ST,81,77,83
+Briarcliff,Jamie Brown,LM,76,87,80
+Briarcliff,Alex Anderson,RW,77,82,87
+Briarcliff,Casey Wilson,ST,83,70,86
+Briarcliff,Taylor Wilson,CB,79,81,83
+Briarcliff,Morgan Lopez,"RB, CM",80,89,83
+Briarcliff,Taylor Garcia,"RB, LM",74,83,89
+Briarcliff,Riley Lee,CM,69,81,83
+Briarcliff,Jordan Anderson,"ST, LB",76,84,85
+Briarcliff,Jordan Brown,"RW, LM",81,80,87
+Briarcliff,Alex Lee,"CF, RB",71,83,77
+Briarcliff,Jamie Smith,CF,79,88,87
+Briarcliff,Quinn Smith,"LM, RW",84,78,92
+Briarcliff,Riley Garcia,LM,76,82,84
+Briarcliff,Casey Garcia,"CM, CB",81,81,87
+Briarcliff,Taylor Garcia,"RW, CM",85,86,94
+Briarcliff,Taylor Brown,"GK, RB",78,87,82
+Briarcliff,Alex Garcia,"ST, RM",71,87,90
+Briarcliff,Jamie Lopez,RW,70,87,85
+Briarcliff,Morgan Smith,LM,81,80,79
+Briarcliff,Drew Lopez,"RM, CB",78,92,95
+Briarcliff,Morgan Martinez,"LM, ST",71,79,83
+Briarcliff,Taylor Smith,ST,72,82,76
+Sunridge,Taylor Davis,LM,89,70,80
+Sunridge,Quinn Martinez,"RB, LM",84,78,93
+Sunridge,Riley Smith,RB,82,83,82
+Sunridge,Drew Johnson,GK,88,82,84
+Sunridge,Alex Anderson,RM,88,70,84
+Sunridge,Jordan Brown,LB,85,80,83
+Sunridge,Cameron Martinez,RB,99,70,90
+Sunridge,Alex Johnson,LW,84,67,83
+Sunridge,Drew Brown,"RM, GK",75,78,82
+Sunridge,Quinn Davis,CM,90,78,87
+Sunridge,Casey Garcia,RB,89,73,85
+Sunridge,Cameron Davis,CF,90,72,73
+Sunridge,Jamie Brown,"RB, CM",88,76,76
+Sunridge,Casey Davis,LM,80,77,81
+Sunridge,Cameron Lopez,CF,87,69,80
+Sunridge,Jordan Lee,LM,90,76,84
+Sunridge,Jordan Brown,"CB, ST",92,72,86
+Sunridge,Taylor Anderson,"RB, LM",85,74,81
+Sunridge,Morgan Wilson,"RB, CM",81,76,82
+Sunridge,Alex Davis,"LB, LW",90,74,80
+Sunridge,Drew Lopez,ST,89,73,84
+Sunridge,Quinn Garcia,CM,99,75,78
+Sunridge,Alex Brown,CF,98,71,82
+Sunridge,Quinn Lopez,CM,84,83,83
+Sunridge,Taylor Martinez,"CM, LM",85,82,83
+Driftwood,Drew Wilson,GK,74,78,74
+Driftwood,Taylor Garcia,ST,77,76,71
+Driftwood,Cameron Davis,LW,79,86,73
+Driftwood,Casey Davis,LB,80,77,81
+Driftwood,Alex Wilson,CF,83,83,75
+Driftwood,Riley Smith,LB,83,77,76
+Driftwood,Taylor Davis,ST,78,77,72
+Driftwood,Morgan Johnson,"LM, RB",81,83,71
+Driftwood,Jamie Brown,"ST, LB",71,86,68
+Driftwood,Drew Lee,RM,80,75,75
+Driftwood,Taylor Martinez,"CM, LW",78,76,71
+Driftwood,Alex Davis,CB,75,79,67
+Driftwood,Jamie Anderson,RM,73,87,78
+Driftwood,Taylor Lee,ST,74,76,72
+Driftwood,Casey Wilson,CF,72,78,68
+Driftwood,Quinn Martinez,"RW, ST",78,75,78
+Driftwood,Jordan Davis,CM,78,76,71
+Driftwood,Alex Davis,"RB, CM",83,89,79
+Driftwood,Morgan Lee,GK,66,83,68
+Driftwood,Casey Anderson,LM,72,80,74
+Driftwood,Taylor Martinez,"CB, LB",78,91,75
+Driftwood,Jordan Martinez,RM,72,83,74
+Driftwood,Drew Lee,"GK, LM",80,84,79
+Driftwood,Drew Anderson,"LM, RM",83,80,70
+Driftwood,Drew Anderson,GK,77,85,83
+Silverpeak,Morgan Brown,"GK, RM",78,91,83
+Silverpeak,Quinn Davis,CF,87,82,81
+Silverpeak,Taylor Garcia,"CM, ST",90,88,90
+Silverpeak,Jamie Davis,LB,80,84,92
+Silverpeak,Casey Johnson,"CF, RM",80,86,85
+Silverpeak,Quinn Brown,"LW, RW",72,87,87
+Silverpeak,Jordan Lee,RW,87,96,86
+Silverpeak,Taylor Brown,CB,82,96,85
+Silverpeak,Jamie Anderson,CF,87,90,92
+Silverpeak,Cameron Lee,"LW, CM",85,87,94
+Silverpeak,Taylor Davis,"GK, RM",91,93,92
+Silverpeak,Alex Garcia,"CM, RB",89,82,84
+Silverpeak,Quinn Anderson,LM,80,84,88
+Silverpeak,Riley Martinez,"CF, GK",84,85,88
+Silverpeak,Casey Wilson,CB,83,90,91
+Silverpeak,Riley Anderson,RB,72,75,83
+Silverpeak,Quinn Smith,LB,79,83,86
+Silverpeak,Riley Davis,"CM, CF",77,91,88
+Silverpeak,Jamie Davis,CB,80,90,85
+Silverpeak,Taylor Johnson,CM,81,82,82
+Silverpeak,Morgan Johnson,"GK, RW",91,91,88
+Silverpeak,Riley Lopez,ST,79,80,85
+Silverpeak,Alex Johnson,"LM, CB",74,88,89
+Silverpeak,Riley Martinez,"LM, LB",83,92,94
+Silverpeak,Drew Garcia,LM,85,90,79
+Oakenshire,Riley Lopez,CM,94,86,83
+Oakenshire,Riley Lee,"LM, LW",87,93,81
+Oakenshire,Casey Smith,CB,94,93,84
+Oakenshire,Drew Smith,CB,90,94,99
+Oakenshire,Jamie Davis,LB,86,85,83
+Oakenshire,Quinn Anderson,ST,90,91,92
+Oakenshire,Taylor Anderson,ST,90,92,80
+Oakenshire,Cameron Lee,"LM, CB",87,84,89
+Oakenshire,Jordan Davis,LM,85,90,76
+Oakenshire,Jamie Martinez,CF,79,95,93
+Oakenshire,Drew Smith,"LM, GK",92,91,78
+Oakenshire,Jamie Wilson,LB,87,80,84
+Oakenshire,Taylor Brown,"RM, LM",88,90,93
+Oakenshire,Morgan Davis,"CM, LW",91,80,86
+Oakenshire,Jordan Lee,RM,88,87,80
+Oakenshire,Jordan Lopez,"RM, ST",86,86,83
+Oakenshire,Morgan Davis,"RB, CF",90,87,87
+Oakenshire,Cameron Brown,"CB, LB",95,83,76
+Oakenshire,Riley Davis,"CB, ST",87,89,90
+Oakenshire,Cameron Martinez,"CM, RM",92,83,90
+Oakenshire,Taylor Wilson,"RB, RM",82,91,83
+Oakenshire,Jamie Martinez,CF,84,88,86
+Oakenshire,Quinn Brown,"CF, LW",82,89,97
+Oakenshire,Taylor Lopez,GK,91,76,86
+Oakenshire,Jamie Brown,GK,81,83,73
+Stormhold,Jordan Johnson,LW,84,80,79
+Stormhold,Casey Garcia,"LM, RW",87,81,73
+Stormhold,Taylor Anderson,ST,92,89,87
+Stormhold,Morgan Anderson,CB,89,88,76
+Stormhold,Morgan Johnson,"LM, RM",87,87,74
+Stormhold,Jamie Johnson,RW,97,81,75
+Stormhold,Jamie Brown,CB,91,85,79
+Stormhold,Cameron Martinez,ST,84,85,72
+Stormhold,Alex Brown,CB,91,95,80
+Stormhold,Cameron Lopez,"LM, LB",92,93,78
+Stormhold,Quinn Anderson,"CF, GK",88,88,84
+Stormhold,Jamie Johnson,"GK, RW",89,85,73
+Stormhold,Quinn Davis,RW,97,89,83
+Stormhold,Morgan Brown,"LB, ST",89,83,71
+Stormhold,Casey Davis,"RM, LB",98,85,78
+Stormhold,Cameron Garcia,"CF, CM",88,78,85
+Stormhold,Jordan Wilson,CF,87,85,77
+Stormhold,Drew Johnson,"RB, RM",85,80,75
+Stormhold,Alex Garcia,CB,86,85,82
+Stormhold,Jamie Garcia,"LW, GK",88,88,72
+Stormhold,Casey Garcia,RB,98,91,83
+Stormhold,Casey Lopez,GK,93,87,78
+Stormhold,Quinn Lee,LM,91,80,82
+Stormhold,Casey Smith,LM,99,88,81
+Stormhold,Alex Martinez,CM,84,77,76
+Willowbrook,Riley Garcia,"RB, LB",83,84,82
+Willowbrook,Casey Wilson,"RM, CM",82,80,81
+Willowbrook,Taylor Wilson,RM,83,74,95
+Willowbrook,Morgan Martinez,"RB, ST",91,80,94
+Willowbrook,Drew Anderson,"RM, LM",92,70,86
+Willowbrook,Quinn Davis,LM,87,82,81
+Willowbrook,Quinn Wilson,LW,87,81,93
+Willowbrook,Quinn Anderson,"GK, LW",92,78,87
+Willowbrook,Jamie Davis,LB,89,84,89
+Willowbrook,Drew Anderson,CM,90,80,89
+Willowbrook,Jamie Lee,"CB, CM",81,83,89
+Willowbrook,Drew Brown,CB,91,72,85
+Willowbrook,Riley Brown,LB,92,84,89
+Willowbrook,Casey Brown,CB,85,83,81
+Willowbrook,Drew Anderson,CM,92,81,86
+Willowbrook,Taylor Lee,"CF, LW",85,78,88
+Willowbrook,Morgan Brown,"RB, LW",92,86,80
+Willowbrook,Taylor Johnson,"GK, CF",95,78,78
+Willowbrook,Drew Lopez,LB,89,88,80
+Willowbrook,Riley Brown,RB,83,80,84
+Willowbrook,Morgan Lee,LW,91,83,90
+Willowbrook,Quinn Lee,CM,85,78,93
+Willowbrook,Alex Smith,RM,84,74,87
+Willowbrook,Jordan Brown,RW,88,87,94
+Willowbrook,Casey Lee,"GK, LM",86,76,86
+Stonebridge,Cameron Martinez,"LB, LM",90,86,78
+Stonebridge,Taylor Martinez,"GK, CB",90,87,74
+Stonebridge,Casey Davis,CF,82,89,78
+Stonebridge,Riley Brown,CM,99,87,81
+Stonebridge,Alex Garcia,LB,90,85,81
+Stonebridge,Morgan Garcia,RM,80,86,75
+Stonebridge,Cameron Anderson,"LB, RW",93,77,77
+Stonebridge,Jordan Martinez,GK,95,88,75
+Stonebridge,Jamie Lee,CB,82,80,79
+Stonebridge,Alex Johnson,"CB, RW",88,88,75
+Stonebridge,Jordan Martinez,"RW, GK",87,88,69
+Stonebridge,Taylor Anderson,"RM, GK",84,78,76
+Stonebridge,Riley Anderson,RM,91,85,73
+Stonebridge,Jordan Davis,"LB, CF",93,82,76
+Stonebridge,Drew Lopez,"ST, CB",83,80,74
+Stonebridge,Jamie Lee,"GK, LW",96,80,68
+Stonebridge,Jamie Wilson,GK,88,82,63
+Stonebridge,Casey Lee,LM,84,83,69
+Stonebridge,Casey Davis,LM,85,82,71
+Stonebridge,Alex Anderson,CF,90,79,82
+Stonebridge,Alex Smith,"ST, GK",88,87,70
+Stonebridge,Jamie Wilson,"GK, RB",85,77,81
+Stonebridge,Riley Martinez,LB,89,88,75
+Stonebridge,Jamie Lopez,RM,87,80,74
+Stonebridge,Quinn Lee,LB,90,82,85
+Everpeak,Alex Anderson,"CM, RB",74,91,80
+Everpeak,Quinn Martinez,RM,74,98,87
+Everpeak,Jamie Wilson,RW,81,79,81
+Everpeak,Taylor Garcia,"RW, ST",70,82,83
+Everpeak,Casey Lee,CM,76,90,75
+Everpeak,Cameron Garcia,"LB, LW",67,86,82
+Everpeak,Quinn Johnson,"CM, CF",74,96,79
+Everpeak,Drew Davis,"LB, CM",70,94,87
+Everpeak,Quinn Johnson,"RM, RB",70,92,83
+Everpeak,Cameron Smith,"CM, CF",75,95,87
+Everpeak,Jamie Martinez,CF,88,78,76
+Everpeak,Taylor Lopez,"RW, LM",69,81,89
+Everpeak,Casey Martinez,"CB, CF",70,92,91
+Everpeak,Taylor Brown,GK,77,80,85
+Everpeak,Cameron Johnson,"CM, GK",75,90,73
+Everpeak,Cameron Davis,GK,72,86,86
+Everpeak,Cameron Martinez,"CF, CM",74,92,90
+Everpeak,Taylor Smith,LM,69,79,77
+Everpeak,Jamie Lopez,LW,71,89,84
+Everpeak,Jamie Anderson,RB,76,99,84
+Everpeak,Quinn Lopez,CB,65,84,78
+Everpeak,Taylor Davis,CF,73,90,69
+Everpeak,Cameron Anderson,RB,82,89,82
+Everpeak,Morgan Lopez,RM,69,87,78
+Everpeak,Quinn Garcia,"CF, LB",72,85,83
+Goldleaf,Jordan Lee,RW,89,86,83
+Goldleaf,Drew Lee,"GK, CF",89,87,78
+Goldleaf,Riley Johnson,"LB, RW",87,83,84
+Goldleaf,Alex Anderson,"LB, CB",89,78,90
+Goldleaf,Cameron Lopez,"LW, RM",91,76,74
+Goldleaf,Drew Lee,"LM, RW",80,85,89
+Goldleaf,Drew Garcia,GK,87,84,88
+Goldleaf,Jordan Johnson,ST,90,83,82
+Goldleaf,Taylor Martinez,"LW, LB",90,83,82
+Goldleaf,Jordan Johnson,"RB, CM",80,78,92
+Goldleaf,Jamie Brown,LM,83,70,77
+Goldleaf,Taylor Martinez,RB,85,64,85
+Goldleaf,Morgan Brown,LW,82,84,90
+Goldleaf,Riley Anderson,LW,92,84,85
+Goldleaf,Riley Smith,"CM, RW",77,85,74
+Goldleaf,Jordan Johnson,"LB, RB",79,75,79
+Goldleaf,Drew Brown,"LM, GK",95,85,79
+Goldleaf,Jordan Lee,CM,79,91,83
+Goldleaf,Jordan Lopez,CB,86,74,75
+Goldleaf,Quinn Garcia,CF,80,81,74
+Goldleaf,Morgan Smith,LB,88,86,81
+Goldleaf,Quinn Lopez,LM,83,82,82
+Goldleaf,Riley Davis,"LW, CM",78,84,88
+Goldleaf,Morgan Lee,"CF, RW",97,79,81
+Goldleaf,Taylor Wilson,"CM, LB",88,84,85
+Riverbend,Jordan Lee,LW,66,82,85
+Riverbend,Riley Garcia,"LM, ST",69,72,77
+Riverbend,Morgan Martinez,RM,79,80,90
+Riverbend,Jordan Wilson,"LM, CF",84,84,87
+Riverbend,Cameron Lopez,RW,71,66,87
+Riverbend,Drew Smith,GK,71,83,85
+Riverbend,Alex Brown,CB,75,83,76
+Riverbend,Jordan Anderson,CF,69,76,83
+Riverbend,Casey Smith,"LM, ST",73,75,79
+Riverbend,Riley Lopez,CM,79,74,85
+Riverbend,Alex Garcia,CF,72,77,81
+Riverbend,Casey Johnson,CB,74,74,85
+Riverbend,Casey Brown,RM,78,79,87
+Riverbend,Quinn Davis,RM,72,77,83
+Riverbend,Quinn Anderson,"RM, RB",78,77,86
+Riverbend,Taylor Martinez,CF,79,79,74
+Riverbend,Drew Wilson,RM,75,79,77
+Riverbend,Drew Johnson,"RM, LM",74,72,90
+Riverbend,Alex Anderson,"CB, GK",72,78,76
+Riverbend,Alex Anderson,"CB, LW",76,76,80
+Riverbend,Casey Garcia,CF,78,72,86
+Riverbend,Morgan Davis,RB,77,81,86
+Riverbend,Cameron Wilson,"LW, ST",75,76,83
+Riverbend,Taylor Davis,CF,67,68,77
+Riverbend,Jordan Johnson,GK,74,79,84
+Moonridge,Taylor Brown,ST,84,78,80
+Moonridge,Cameron Brown,GK,87,80,75
+Moonridge,Morgan Brown,RW,91,79,72
+Moonridge,Riley Johnson,ST,80,77,81
+Moonridge,Morgan Garcia,RB,83,72,70
+Moonridge,Quinn Lee,RB,76,82,78
+Moonridge,Jordan Johnson,"CB, LW",88,85,82
+Moonridge,Casey Anderson,LB,83,82,82
+Moonridge,Riley Lee,CF,86,78,74
+Moonridge,Riley Smith,"CB, ST",87,77,78
+Moonridge,Taylor Garcia,LM,91,79,70
+Moonridge,Jordan Smith,LM,90,78,84
+Moonridge,Quinn Lopez,"CB, RB",83,84,77
+Moonridge,Jordan Johnson,RB,84,76,75
+Moonridge,Cameron Garcia,ST,87,87,84
+Moonridge,Jordan Lee,LB,90,81,71
+Moonridge,Cameron Martinez,CF,83,90,76
+Moonridge,Morgan Davis,"GK, RB",91,78,73
+Moonridge,Jamie Anderson,"CB, CM",92,85,78
+Moonridge,Cameron Johnson,LW,87,84,68
+Moonridge,Jamie Martinez,"LW, GK",85,83,81
+Moonridge,Cameron Davis,RW,86,84,80
+Moonridge,Drew Brown,LB,80,86,70
+Moonridge,Riley Martinez,CB,80,82,69
+Moonridge,Riley Martinez,CF,89,85,82
+Westward,Jamie Smith,LW,70,75,69
+Westward,Cameron Martinez,ST,56,85,80
+Westward,Quinn Garcia,CF,65,81,73
+Westward,Quinn Lee,LW,67,68,74
+Westward,Drew Lee,CB,70,69,81
+Westward,Quinn Wilson,ST,75,75,73
+Westward,Jamie Lopez,LB,68,72,65
+Westward,Quinn Anderson,GK,66,78,68
+Westward,Casey Wilson,LM,74,71,74
+Westward,Cameron Lopez,"LW, LB",61,78,71
+Westward,Jamie Martinez,CM,65,77,72
+Westward,Jamie Lopez,RB,57,74,73
+Westward,Jordan Brown,GK,62,71,75
+Westward,Cameron Wilson,GK,73,79,80
+Westward,Jamie Smith,RB,77,71,64
+Westward,Casey Anderson,GK,72,78,72
+Westward,Casey Wilson,ST,68,74,70
+Westward,Jordan Martinez,RB,72,79,61
+Westward,Casey Brown,RM,64,76,67
+Westward,Cameron Lee,"LB, GK",66,80,73
+Westward,Alex Martinez,"CB, ST",70,78,72
+Westward,Cameron Brown,CM,58,82,66
+Westward,Casey Lee,RB,73,84,69
+Westward,Casey Lopez,LM,66,75,74
+Westward,Jordan Anderson,RW,69,67,78
