@@ -1,0 +1,63 @@
+{
+  "id": "chapter1",
+  "title": "Chapter 1 — The Westen-Xiao League",
+  "scenes": [
+    {
+      "id": "apartment_evening",
+      "title": "The Apartment — Evening",
+      "lines": [
+        { "speaker": "Rebecca", "text": "You're late again." },
+        { "speaker": "Otto", "text": "I had to stay." },
+        { "speaker": "Rebecca", "text": "You look dead." },
+        { "speaker": "Rebecca", "text": "Hey — today at school everyone was talking about the tryouts and the new season that's coming. You're gonna go try out in a couple of days right?" },
+        { "speaker": "Elizabeth", "text": "You can't give up." },
+        { "speaker": "Elizabeth", "text": "I've seen you play. You're so good." },
+        { "speaker": "Otto", "text": "I don't know yet. But I probably will." },
+        { "speaker": "Rebecca", "text": "You better. I'm tired of eating rice and beans almost every day." },
+        { "speaker": "Elizabeth", "text": "Yeah. You say this every year. And every year, you still go." },
+        { "speaker": "Otto", "text": "Yeah, you're right." }
+      ]
+    },
+    {
+      "id": "breakup",
+      "title": "The Breakup",
+      "lines": [
+        { "speaker": "Morgan", "text": "Otto can I talk to you?" },
+        { "speaker": "Morgan", "text": "I'm leaving. I got selected." },
+        { "speaker": "Morgan", "text": "The government selected me to be a model. I'm going to the capital." },
+        { "speaker": "Morgan", "text": "Otto, I deserve more. I can't wait forever." },
+        { "speaker": "Morgan", "text": "You've been trying for years. And you're still here." },
+        { "speaker": "Morgan", "text": "You need to fix yourself. I can do better." },
+        { "speaker": "Narrator", "text": "She leaves. Otto stays standing." }
+      ]
+    },
+    {
+      "id": "tryout_morning",
+      "title": "Tryout Morning",
+      "lines": [
+        { "speaker": "Narrator", "text": "Early morning. Otto wakes up. Eats hard-boiled eggs. Chugs a bottle of electrolytes." }
+      ]
+    },
+    {
+      "id": "training_facility_gate",
+      "title": "Training Facility Gate",
+      "lines": [
+        { "speaker": "Soldier", "text": "You trying out?" },
+        { "speaker": "Soldier", "text": "ID." },
+        { "speaker": "Narrator", "text": "Otto hands it over. The soldier scans it." },
+        { "speaker": "Soldier", "text": "You look weak. But you're on the list. Go on." }
+      ]
+    },
+    {
+      "id": "coach_baker",
+      "title": "Coach Baker",
+      "lines": [
+        { "speaker": "Coach Baker", "text": "Listen up." },
+        { "speaker": "Coach Baker", "text": "If you're here to dream — leave now." },
+        { "speaker": "Narrator", "text": "No one moves." },
+        { "speaker": "Coach Baker", "text": "And if you made the team last year — that means nothing." },
+        { "speaker": "Narrator", "text": "Whistle blows. FADE OUT." }
+      ]
+    }
+  ]
+}

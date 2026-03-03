@@ -1,0 +1,64 @@
+{
+  "id": "chapter2",
+  "title": "Chapter 2 — Selected",
+  "scenes": [
+    {
+      "id": "morning_the_list",
+      "title": "Morning — The List",
+      "lines": [
+        { "speaker": "Narrator", "text": "Phone notification buzzes. Otto's eyes open. He reaches for his phone." },
+        { "speaker": "Narrator", "text": "On screen: WESTWARD FC — SELECTED PLAYERS. His thumb scrolls. He stops. His name. OTTO HERRERA." },
+        { "speaker": "Otto", "text": "I made it. I made it. This feels... this feels so unreal." }
+      ]
+    },
+    {
+      "id": "family_reaction",
+      "title": "Living Room — Family Reaction",
+      "lines": [
+        { "speaker": "Rebecca", "text": "What's wrong with you?" },
+        { "speaker": "News Anchor", "text": "Westward FC has officially announced its squad for the upcoming Western League season. Selected players are advised to report to the training center by 10 a.m. today." },
+        { "speaker": "Otto", "text": "That's me, do you see my name!" },
+        { "speaker": "Rebecca", "text": "That's actually you. You made it?" },
+        { "speaker": "Amy", "text": "You're on TV?" },
+        { "speaker": "Elizabeth", "text": "So it finally happened." },
+        { "speaker": "Rebecca", "text": "Good. Maybe now we can eat something other than rice and beans." },
+        { "speaker": "Josh", "text": "Does this mean you're famous?" },
+        { "speaker": "Otto", "text": "No. It just means I have to work even harder." }
+      ]
+    },
+    {
+      "id": "reporting_in",
+      "title": "Outside — Reporting In",
+      "lines": [
+        { "speaker": "Narrator", "text": "Streets packed. Soldiers everywhere. People funnel toward the training complex." },
+        { "speaker": "Soldier", "text": "ID." },
+        { "speaker": "Soldier", "text": "You made it." },
+        { "speaker": "Soldier", "text": "I was reluctant about you. But congrats. Keep working hard. That's all I can tell you." }
+      ]
+    },
+    {
+      "id": "team_meeting",
+      "title": "Team Meeting Room",
+      "lines": [
+        { "speaker": "Coach Baker", "text": "Congratulations. If you're sitting in this room, you made the team." },
+        { "speaker": "Coach Baker", "text": "I'm not going to lie to you. This team has less depth than last year. Less talent too." },
+        { "speaker": "Coach Baker", "text": "But if we're disciplined — if we work together — we can avoid last year's mistakes." },
+        { "speaker": "Coach Baker", "text": "Going far in this league means money. Money means survival. For you. For your families. For Westward." },
+        { "speaker": "Coach Baker", "text": "You're not just players. You're hope. That's not a small responsibility." },
+        { "speaker": "Coach Baker", "text": "Report to training tomorrow morning. Be ready." }
+      ]
+    },
+    {
+      "id": "one_on_one_coach",
+      "title": "One-on-One with Coach Baker",
+      "lines": [
+        { "speaker": "Otto", "text": "Coach... thank you. For picking me." },
+        { "speaker": "Coach Baker", "text": "Relax." },
+        { "speaker": "Coach Baker", "text": "You're depth. Very low on the chart." },
+        { "speaker": "Coach Baker", "text": "You'll need to train harder than everyone else. Maybe you get lucky and see minutes." },
+        { "speaker": "Coach Baker", "text": "But don't expect much this season." },
+        { "speaker": "Otto", "text": "I understand. I'm going to give it my best and surprise you." }
+      ]
+    }
+  ]
+}

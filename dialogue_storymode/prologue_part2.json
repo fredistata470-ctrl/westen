@@ -1,0 +1,45 @@
+{
+  "id": "prologue_part2",
+  "title": "Prologue Part 2 — Before",
+  "scenes": [
+    {
+      "id": "black_screen",
+      "title": "Black Screen",
+      "lines": [
+        { "speaker": "Unknown", "text": "Otto are you okay?" },
+        { "speaker": "Unknown", "text": "I have to leave." },
+        { "speaker": "Unknown", "text": "Mom will be back in an hour or two. You stay here." },
+        { "speaker": "Unknown", "text": "I never scanned my ID when I turned twenty-one." },
+        { "speaker": "Unknown", "text": "They don't know where I am. They can't track me." }
+      ]
+    },
+    {
+      "id": "war",
+      "title": "War",
+      "lines": [
+        { "speaker": "Narrator", "text": "Soldiers storm the town. Gunfire. People running." },
+        { "speaker": "Narrator", "text": "A woman falls. One gunshot. Silence." }
+      ]
+    },
+    {
+      "id": "message",
+      "title": "Message at Otto's House",
+      "lines": [
+        { "speaker": "Narrator", "text": "Grandfather stands at the door. He looks broken." },
+        { "speaker": "Otto", "text": "Mom isn't coming back." },
+        { "speaker": "Otto", "text": "He went away as well." }
+      ]
+    },
+    {
+      "id": "children_inside",
+      "title": "Children Inside",
+      "lines": [
+        { "speaker": "Otto", "text": "Mom isn't coming back." },
+        { "speaker": "Otto", "text": "He went away as well." },
+        { "speaker": "Narrator", "text": "One child starts to cry." },
+        { "speaker": "Otto", "text": "...but I'm here." },
+        { "speaker": "Narrator", "text": "END OF PROLOGUE PART 2" }
+      ]
+    }
+  ]
+}
