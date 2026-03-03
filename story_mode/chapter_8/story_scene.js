@@ -15,7 +15,6 @@ var chapter8Scene = createDialogueScene({
               { text: "Keep most (keep 2000)", next: "chapter_8_keep_most" }
           ]
         },
-        { speaker: "Narrator",    emotion: "neutral",    text: "Option A — Send Most to Family." },
         { speaker: "Otto",        emotion: "neutral",    text: "Hey. I'm about to send you some money. Does your wire transfer app still work?" },
         { speaker: "Rebecca",     emotion: "curious",    text: "Yeah. How much you gonna send?" },
         { speaker: "Otto",        emotion: "neutral",    text: "Enough to buy some beef." },
@@ -23,7 +22,7 @@ var chapter8Scene = createDialogueScene({
         { speaker: "Otto",        emotion: "neutral",    text: "I'm serious. Go buy food for the house." },
         { speaker: "Rebecca",     emotion: "happy",      text: "…Thanks, bro. I love you." },
         { speaker: "Rebecca",     emotion: "happy",      text: "We're gonna have meat tomorrow. Thank you again. Elizabeth says to stop shooting with the knuckleball. Shoot normally because you suck at the knuckleball." },
-        { speaker: "Narrator",    emotion: "neutral",    text: "Option C branch — Bar. Olivia is already there." },
+        { speaker: "Narrator",    emotion: "neutral",    text: "If Otto kept most of the money: He heads to a bar where Olivia is waiting." },
         { speaker: "Olivia",      emotion: "neutral",    text: "Otto. You played well today." },
         { speaker: "Otto",        emotion: "neutral",    text: "Thanks. You watched?" },
         { speaker: "Olivia",      emotion: "neutral",    text: "Caught the highlights. Is it just me, or do you look… stronger?" },
@@ -46,11 +45,10 @@ var chapter8Scene = createDialogueScene({
         { speaker: "Narrator",    emotion: "neutral",    text: "Otto reacts.",
           choices: [
               { text: "Protect teammates", next: "chapter_8_protect" },
-              { text: "Yell back at the crowd", next: "chapter_8_yell" },
+              { text: "Yell back: STOP ACTING LIKE ANIMALS! WE'RE NOT YOUR ENEMY!", next: "chapter_8_yell" },
               { text: "Fight", next: "chapter_8_fight" }
           ]
         },
-        { speaker: "Otto",        emotion: "angry",      text: "STOP ACTING LIKE ANIMALS! WE'RE NOT YOUR ENEMY!" },
         { speaker: "Narrator",    emotion: "neutral",    text: "Scene change: After Incident. Jenny calls." },
         { speaker: "Jenny",       emotion: "serious",    text: "Are you okay? I saw the footage." },
         { speaker: "Otto",        emotion: "neutral",    text: "Yeah. We're safe." },

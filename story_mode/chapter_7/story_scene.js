@@ -32,10 +32,10 @@ var chapter7Scene = createDialogueScene({
         { speaker: "Mei Ling",    emotion: "curious",    text: "Why don't you write a book?" },
         { speaker: "Otto",        emotion: "neutral",    text: "I'm not that creative." },
         { speaker: "Mei Ling",    emotion: "happy",      text: "I think you are." },
-        { speaker: "Otto",        emotion: "neutral",    text: "A friend who thinks you have really nice hair.",
+        { speaker: "Otto",        emotion: "neutral",    text: "...",
           choices: [
-              { text: "Playful: A friend who thinks you have really nice hair.", next: "chapter_7_playful" },
-              { text: "Genuine: I'm glad. I don't have many friends.", next: "chapter_7_genuine" }
+              { text: "A friend who thinks you have really nice hair.", next: "chapter_7_playful" },
+              { text: "I'm glad. I don't have many friends.", next: "chapter_7_genuine" }
           ]
         },
         { speaker: "Narrator",    emotion: "neutral",    text: "Mei Ling smiles. The meeting draws to a close, but something has started." }
