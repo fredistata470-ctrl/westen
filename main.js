@@ -6,16 +6,6 @@ const screen = document.getElementById("screen");
 
 let currentChapter = 0;
 
-// Return a human-readable label for the chapter at the given story index.
-function _getChapterLabel(index) {
-    if (typeof STORY_CHAPTERS !== "undefined" && STORY_CHAPTERS[index]) {
-        const ch = STORY_CHAPTERS[index];
-        if (ch.type === "match") return ch.chapterTitle || ("Chapter " + index);
-        return (ch.scene && ch.scene.chapterTitle) || ("Chapter " + index);
-    }
-    return "Chapter " + index;
-}
-
 function init() {
     showBootScreen();
 }
@@ -39,49 +29,25 @@ function showMainMenu() {
         screen.style.backgroundPosition = "center";
     }
 
-    const hasSaveFile = hasSave();
-    let loadBtnLabel = "Load Game";
-    if (hasSaveFile) {
-        try {
-            const raw = JSON.parse(localStorage.getItem(SAVE_KEY));
-            const name = (raw && raw.playerName) || "Otto";
-            const chIdx = (raw && raw.chapter) || 0;
-            loadBtnLabel = name + " \u2014 " + _getChapterLabel(chIdx);
-        } catch (_e) { /* use default label */ }
-    }
-
     screen.innerHTML = `
-        <h1>Westen &amp; Zhao Champions League</h1>
-        <button onclick="startStoryMode()">Story Mode</button>
-        <button id="load-story-btn" onclick="loadStoryMode()">${loadBtnLabel}</button>
-        <button onclick="startTrainingMode()">Training Mode</button>
-        <button onclick="showSettings()">Settings</button>
+        <div class="main-menu">
+            <h1 class="main-menu-title">Westen &amp; Zhao Champions League</h1>
+            <div class="main-menu-buttons">
+                <button class="menu-btn" onclick="startStoryMode()">Story Mode</button>
+                <button class="menu-btn" onclick="startTrainingMode()">Training Mode</button>
+                <button class="menu-btn" onclick="showSettings()">Settings</button>
+            </div>
+        </div>
     `;
-    // Disable load button if no save exists
-    const loadBtn = document.getElementById("load-story-btn");
-    if (loadBtn && !hasSaveFile) {
-        loadBtn.disabled = true;
-    }
 }
 
 function startStoryMode() {
-    audioManager.stopMenuTheme();
+    audioManager.fadeOutMenuTheme();
     screen.style.backgroundImage = "";
     currentChapter = 0;
     saveData.chapter = 0;
     saveData.storyProgress = 0;
     _runChapter();
-}
-
-function loadStoryMode() {
-    audioManager.stopMenuTheme();
-    screen.style.backgroundImage = "";
-    if (loadGame()) {
-        currentChapter = saveData.chapter;
-        _runChapter();
-    } else {
-        startStoryMode();
-    }
 }
 
 async function _runChapter() {
@@ -99,22 +65,22 @@ async function _runChapter() {
 }
 
 function startTrainingMode() {
-    audioManager.stopMenuTheme();
+    audioManager.fadeOutMenuTheme();
     screen.style.backgroundImage = "";
-    // Training Mode: direct access to the match engine, no dialogue, no progression
-    setScene("MATCH");
-    startMatch(null, () => {
-        showMainMenu();
-    });
+    showTrainingTeamSelect();
 }
 
 function showSettings() {
+    audioManager.fadeOutMenuTheme();
     setScene("SETTINGS");
+    screen.style.backgroundImage = "";
     screen.innerHTML = `
         <h2>Settings</h2>
         <p>Settings coming soon.</p>
         <button onclick="showMainMenu()">Back to Menu</button>
     `;
+    // Note: showMainMenu() calls audioManager.playMenuTheme(), so the theme
+    // restarts automatically when the player returns from Settings.
 }
 
 function nextChapter() {

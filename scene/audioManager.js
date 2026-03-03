@@ -168,6 +168,28 @@ const audioManager = {
         this._menuAudio = null;
     },
 
+    // Fade the main menu theme out over `duration` seconds (default 0.7 s) then stop.
+    // Safe to call even when no theme is playing.
+    fadeOutMenuTheme(duration) {
+        if (!this._menuAudio) return;
+        var audio = this._menuAudio;
+        var startVol = audio.volume || 0.6;
+        var steps = 20;
+        var stepTime = Math.round(((duration || 0.7) * 1000) / steps);
+        var step = 0;
+        var self = this;
+        var fade = setInterval(function() {
+            step++;
+            try {
+                audio.volume = Math.max(0, startVol * (1 - step / steps));
+            } catch (_e) { /* ignore */ }
+            if (step >= steps) {
+                clearInterval(fade);
+                self.stopMenuTheme();
+            }
+        }, stepTime);
+    },
+
     stop(src) {
         if (!src || !this._cache[src]) return;
         try {
