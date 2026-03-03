@@ -62,5 +62,5 @@ var chapter14Scene = createDialogueScene({
         { speaker: "Narrator",      emotion: "neutral",    text: "The president looks at Otto's televised image." },
         { speaker: "President",     emotion: "serious",    text: "Let's see what he chooses now." }
     ],
-    next: "chapter_22"
+    next: "chapter_15_scene"
 });

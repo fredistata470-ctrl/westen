@@ -90,5 +90,5 @@ var chapter2Scene = createDialogueScene({
         { speaker: "Otto (inner voice)", emotion: "neutral",    text: "Such a dweeb." },
         { speaker: "Narrator",           emotion: "neutral",    text: "He pockets his phone and keeps walking." }
     ],
-    next: "ch3_pre_game"
+    next: "chapter_3_scene"
 });
