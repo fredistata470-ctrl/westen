@@ -1,0 +1,79 @@
+{
+  "id": "prologue_part1",
+  "title": "Prologue Part 1 — Arrival",
+  "scenes": [
+    {
+      "id": "arrival",
+      "title": "Arrival",
+      "lines": [
+        { "speaker": "Narrator", "text": "Fade in. A government building sits by the ocean. A boat approaches the dock." }
+      ]
+    },
+    {
+      "id": "front_desk",
+      "title": "Front Desk",
+      "lines": [
+        { "speaker": "Ara Hernandez", "text": "Oh, hello. I'm sorry. Welcome. I didn't hear you come in." },
+        { "speaker": "Ara Hernandez", "text": "My name is Ara Hernandez." },
+        { "speaker": "Ara Hernandez", "text": "Are you just arriving from Breeder's Island or are you a foreigner from the land of London?",
+          "choices": [
+            { "text": "Yeah. I just came from Breeder's Island.", "next": "orientation" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "orientation",
+      "title": "Orientation Building",
+      "lines": [
+        { "speaker": "Ara Hernandez", "text": "Please sit down." },
+        { "speaker": "Ara Hernandez", "text": "Okay, all set. You're assigned to the city of West Ward." },
+        { "speaker": "Ara Hernandez", "text": "To be honest. I don't know much about West Ward." },
+        { "speaker": "Ara Hernandez", "text": "But they're known for their coal mining. And their parties. You didn't hear that from me." },
+        { "speaker": "Ara Hernandez", "text": "Also don't lose your discipline while you're there." },
+        { "speaker": "Ara Hernandez", "text": "Let me give you a tour of Weston." }
+      ]
+    },
+    {
+      "id": "history_slide",
+      "title": "History",
+      "lines": [
+        { "speaker": "Ara Hernandez", "text": "Weston is over 1,100 years old. That's a lot of history. We became one of the strongest countries in the world over 500 years ago." },
+        { "speaker": "Ara Hernandez", "text": "Then the Great Xiao-Zunich War happened. It lasted over 10 years. It was a dark time in our history." },
+        { "speaker": "Ara Hernandez", "text": "But now we made our government system for the benefit of the people. And people are happy." }
+      ]
+    },
+    {
+      "id": "lottery_convention",
+      "title": "Lottery Convention",
+      "lines": [
+        { "speaker": "Ara Hernandez", "text": "Oh, But for you, you will start off here — The Lottery Convention!!!" },
+        { "speaker": "Ara Hernandez", "text": "In a couple of years, when you turn 25, you get to enter the Lottery Convention." },
+        { "speaker": "Ara Hernandez", "text": "You will go to the Grand Lottery Convention Hall in the capital city of Draco." },
+        { "speaker": "Ara Hernandez", "text": "Depending on your status, you can find a higher-level mate or a lower-level mate for you." },
+        { "speaker": "Ara Hernandez", "text": "But remember — mating or intimate relationships before marriage is illegal and punishable." }
+      ]
+    },
+    {
+      "id": "final_statement",
+      "title": "Final Statement",
+      "lines": [
+        { "speaker": "Ara Hernandez", "text": "Breeder Island-born Westenites and Mainland-born Westenites on the mainland are all seen as the same." },
+        { "speaker": "Ara Hernandez", "text": "We have to protect each other to make sure our society survives." },
+        { "speaker": "Ara Hernandez", "text": "Because without unity there is no future.",
+          "choices": [
+            { "text": "What?", "next": "end" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "end",
+      "title": "End of Prologue Part 1",
+      "lines": [
+        { "speaker": "Ara Hernandez", "text": "Oh. Nothing." },
+        { "speaker": "Narrator", "text": "END OF PROLOGUE PART 1" }
+      ]
+    }
+  ]
+}

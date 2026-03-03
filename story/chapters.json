@@ -1,41 +1,102 @@
 [
   {
     "type": "story",
+    "title": "Prologue Part 1 — Arrival",
     "lines": [
-      { "speaker": "Narrator", "text": "Prologue..." },
-      { "speaker": "Coach", "text": "Welcome to Westen." }
+      { "speaker": "Narrator", "text": "Fade in. A government building sits by the ocean. A boat approaches the dock." },
+      { "speaker": "Ara Hernandez", "text": "Oh, hello. I'm sorry. Welcome. I didn't hear you come in." },
+      { "speaker": "Ara Hernandez", "text": "My name is Ara Hernandez. Are you just arriving from Breeder's Island or are you a foreigner from the land of London?" },
+      { "speaker": "Otto", "text": "Yeah. I just came from Breeder's Island." },
+      { "speaker": "Ara Hernandez", "text": "Cool. A fellow Westenite. Welcome to the mainland." },
+      { "speaker": "Ara Hernandez", "text": "You're assigned to the city of West Ward. They're known for their coal mining. And their parties." },
+      { "speaker": "Ara Hernandez", "text": "Weston is over 1,100 years old. We became one of the strongest countries in the world. Then the Great Xiao-Zunich War happened. It was a dark time." },
+      { "speaker": "Ara Hernandez", "text": "But now we have a government system for the benefit of the people. And people are happy." },
+      { "speaker": "Ara Hernandez", "text": "When you turn 25, you enter the Lottery Convention in Draco. Mating or intimate relationships before marriage is illegal and punishable." },
+      { "speaker": "Ara Hernandez", "text": "Breeder Island-born Westenites and Mainland-born Westenites are all seen as the same. We have to protect each other." },
+      { "speaker": "Ara Hernandez", "text": "Because without unity there is no future." }
     ]
   },
   {
     "type": "story",
+    "title": "Prologue Part 2 — Before",
     "lines": [
-      { "speaker": "Narrator", "text": "Chapter 1 begins..." }
+      { "speaker": "Unknown", "text": "Otto are you okay? I have to leave. Mom will be back in an hour or two. You stay here." },
+      { "speaker": "Unknown", "text": "I never scanned my ID when I turned twenty-one. They don't know where I am." },
+      { "speaker": "Narrator", "text": "Soldiers storm the town. Gunfire. People running. A woman falls. Silence." },
+      { "speaker": "Narrator", "text": "Grandfather stands at the door. He looks broken." },
+      { "speaker": "Otto", "text": "Mom isn't coming back. He went away as well." },
+      { "speaker": "Narrator", "text": "One child starts to cry." },
+      { "speaker": "Otto", "text": "...but I'm here." }
     ]
   },
   {
     "type": "story",
+    "title": "Chapter 1 — The Westen-Xiao League",
     "lines": [
-      { "speaker": "Narrator", "text": "Chapter 2..." }
+      { "speaker": "Rebecca", "text": "You're late again." },
+      { "speaker": "Otto", "text": "I had to stay." },
+      { "speaker": "Rebecca", "text": "Everyone at school was talking about the tryouts. You're gonna go try out, right?" },
+      { "speaker": "Elizabeth", "text": "You can't give up. I've seen you play. You're so good." },
+      { "speaker": "Otto", "text": "I don't know yet. But I probably will." },
+      { "speaker": "Rebecca", "text": "You better. I'm tired of eating rice and beans almost every day." },
+      { "speaker": "Morgan", "text": "Otto can I talk to you?" },
+      { "speaker": "Morgan", "text": "I'm leaving. I got selected to be a model. I'm going to the capital." },
+      { "speaker": "Morgan", "text": "I can't wait forever. You've been trying for years. And you're still here." },
+      { "speaker": "Narrator", "text": "She leaves. Otto stays standing." },
+      { "speaker": "Narrator", "text": "Early morning. Otto wakes up, eats hard-boiled eggs, and heads to tryouts." },
+      { "speaker": "Soldier", "text": "You trying out? ID." },
+      { "speaker": "Soldier", "text": "You look weak. But you're on the list. Go on." },
+      { "speaker": "Coach Baker", "text": "Listen up. If you're here to dream — leave now. If you made the team last year, that means nothing." }
+    ]
+  },
+  {
+    "type": "story",
+    "title": "Chapter 2 — Selected",
+    "lines": [
+      { "speaker": "Narrator", "text": "Phone notification buzzes. On screen: WESTWARD FC — SELECTED PLAYERS." },
+      { "speaker": "Otto", "text": "I made it. This feels so unreal." },
+      { "speaker": "Rebecca", "text": "That's actually you. You made it?" },
+      { "speaker": "Elizabeth", "text": "So it finally happened." },
+      { "speaker": "Rebecca", "text": "Good. Maybe now we can eat something other than rice and beans." },
+      { "speaker": "Josh", "text": "Does this mean you're famous?" },
+      { "speaker": "Otto", "text": "No. It just means I have to work even harder." },
+      { "speaker": "Soldier", "text": "You made it. I was reluctant about you. But congrats. Keep working hard." },
+      { "speaker": "Coach Baker", "text": "Congratulations. If you're sitting in this room, you made the team." },
+      { "speaker": "Coach Baker", "text": "Going far in this league means money. Money means survival. For you, your families, and Westward." },
+      { "speaker": "Coach Baker", "text": "You're not just players. You're hope. Report to training tomorrow morning. Be ready." },
+      { "speaker": "Otto", "text": "Coach... thank you. For picking me." },
+      { "speaker": "Coach Baker", "text": "You're depth. Very low on the chart. Don't expect much this season." },
+      { "speaker": "Otto", "text": "I understand. I'm going to give it my best and surprise you." }
     ]
   },
   {
     "type": "match",
+    "title": "Match 1 — Westward FC vs Northbridge United",
+    "homeTeam": "westen_fc",
+    "awayTeam": "northbridge_united",
     "preGame": {
       "type": "story",
       "lines": [
-        { "speaker": "Reporter", "text": "How do you feel today?" }
+        { "speaker": "Reporter", "text": "Otto, this is your first league match. How are you feeling?" },
+        { "speaker": "Otto", "text": "Ready. I've worked too hard to be nervous." },
+        { "speaker": "Reporter", "text": "Westward has been struggling. What does this season mean to you?" },
+        { "speaker": "Otto", "text": "Everything. For the team. For West Ward. We're going out there to fight." }
       ]
     },
     "postGame": {
       "type": "story",
       "lines": [
-        { "speaker": "Reporter", "text": "Great performance." }
+        { "speaker": "Reporter", "text": "That was a tough match. What are your thoughts?" },
+        { "speaker": "Otto", "text": "We gave it everything. We keep building from here." },
+        { "speaker": "Coach Baker", "text": "Good effort out there today. Now we get back to work." }
       ]
     },
     "storyAfterMatch": {
       "type": "story",
       "lines": [
-        { "speaker": "Narrator", "text": "System cycle unlocked: Pre-Game Interview → Match → Post-Game Interview → Story → Next Chapter." }
+        { "speaker": "Narrator", "text": "Win or lose, Otto walks off the pitch knowing this is only the beginning." },
+        { "speaker": "Rebecca", "text": "I saw the match on TV. You actually played!" },
+        { "speaker": "Otto", "text": "Yeah. And there's more to come." }
       ]
     }
   }
