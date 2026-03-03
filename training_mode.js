@@ -5,8 +5,12 @@
 // Flow: Team Selection → Team Management → Match Start
 
 // ── Team Data Structure ───────────────────────────────────────────────────────
-// Placeholders — populate via Excel/JSON upload when roster data is available.
-// isGoalkeeper: true marks the GK slot; stats are null until data is loaded.
+// TRAINING_LEAGUE is populated dynamically from data/teams.json on first load.
+// Fallback data below is used if the fetch fails (e.g. running without a local server).
+// Stats are sourced from the Western League Roster CSV:
+//   Defense column → defense stat
+//   Midfield column → passing/stamina stats
+//   Attack column → speed/shooting stats (as recorded in the uploaded roster data)
 
 var TRAINING_LEAGUE = [
     {
@@ -14,38 +18,69 @@ var TRAINING_LEAGUE = [
         color: "blue",
         stadium: "Westward Arena",
         players: [
-            { name: "Otto Herrera",   position: "FW", overall: null, speed: null, shooting: null, defense: null, passing: null, stamina: null, isGoalkeeper: false },
-            { name: "Reyes",          position: "MF", overall: null, speed: null, shooting: null, defense: null, passing: null, stamina: null, isGoalkeeper: false },
-            { name: "Malik",          position: "DF", overall: null, speed: null, shooting: null, defense: null, passing: null, stamina: null, isGoalkeeper: false },
-            { name: "Torres",         position: "DF", overall: null, speed: null, shooting: null, defense: null, passing: null, stamina: null, isGoalkeeper: false },
-            { name: "Westward GK",    position: "GK", overall: null, speed: null, shooting: null, defense: null, passing: null, stamina: null, isGoalkeeper: true  }
+            { name: "Otto Herrera",   position: "FW", overall: 78, speed: 75, shooting: 75, defense: 70, passing: 72, stamina: 72, isGoalkeeper: false },
+            { name: "Reyes",          position: "MF", overall: 74, speed: 70, shooting: 68, defense: 72, passing: 76, stamina: 76, isGoalkeeper: false },
+            { name: "Malik",          position: "DF", overall: 72, speed: 68, shooting: 62, defense: 78, passing: 70, stamina: 70, isGoalkeeper: false },
+            { name: "Torres",         position: "DF", overall: 71, speed: 67, shooting: 60, defense: 76, passing: 68, stamina: 68, isGoalkeeper: false },
+            { name: "Westward GK",    position: "GK", overall: 75, speed: 65, shooting: 55, defense: 80, passing: 65, stamina: 65, isGoalkeeper: true  }
         ]
     },
     {
-        teamName: "Northfield",
+        teamName: "Northfield FC",
         color: "red",
-        stadium: "Northfield Park",
+        stadium: "Northfield Stadium",
         players: [
-            { name: "Shaw",           position: "FW", overall: null, speed: null, shooting: null, defense: null, passing: null, stamina: null, isGoalkeeper: false },
-            { name: "Patel",          position: "MF", overall: null, speed: null, shooting: null, defense: null, passing: null, stamina: null, isGoalkeeper: false },
-            { name: "Nkosi",          position: "DF", overall: null, speed: null, shooting: null, defense: null, passing: null, stamina: null, isGoalkeeper: false },
-            { name: "Cruz",           position: "MF", overall: null, speed: null, shooting: null, defense: null, passing: null, stamina: null, isGoalkeeper: false },
-            { name: "Northfield GK",  position: "GK", overall: null, speed: null, shooting: null, defense: null, passing: null, stamina: null, isGoalkeeper: true  }
+            { name: "Quinn Lopez",    position: "ST", overall: 89, speed: 86, shooting: 86, defense: 85, passing: 95, stamina: 95, isGoalkeeper: false },
+            { name: "Alex Smith",     position: "LB", overall: 89, speed: 93, shooting: 93, defense: 89, passing: 86, stamina: 86, isGoalkeeper: false },
+            { name: "Jamie Wilson",   position: "RB", overall: 88, speed: 93, shooting: 93, defense: 83, passing: 87, stamina: 87, isGoalkeeper: false },
+            { name: "Casey Davis",    position: "RM", overall: 79, speed: 85, shooting: 85, defense: 72, passing: 81, stamina: 81, isGoalkeeper: false },
+            { name: "Morgan Brown",   position: "GK", overall: 84, speed: 83, shooting: 83, defense: 89, passing: 81, stamina: 81, isGoalkeeper: true  }
         ]
     },
     {
-        teamName: "Lakeside City",
-        color: "green",
-        stadium: "Lakeside Stadium",
+        teamName: "Silverton FC",
+        color: "silver",
+        stadium: "Silverton Stadium",
         players: [
-            { name: "Vega",           position: "FW", overall: null, speed: null, shooting: null, defense: null, passing: null, stamina: null, isGoalkeeper: false },
-            { name: "Osei",           position: "MF", overall: null, speed: null, shooting: null, defense: null, passing: null, stamina: null, isGoalkeeper: false },
-            { name: "Ruiz",           position: "DF", overall: null, speed: null, shooting: null, defense: null, passing: null, stamina: null, isGoalkeeper: false },
-            { name: "Kim",            position: "DF", overall: null, speed: null, shooting: null, defense: null, passing: null, stamina: null, isGoalkeeper: false },
-            { name: "Lakeside GK",    position: "GK", overall: null, speed: null, shooting: null, defense: null, passing: null, stamina: null, isGoalkeeper: true  }
+            { name: "Quinn Davis",    position: "ST", overall: 75, speed: 77, shooting: 77, defense: 75, passing: 92, stamina: 92, isGoalkeeper: false },
+            { name: "Taylor Davis",   position: "CF", overall: 78, speed: 77, shooting: 77, defense: 73, passing: 85, stamina: 85, isGoalkeeper: false },
+            { name: "Jamie Lopez",    position: "RM", overall: 80, speed: 87, shooting: 87, defense: 71, passing: 81, stamina: 81, isGoalkeeper: false },
+            { name: "Jordan Davis",   position: "CF", overall: 75, speed: 73, shooting: 73, defense: 80, passing: 72, stamina: 72, isGoalkeeper: false },
+            { name: "Casey Garcia",   position: "GK", overall: 82, speed: 88, shooting: 88, defense: 67, passing: 90, stamina: 90, isGoalkeeper: true  }
         ]
     }
 ];
+
+// Flag to avoid fetching teams.json more than once per session
+var _teamsDataLoaded = false;
+
+// Load team data from data/teams.json and populate TRAINING_LEAGUE.
+// Calls onReady() when complete (whether fetch succeeded or not).
+function _loadTeamsData(onReady) {
+    if (_teamsDataLoaded) { if (onReady) onReady(); return; }
+    fetch("data/teams.json")
+        .then(function(r) { return r.json(); })
+        .then(function(teamsJson) {
+            var loaded = teamsJson.map(function(t) {
+                return {
+                    teamName: t.name,
+                    color: t.id === "westward" ? "blue" : t.color,
+                    stadium: t.stadium,
+                    players: t.players
+                };
+            });
+            if (loaded.length > 0) {
+                TRAINING_LEAGUE = loaded;
+                _teamsDataLoaded = true;
+            }
+            if (onReady) onReady();
+        })
+        .catch(function() {
+            // Fetch failed (e.g. running from file://) — keep fallback data
+            _teamsDataLoaded = true;
+            if (onReady) onReady();
+        });
+}
 
 // Available formations (4 outfield players + 1 GK = 5 total per team)
 var TRAINING_FORMATIONS = [
@@ -70,6 +105,16 @@ var _trainingState = {
 function showTrainingTeamSelect() {
     setScene("PRE_MATCH");
 
+    // Show loading state while team data is fetched, then render the selection screen
+    if (!_teamsDataLoaded) {
+        screen.innerHTML = "<div class=\"training-screen\"><div class=\"training-title\">Loading Teams\u2026</div></div>";
+        _loadTeamsData(function() { _renderTrainingTeamSelect(); });
+        return;
+    }
+    _renderTrainingTeamSelect();
+}
+
+function _renderTrainingTeamSelect() {
     var state = _trainingState;
     state.playerTeamIndex = 0;
     state.opponentTeamIndex = 1;
@@ -272,6 +317,14 @@ function _buildMgmtPanel(team, lineup, state, side, onChange) {
         name.className = "training-player-name";
         name.textContent = player.name;
         row.appendChild(name);
+
+        // Show overall rating when available
+        if (player.overall !== null && player.overall !== undefined) {
+            var ovr = document.createElement("span");
+            ovr.className = "training-player-ovr";
+            ovr.textContent = player.overall;
+            row.appendChild(ovr);
+        }
 
         var check = document.createElement("span");
         check.className = "training-player-check";
